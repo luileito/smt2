@@ -1,4 +1,4 @@
-#summary This an introductory page for describing the new (smt)2 version.
+#summary This an introductory page for describing the new (smt)2 version
 #labels Featured
 
 
@@ -98,4 +98,4 @@ Note that the last property have no ending comma.
 
 All recorded user visits can be managed on the _tracking report_ section of the CMS. It is recommended to use the SWF visualization tool, as it is dramatically more advanced and interactive than the JavaScript one.
 
-More CMS extensions (modules) will be added soon...
+Read more about the CMS on the [http://code.google.com/p/smt2/wiki/CMS wiki page].
