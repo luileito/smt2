@@ -1,10 +1,5 @@
-#summary (smt)2 readme file
+#summary This an introductory page for describing the new (smt)2.0 version. This first release is for beta testing purposes, so please follow these instructions carefully.
 #labels Featured
-
-= Introduction =
-
-This an introductory page for describing the new (smt)^2.0^ version. This first release is for beta testing purposes, so please follow these instructions carefully.
-
 
 = Requirements =
 
