@@ -79,6 +79,4 @@ Your page content goes here...
 
 = Working with the gathered data =
 
-All visits can be managed on the _tracking report_ section of the CMS. It is recommended to use the SWF visualization tool, as it is dramatically more advanced and interactive than the JavaScript one. 
-
-You can also analyze the logs, to get a more detailed report.
+All visits can be managed on the _tracking report_ section of the CMS. It is recommended to use the SWF visualization tool, as it is dramatically more advanced and interactive than the JavaScript one.
