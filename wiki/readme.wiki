@@ -23,13 +23,13 @@ It is recommended to put the system in a directory named `/smt2` on your localho
 
 == Steps ==
 
-First of all, you must configure the basic stuff by editing the file `config.php` and typing your MySQL database settings. Then, just upload the `smt2` folder to your server.
+First of all, you must configure the basic stuff by editing the file `config.php` and typing your MySQL database settings. Then, just upload the `smt2` folder to your web server.
 
-Assuming that you've uploaded the files to a server called `server.com`:
+Assuming that you've uploaded the files to a server called `mysite.com`:
 
- # Open your Web browser and navigate to the URL `http://server.com/smt2/admin/sys/install.php`.
+ # Open your Web browser and navigate to the URL `http://mysite.com/smt2/admin/sys/install.php`.
  # Enter your email and click the `Install` button. That email will be used to send you a new root password if you lose/forget it.
- # Once the installation process finishes, copy the generated password and log in (your username is *root*) to the CMS. You can change the password on the `users` section.
+ # Once the installation process finishes, copy the generated password and log in (your username is *root*) to the CMS. You can change that password on the _users_ section.
 
 
 = Including the record script on your page(s) =
@@ -89,9 +89,13 @@ Your page content goes here...
 </html>
 }}}
 
+Here we are telling that the record script will live for 300 seconds, and will track *all* page views. Also, it will advice users with a custom message (they must agree to get recorded their mouse activity).
+
+Note that the last property have no ending comma.
+
 
 = Working with the gathered data =
 
-All recorded visits can be managed on the _tracking report_ section of the CMS. It is recommended to use the SWF visualization tool, as it is dramatically more advanced and interactive than the JavaScript one.
+All recorded user visits can be managed on the _tracking report_ section of the CMS. It is recommended to use the SWF visualization tool, as it is dramatically more advanced and interactive than the JavaScript one.
 
 More CMS extensions (modules) will be added soon...
