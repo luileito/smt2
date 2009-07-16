@@ -7,7 +7,7 @@ You may log in as the superuser (username *root*) in order to have full access t
 
 = Extensions overview =
 
-The (smt)^2.0^ CMS is composed by _extensions_ (aka functional modules or simply _sections_). When new extensions are available, just upload them to the `/smt2/admin/ext/` dir and the system will install them automatically for your convenience -- You will be warned on the _Dashboard_ section. 
+The (smt)^2.0^ CMS is composed by _extensions_ (aka _functional modules_ or simply _sections_). When new extensions are available, just upload them to the `/smt2/admin/ext/` dir and the system will install them automatically for your convenience -- You will be warned on the _Dashboard_ section. 
 
 == Dashboard ==
 
@@ -23,13 +23,17 @@ This is the most featured extension. Here you will manage all tracked visits (vi
 
 == Roles ==
 
-This extension is designed to give you the ability to control and assign what users can and cannot do in the CMS. The default role is named _admin_. You can assign users to the _admin_ role, with almost wide access. However, the *root* user is the only account that can enjoy all CMS features (i.e: create, assign and delete roles).
+This extension is designed to give you the ability to control and assign what users can and cannot do in the CMS. The default role is named _admin_, and it is the role that the *root* user belongs to. 
+
+You can assign users to the _admin_ role, with almost wide access. However, the *root* user is the only account that can enjoy all CMS features (i.e: create, assign and delete roles).
+
+Read more about roles and capabilities on the [http://code.google.com/p/smt2/wiki/roles roles wiki].
 
 == Users ==
 
-On that section you can add new users, and assign them certain roles. Users with the _admin_ role can create new users, but not assign roles to them. Again, the *root* user is the only one that can do these kind of things (i.e: also update and delete all registered accounts).
+On that section you can add new users, and assign them certain roles. Users with the _admin_ role can create new users, but they won't assign roles to them. Again, the *root* user is the only one that can do these kind of things (i.e: also update and delete all registered accounts).
 
 
 = Creating custom extensions =
 
-If you know how the CMS works, you can create your own extensions. Please read the API documentation for better understanding.
+If you know how the CMS works, you can create your own extensions. Please read the PHP API documentation for better understanding.
