@@ -3,22 +3,27 @@
 
 = Requirements =
 
-Your server needs a MySQL 5 database and PHP 5 with the cURL library. These settings are very common on most web servers. If you don't know if your server has these requirements, you will be adviced when installing the system.
-
+Your web server needs a *MySQL 5* database and *PHP 5* installed with the *cURL library*. These settings are very common on most web servers. If you don't know if your server has these requirements, you will be adviced when installing the system.
 
 = Download =
 
-Downloads are available both on the [http://smt.speedzinemedia.com/smt/downloads.php (smt) website] (compressed in a ZIP file) and the [http://code.google.com/p/smt2/downloads/list Google code SVN].
-
-It is recommended to put the downloaded files in the `/smt2` dir on your localhost or production website.
-
+Downloads are available in a ZIP file both from the [http://smt.speedzinemedia.com/smt/downloads.php (smt) website] and the [http://code.google.com/p/smt2/downloads/list Project Downloads page]. You can also download the sources form the [http://code.google.com/p/smt2/downloads/list Google code SVN].
 
 = Installing =
 
- # Open your browser and navigate to the URL `/smt2/admin/sys/install.php`.
- # Enter your email and click the `Install` button. That email will be used to send you a new root password if you lose/forget it.
- # Once the installation process finishes, copy the generated password and log in (your username is *root*) to the Content Management System (CMS from here onwards).
+The installation process is very similar to the well-known WordPress Content Management System (CMS from here onwards), so the learning curve is supposed to be very soft.
 
+It is recommended to put the system in a directory named `/smt2` on your localhost or production server.
+
+== Steps ==
+
+First of all, you must configure the basic stuff by editing the file `config.php` and typing your MySQL database settings. Then, just upload the `smt2` folder to your server.
+
+Assuming that you've uploaded the files to a server called `server.com`:
+
+ # Open your Web browser and navigate to the URL `http://server.com/smt2/admin/sys/install.php`.
+ # Enter your email and click the `Install` button. That email will be used to send you a new root password if you lose/forget it.
+ # Once the installation process finishes, copy the generated password and log in (your username is *root*) to the CMS.
 
 = Including the record script on your page(s) =
 
@@ -27,7 +32,7 @@ You must add the following 2 lines to the HEAD of each document that you wish to
 <script type="text/javascript" src="/smt2/core/js/smt-aux.min.js"></script>  
 <script type="text/javascript" src="/smt2/core/js/smt-record.min.js"></script>
 }}}
-
+Note that order is mandatory: aux functions first.
 
 = Customizing the recording options =
 
@@ -36,8 +41,8 @@ These are the default (smt)^2.0^ recording options that you can change:
 // Tracking frequency, in frames per second.      
 fps: 24, 	
 // Tracking timeout, in seconds.
-recTime: 20, 
-// Path to (smt)2 installation. The record script will try to find automatically the installation path.
+recTime: 60, 
+// Path to (smt)2 installation. The record script will try to find it automatically!
 smtPath: "/smt2", 
 // You may choose to advice users (or not) that their mouse activity is going to be logged. 
 warn: false, 
@@ -47,7 +52,7 @@ warnText: "Your mouse movements are going to be logged.\nDo you agree?",
 disabled: Math.round(Math.random())
 }}}
 
-To override these defaults you do not need to edit manually the record script. Just add an object named `smtRecordingOptions` with the properties that you want to customize BEFORE the above mentioned 2 JavaScript lines. Take this example page:
+To override these defaults you do not need to edit manually the record script. Just create an object named `smtRecordingOptions` with the properties that you want to customize BEFORE the above mentioned 2 JavaScript lines. Take this example page:
 {{{
 <html>
 
@@ -76,7 +81,8 @@ Your page content goes here...
 </html>
 }}}
 
-
 = Working with the gathered data =
 
-All visits can be managed on the _tracking report_ section of the CMS. It is recommended to use the SWF visualization tool, as it is dramatically more advanced and interactive than the JavaScript one.
+All recorded visits can be managed on the _tracking report_ section of the CMS. It is recommended to use the SWF visualization tool, as it is dramatically more advanced and interactive than the JavaScript one.
+
+More CMS extensions (modules) will be added soon...
