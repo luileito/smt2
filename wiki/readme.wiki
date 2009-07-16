@@ -1,0 +1,89 @@
+#summary (smt)2 readme file
+#labels Featured
+
+= Introduction =
+
+This an introductory page for describing the new (smt)^2.0^ version. This first release is for beta testing purposes, so please follow these instructions carefully.
+
+
+= Requirements =
+
+Your server needs a MySQL 5 database and PHP 5 with the cURL library. These settings are very common on most web servers. If you don't know if your server has these requirements, you will be adviced when installing the system.
+
+
+= Download =
+
+Downloads are available both on the [http://smt.speedzinemedia.com (smt) website] (compressed in a ZIP file) and [http://code.google.com/p/smt2/downloads/list Google code SVN].
+
+It is recommended to put the downloaded files in the `/smt2` dir on your localhost or production website.
+
+
+= Installing =
+
+ # Open your browser and navigate to the URL `/smt2/admin/sys/install.php`.
+ # Enter your email and click the `Install` button. That email will be used to send you a new root password if you lose/forget it.
+ # Once the installation process finishes, copy the generated password and log in (your username is *root*) to the Content Management System (CMS from here onwards).
+
+
+= Including the record script on your page(s) =
+
+You must add the following 2 lines to the HEAD of each document that you wish to track:
+{{{
+<script type="text/javascript" src="/smt2/core/js/smt-aux.min.js"></script>  
+<script type="text/javascript" src="/smt2/core/js/smt-record.min.js"></script>
+}}}
+
+
+= Customizing the recording options =
+
+These are the default (smt)^2.0^ recording options that you can change:
+{{{
+// Tracking frequency, in frames per second.      
+fps: 24, 	
+// Tracking timeout, in seconds.
+recTime: 20, 
+// Path to (smt)2 installation. The record script will try to find automatically the installation path.
+smtPath: "/smt2", 
+// You may choose to advice users (or not) that their mouse activity is going to be logged. 
+warn: false, 
+// Text to display when advising users (if warn is set to true).
+warnText: "Your mouse movements are going to be logged.\nDo you agree?", 
+// Random user selection. Setting it to false means that all the population will be tracked.      
+disabled: Math.round(Math.random())
+}}}
+
+To override these defaults you do not need to edit manually the record script. Just add an object named `smtRecordingOptions` with the properties that you want to customize BEFORE the above mentioned 2 JavaScript lines. Take this example page:
+{{{
+<html>
+
+<head>
+
+  <title>My document title</title>
+
+  <script type="text/javascript">
+  var smtRecordingOptions = { 
+   recTime: 300,
+   disabled: false,
+   warn:true, 
+   warnText: "We are going to record your mouse movements for a remote usability study."
+  };
+  </script>
+
+  <script type="text/javascript" src="/smt2/core/js/src/smt-aux-2.0.0.js"></script>
+  <script type="text/javascript" src="/smt2/core/js/src/smt-record-2.0.0.js"></script>  
+
+</head>
+
+<body>
+Your page content goes here...
+</body>
+
+</html>
+}}}
+
+
+= Working with the gathered data =
+
+All visits can be managed on the _tracking report_ section of the CMS. It is recommended to use the SWF visualization tool, as it is dramatically more advanced and interactive than the JavaScript one. 
+
+You can also analyze the logs, to get a more detailed report.
