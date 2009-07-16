@@ -8,7 +8,7 @@ Your server needs a MySQL 5 database and PHP 5 with the cURL library. These sett
 
 = Download =
 
-Downloads are available both on the [http://smt.speedzinemedia.com (smt) website] (compressed in a ZIP file) and [http://code.google.com/p/smt2/downloads/list Google code SVN].
+Downloads are available both on the [http://smt.speedzinemedia.com/smt/downloads.php (smt) website] (compressed in a ZIP file) and the [http://code.google.com/p/smt2/downloads/list Google code SVN].
 
 It is recommended to put the downloaded files in the `/smt2` dir on your localhost or production website.
 
@@ -64,8 +64,8 @@ To override these defaults you do not need to edit manually the record script. J
   };
   </script>
 
-  <script type="text/javascript" src="/smt2/core/js/src/smt-aux-2.0.0.js"></script>
-  <script type="text/javascript" src="/smt2/core/js/src/smt-record-2.0.0.js"></script>  
+  <script type="text/javascript" src="/smt2/core/js/smt-aux.min.js"></script>  
+  <script type="text/javascript" src="/smt2/core/js/smt-record.min.js"></script>
 
 </head>
 
