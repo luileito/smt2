@@ -1,0 +1,54 @@
+/** 
+ * Admin theme styles.
+ * Here you can customize/override the styles set in 'admin.css'  
+ */
+body { background-color:#888; }
+#global { background-color:#FFF; padding:2em; }
+
+/* table row visuals */
+table { border-bottom:1px solid #000; }
+th { background-color:#888; color:#FFF; }
+/* table styles can be overriden when using the jquery.stripy plugin */
+tr.even { background-color:#DDD; }
+tr.odd { background-color:#EEE; }
+tr:hover { background-color:#FFC; }
+.deleted { background-color:#F66 !important; }
+.dummy { background-color:#FFF; }
+/* deprecated: used to alternate rows by client ID */
+.row0 { background-color:#EEE; }
+.row1 { background-color:#DDD; }
+
+/* the 'more' link */
+a.morebtn { background-color:#EEE; border:1px solid #CCC; }
+  a.morebtn:hover { background-color:#DDD; }
+
+/* logout button */
+a#logout { color:#FFF; background-color:#C33; text-decoration:none; padding:.2em .4em; font:bold 100% sans-serif; }
+  a#logout:hover { background-color:#F33; }
+
+/* forms */
+input.button { color:#FFF; background-color:#000; }
+input.button:hover { color:#FFF; background-color:#444; }
+.wrapper { border:1px solid #CCC; overflow:auto; margin-bottom:.5em; }
+.wrapper:hover { border:1px solid #000; background-color:#EEE; }
+
+/* login */
+.loginwrap { margin-top:10%; }
+  .title { font-size:300%; color:#FFF; font-weight:lighter; }
+  .loginwrap h2 { color:#CCC; }
+    #loginform { border:1px solid #000; background-color:#FFF; font:90% sans-serif; }
+      #loginform label { color:#888; font:90% Georgia,serif; }
+      #loginform input.text { border:1px solid #CCC; background-color:#FBFBFB; }
+
+/* footer and header */
+.foothead { color:#FFF; font-size:85%; } 
+  .foothead a { color:#BBB; }
+    .foothead a:hover { color:#FFF; }
+#footer { border-top:2px solid #000; font-size:75%; }
+#bugreport a { background-color:#000; padding:.2em .4em; font:bold 110% sans-serif; }
+    #bugreport a:hover { background-color:#333; }
+
+/* other */
+.notfound { font-family:Georgia,serif; font-style:italic; color:#AAA; }
+.delete { background-color:#C00 !important; }
+.delete:hover { background-color:#D00 !important; }
