@@ -50,9 +50,8 @@ switch ($form)
       if (!empty($pass1)) {
         $tuples .= "pass=MD5('".$pass1."'),";
       }
-      if (is_root()) {
-        $tuples .= "role_id='".$role_id."',";
-      }
+      // dont't remove root permissions!
+      if (is_root()) { $tuples .= "role_id='1',"; }
       $tuples .= "name='".$name."', email='".$email."', website='".$website."'";
       $success = db_update(TBL_PREFIX.TBL_USERS, $tuples, "login='".$login."'");
       break;

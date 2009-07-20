@@ -120,17 +120,6 @@ var smtAuxFn = {
     this.addEvent(window, 'load', callback);
   },
   /**
-   * Reloads the current page.   
-   * This method is needed for the drawing APIs, 
-   * where all window and screen data should be re-computed (and stage size should be reset).
-   * @return void
-   */
-  reloadPage: function() 
-  {
-    // do not not alter the the browser's history
-    window.location.replace(window.location.href);
-  }, 
-  /**
    * Gets the browser's window size (aka 'the viewport')     
    * @return {object} window dimmensions - object with 2 properties: width {integer}, and height {integer}
    */
@@ -273,20 +262,6 @@ var smtAuxFn = {
      * <code>for (var i = 0, exp = 1; i < digits.length; ++i, exp *= 10) {}</code>          
      */
     return Math.round(exp*number)/exp; 
-  },
-  /**
-   * Scrolls the browser window.
-   * This function is used for visualizing logs, and requires jQuery (already included).   
-   * @return void
-   * @param expression  {mixed}   DOM element, number, hash, percentage...
-   * @param ms          {integer} time in milliseconds
-   * @param axis        {string}  window axis (computed automatically)
-   * @requires jQuery library and scrollTo jQuery plugin
-   */
-  scrollTo: function(expression, ms, axis)
-  {
-    var toAxe = axis || 'y';
-    $(window).scrollTo(expression, ms, {axis:toAxe});
   },
   /**
    * Creates an XML/HTTP request to provide async communication with the server.

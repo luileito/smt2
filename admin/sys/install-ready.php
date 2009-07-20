@@ -202,6 +202,7 @@ $opts = array(
                 array(CMS_TYPE, "varCir",  "FF9999", "Time-depending circles color. Each circle represents the amount of time that there is no mouse movement (the user is not using the mouse)."),
                 array(CMS_TYPE, "cenPt",   "DDDDDD", "Centroid color. The centroid is the geometric center of the mouse path."),
                 array(CMS_TYPE, "clust",   "0000FF", "Clusters color. The k-means algorithm assigns each registration point to the cluster whose center is nearest."),
+                array(CMS_TYPE, "bgColor", "000000", "Background layer color."),
                 // more JS options
                 array(CMS_CHOICE, "realTime", 1, "You can replay the mouse path in real time or as a static overlayed image."),
                 array(CMS_CHOICE, "bgLayer",  1, "Draw a semi-transparent background layer on bottom."),

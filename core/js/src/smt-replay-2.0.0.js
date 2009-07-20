@@ -73,7 +73,12 @@
      * Draw background layer (true) or not (false)
      * @type boolean      
      */
-    bgLayer:  true,     
+    bgLayer:  true,
+    /** 
+     * Background layer color
+     * @type string
+     */
+    bgColor:  "#000",     
     /** 
      * Show direction vector (useful if realTime: false)
      * @type boolean      
@@ -161,9 +166,7 @@
      */
     setBgCanvas: function(layerName) 
     {
-      var bgColor = "#000",
-          // background layer opacity (%)
-          opacity = 50,
+      var opacity = 50, // background layer opacity (%)
           // set layer above the mouse tracking one
           jg = document.getElementById(layerName),
           doc = aux.getPageSize();
@@ -176,7 +179,7 @@
           bg.style.width            = doc.width + 'px'; 
           bg.style.height           = doc.height + 'px';
           bg.style.overflow         = "hidden";
-          bg.style.backgroundColor  = bgColor;
+          bg.style.backgroundColor  = smtOpt.bgColor;
           bg.style.opacity          = opacity/100; // for W3C browsers
           bg.style.filter           = "alpha(opacity="+opacity+")"; // only for IE
           bg.style.zIndex           = jg.style.zIndex - 1;
@@ -412,6 +415,7 @@
     },
     /** 
      * Reload method: mouse tracking layers are redrawn.
+     * @deprecated     
      */
     reset: function() 
     {
@@ -423,8 +427,6 @@
       // clear canvas  
       smtRep.jg.clear();
       smtRep.jgClust.clear();
-      // finally reload page
-      aux.reloadPage();
     },
     /** 
      * User can pause the mouse replay by pressing the SPACE key, 
@@ -500,9 +502,8 @@
   };
   
   /* (smt)2 replay initialization ------------------------------------------- */
-  aux.addEvent(window, "resize", smtRep.reset);
-  aux.addEvent(document, "keyup",  smtRep.helpKeys);
-  // start replaying on DOM load
+  aux.addEvent(document, "keyup", smtRep.helpKeys);
+  //aux.addEvent(window, "resize", smtRep.reset);
   aux.onDOMload(smtRep.init);
 
 })();

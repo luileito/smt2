@@ -24,8 +24,6 @@ $cdata_swf = '
       swfobject.embedSWF("'.SWF_PATH.'tracking.swf", "'.$smtID.'", doc.width, doc.height, "9.0.0", "'.SWF_PATH.'expressInstall.swf", dat, par, att);
     });
     
-    aux.addEvent(window, "resize", aux.reloadPage);
-    
 })();
 //]]>
 ';
