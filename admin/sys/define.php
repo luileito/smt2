@@ -1,6 +1,6 @@
 <?php
 /** Installed (smt) version. */
-define ('SMT_VERSION',   "2.0.0-beta2");
+define ('SMT_VERSION',   "2.0.0-beta3");
 /** Path to (smt) admin system. This absolute URL is used to resolve links, redirections, an so on. */
 define ('ADMIN_PATH',    ABS_PATH."admin/");
 /** Path to core (smt) javascript functions. */
