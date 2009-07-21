@@ -7,6 +7,9 @@
 You must give focus to the tracking layer in order to use the *keyboard* shorcuts.
 This can be done automatically on Windows boxes, but unfortunately it does not work on Linux. So, we all must be on an equal footing ;)
 
+On the JavaScript visualization tool this first-click-to-interact is not required. However, the JavaScript version is deprecated and may not be developed further in a future.
+
+
 = Keyboard shorcuts =
 
 By now there are defined two useful keys:
@@ -21,3 +24,6 @@ If you've tried [http://smt.speedzinemedia.com/smt/test the live demos], at this
  * CTRL + Click on the tracking layer (Mac users should do CMD + Click) toggles the control panel.
 
 The rest is very intuitive IMHO.
+
+
+Note that on the JavaScript-only version there is no Control Panel.
