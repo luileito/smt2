@@ -36,4 +36,4 @@ On that section you can add new users, and assign them certain roles. Users with
 
 = Creating custom extensions =
 
-If you know how the CMS works, you can create your own extensions. Please read the PHP API documentation for better understanding.
+If you know how the CMS works, you can create your own extensions. Please read the PHP API documentation for better understanding. On version 2.0.0 was included a new extension called _documentation_ (you know what you'll find here).
