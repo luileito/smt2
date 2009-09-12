@@ -17,6 +17,7 @@ a[rel~="external"] { background:url(external.png) center right no-repeat; paddin
 /* useful, common styles */
 .center { text-align:center; }
 .right { text-align:right; }
+.left { text-align:left; }
 .inline { display:inline; }
 .heading { margin:.5em auto; }
 .block { display:block; }
@@ -49,7 +50,6 @@ fieldset { margin:.7em auto; display:block; }
 legend { font-size:75%; }
 label { font-weight:bold; font-size:75%; }
 input,select { vertical-align:middle; }
-select { width:100px }
   .text { border:1px solid #555; padding:2px; }
   .radio { margin-left:.5em; }
   .button { margin:auto 1em; padding:.3em 1em; cursor:pointer; font:bold italic 90% Georgia,serif; }

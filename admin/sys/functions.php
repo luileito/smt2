@@ -107,6 +107,16 @@ function notify_request($id, $success, $customErr = "")
   exit;
 }
 
+/**
+ * Redirects the browser to a specified anchor on the page that sent a form.
+ * @param   string    $id   HTML element id
+ * @param   string    $msg  message to display  
+ */
+function notify_request_warning($id, $msg)
+{
+  $_SESSION[ $id ] = '<p class="warning">'.$msg.'</p>';
+}
+
 /** 
  * Displays the message saved on current PHP session. Then the $_SESSION text is unset.
  * @param   string  $name   session variable name 
@@ -194,10 +204,24 @@ function get_client_id()
 }
 
 /** 
+ * Masks a given client ID string.
+ * @return string         Pretty-formatted client ID 
+ * @param  string   $id   client ID 
+ */
+function mask_client($id)
+{
+  $hash = md5($id);
+  $half = strlen($hash) / 2;
+  
+  return substr($hash, -$half, $half);
+}
+
+
+/** 
  * Gets the $URL contents within the HTTP server response header fields. 
  * This function uses cURL to fetch remote pages.
- * @return array  Transfer information (the web page content is in the "content" array key) 
- * @param  string $URL  web page URL
+ * @return array          Transfer information (the web page content is in the "content" array key) 
+ * @param  string   $URL  web page URL
  * @link   http://php.net/function.curl_getinfo 
  */
 function get_remote_webpage($URL)
@@ -210,7 +234,7 @@ function get_remote_webpage($URL)
                     CURLOPT_FOLLOWLOCATION => true,   // follow redirects
                     CURLOPT_MAXREDIRS      => 5,      // limit redirect loops
                     CURLOPT_ENCODING       => "",     // handle all encodings
-                    CURLOPT_CONNECTTIMEOUT => 10,     // timeout on connect
+                    CURLOPT_CONNECTTIMEOUT => 5,      // timeout on connect
                     CURLOPT_TIMEOUT        => 120,    // timeout on response
                     CURLOPT_SSL_VERIFYPEER => false,  // try to fetch SSL pages too
                     CURLOPT_SSL_VERIFYHOST => false
@@ -236,6 +260,19 @@ function get_remote_webpage($URL)
 }
 
 /** 
+ * Displays a default error page.
+ * Used when a cached page is deleted, as well as when cURL cannot fetch a remote page.
+ * @return string             The error page 
+ * @param  string   $bodyText additional info to display on page body
+ */
+function error_webpage($bodyText = "") 
+{  
+  $webpage = '<html><head><title>Not found!</title></head><body>'.$bodyText.'</body></html>';
+  
+  return $webpage; 
+} 
+
+/** 
  * Computes the frequency of each $input array member.
  * @param   mixed  $input        input string or array of strings to parse ($_POST vars are sent as strings)
  * @param   int    $threshold    frequencies (in percentage) under this $threshold will not be stored (default: 1)
@@ -246,9 +283,10 @@ function compute_frequency($input, $threshold = 1)
   // convert $input in a real PHP array
   $input = (!is_array($input)) ? explode(",", $input) : $input;
   // count occurrences (array keys must be strings or integers)
-  $unique = array_count_values($input);
+  $unique = array_count_values($input); // Returns an associative array of values from $input as keys and their count as value. 
   // $hovered is an associative array(string => int)
   $unique = array_sanitize($unique);
+  
   // exit if there are no data
   if (!$unique) return false;
   
@@ -258,7 +296,7 @@ function compute_frequency($input, $threshold = 1)
   // now calculate the frequency of each hovered element (in percentage)
   foreach ($unique as $k => $value) {
     $frequency = round(100*$value/$sum, 2);
-    // do not store frecuencies below $threshold
+    // store frecuencies above given threshold
     if ($frequency > $threshold) {
       $data[$k] = $frequency;
     } 
@@ -296,55 +334,104 @@ function array_sanitize($input)
 }
 
 /** 
- * Sums all array values with a weighted ponderation.
- * @param   array  $inputArray   associative array or set of arrays
- * @return  array                An associative array with the result 
+ * Does a weighted sum for a given multidimensional array and computed weights.
+ * @param   array  $inputArray  multidimensional array (matrix)
+ * @param   array  $weights     weights 
+ * @return  array               Weighted sum
+ * @link    http://www.compapp.dcu.ie/~humphrys/PhD/e.html 
  */
-function array_sum_values($inputArray) 
+function weighted_avg($inputArray, $weights) 
 {
-    $tmp = array();
-    /* $inputArray can be a single multidimensional array (Array(Array1,...,ArrayN)) 
-     * or a collection of arrays (Array1,...,ArrayN)
-     */
-    $arrArgs = (func_num_args() === 1) ? $inputArray : func_get_args();
-    // number of inputs
-    $n = count($arrArgs);
-    // store the $input keys
-    $samples = array();
-    foreach ($arrArgs as $arrItem) {
-        foreach ($arrItem as $k => $v) {
-            $tmp[$k] += $v;
-            $samples[] = $k;
-        }
-    }
-    // count number of (common) $input keys
-    $samples = array_count_values($samples);
-    // now use ponderation
-    return array_weighted($tmp, $samples);
+  $sumArray = array();
+  
+  foreach ($inputArray as $arrItem) {
+    $sumArray[] = array_avg($arrItem) * count($arrItem)/max($weights);
+  }
+  
+  return $sumArray;
 }
 
 /** 
- * Does a weighted sum for a given associative array. Note that count($sumArray) = count($weights).
- * @param   array  $sumArray   associative array
- * @param   array  $weights    weights array 
- * @return  array              Weighted sum array
- * @link    http://www.compapp.dcu.ie/~humphrys/PhD/e.html 
+ * Computes the average sum of an array.
+ * @param   array  $inputArray   array or set of arrays
+ * @return  float                Array average  
  */
-function array_weighted($sumArray, $weights) 
+function array_avg($inputArray) 
 {
-    // note that for all i in $weights: 0 < $weights(i) < 1, and sum($weights) = 1
-    $ws = array_sum($weights);
-    // the sum array is weighted
-    foreach ($sumArray as $k => $v) {
-      // score = mean * normalized weights
-      $score = $v * $weights[$k]/$ws; 
-      // depenalize common matches
-      $sumArray[$k] = round($score, 2);
-    }
-    // sort final result
-    arsort($sumArray);
+  $arrArgs = (func_num_args() === 1) ? $inputArray : func_get_args();
+  $count = 0;
+  
+  foreach ($arrArgs as $arrItem) 
+  {
+    if (!is_array($arrItem)) { $arrItem = explode(",", $arrItem); }
     
-    return $sumArray;
+    $sum += array_sum($arrItem)/count($arrItem);
+    ++$count;
+  }
+  
+  return round($sum/$count, 2);
+}
+
+/** 
+ * Gets the array index that has the maximum value.
+ * @param   array  $inputArray   array
+ * @return  int                  Array index  
+ */
+function array_argmax($inputArray) 
+{
+  $max = max($inputArray);
+  foreach ($inputArray as $key => $value) {
+    if ($value == $max) { $maxIndex = $key; }
+  }
+  
+  return $maxIndex;
+}
+
+/** 
+ * Gets the array index that has the minimum value.
+ * @param   array  $inputArray   array
+ * @return  int                  Array index  
+ */
+function array_argmin($inputArray) 
+{
+  $min = min($inputArray);
+  foreach ($inputArray as $key => $value) {
+    if ($value == $min) { $minIndex = $key; }
+  }
+  
+  return $minIndex;
+}
+
+/** 
+ * Merges vertical and horizontal coordinates in a bidimensional point array.
+ * @param   array  $xcoords        horizontal coordinates
+ * @param   array  $ycoords        vertical coordinates
+ * @param   array  $getDistances   if TRUE, the result array contains euclidean distances
+ * @return  array                  2D points or euclidean distances
+ */
+function convert_points($xcoords, $ycoords, $getDistances = false) 
+{
+  // initialize points array
+  $pointArray = array();
+  // transform arrays in a single points array
+  foreach ($xcoords as $i => $value) 
+  {
+    $p = new Point($value, $ycoords[$i]); 
+    // check if next point exists 
+    if ($xcoords[$i + 1] === null) { break; }
+    // ok
+    $q = new Point($xcoords[$i + 1], $ycoords[$i + 1]);
+    $distance = $p->getDistance($q);
+    // check
+    if ($getDistances) {
+      $pointArray[] = $distance;
+    } else {
+      // append point to the points array, discarding null distances
+      if ($distance > 0) { $pointArray[] = $p; }
+    }
+  }
+  
+  return $pointArray;
 }
 
 /** 

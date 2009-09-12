@@ -20,9 +20,15 @@ $cdata_swf = '
       var doc = aux.getPageSize();
       // avoid IE bug (ActiveX player): use these values instead of the SWF stage ones
       dat.hview = doc.height;
-      dat.wview = doc.width;    
-      swfobject.embedSWF("'.SWF_PATH.'tracking.swf", "'.$smtID.'", doc.width, doc.height, "9.0.0", "'.SWF_PATH.'expressInstall.swf", dat, par, att);
+      dat.wview = doc.width;   
+      swfobject.embedSWF("'.SWF_PATH.'tracking.swf?'.time().'", "'.$smtID.'", doc.width, doc.height, "9.0.0", "'.SWF_PATH.'expressInstall.swf", dat, par, att);
+      
+      // render the Tracking layer on top
+      var smtId = document.getElementById("'.$smtID.'");
+      smtId.style.zIndex = aux.getNextHighestDepth() + 1;
     });
+    
+    //aux.addEvent(window, "resize", aux.reloadPage);
     
 })();
 //]]>

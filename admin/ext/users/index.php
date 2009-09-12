@@ -154,8 +154,7 @@ function format_fields($user, $isAdmin)
   if ($isAdmin) {
     $f .= '</div><!-- end wrapper -->'.PHP_EOL;
   }
-  
-  
+
   return $f;
 }
 // end helper function ---------------------------------------------------------
@@ -190,15 +189,5 @@ else
   echo format_fields($user, $isadmin);
 }
 ?>
-
-<script type="text/javascript">
-// <![CDATA[
-$(function(){
-  $('.conf').click(function(e){
-    return confirm("Are you sure?");
-  });
-});
-// ]]>
-</script>
 
 <?php include INC_PATH.'inc/footer.php'; ?>

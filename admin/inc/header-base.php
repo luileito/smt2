@@ -1,5 +1,5 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>(smt) simple mouse tracking v2 | admin interface</title>
+  <title>(smt) simple mouse tracking <?=SMT_VERSION?> | admin interface</title>
   
   <link href="<?=ADMIN_PATH?>favicon.ico" rel="icon" type="image/x-icon" />
   <link href="<?=ADMIN_PATH?>favicon.ico" rel="shortcut icon" type="image/x-icon" />

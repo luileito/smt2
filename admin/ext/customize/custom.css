@@ -1,7 +1,7 @@
 /* custom CSS for 'customize' section */
 .vspace { margin-top:2em; }
 
-.customize-wrap { width:300px; margin-bottom:1.5em; padding:.1em; overflow:auto; } 
+.customize-wrap { width:300px; margin-bottom:1.5em; padding:.1em; overflow:auto; /* Linux enhancement -> */ padding-right:.3em; overflow-x:hidden; } 
   legend { font-style:italic; }
   .customize { margin:.2em auto; display:block; }
     .customize label { float:left; }

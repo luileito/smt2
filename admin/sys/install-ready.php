@@ -1,5 +1,5 @@
 <?php
-if (empty($_POST)) { exit; }
+if (empty($_POST)) exit;
 
 // turn off error reporting ...
 error_reporting(0);
@@ -10,7 +10,7 @@ function try_sql_query($sql)
 {
   if (db_query($sql)) {
     echo '<strong class="ok">Ok.</strong><br />';
-  } else die ('<strong class="ko">Error.</strong> ');
+  } else die ('<strong class="ko">Error.</strong>');
 }
 
 /* create database ---------------------------------------------------------- */
@@ -165,9 +165,9 @@ try_sql_query($sql);
 /* insert default options --------------------------------------------------- */
 $opts = array(
                 // admin options
-                array(CMS_TYPE,   "recordsPerTable",      20, "Number of records to show on each tracking table."),
-                array(CMS_TYPE,   "cacheDays",            15, "Cache (in days) for HTML logs. If the requested page was not modified in this amount of time, the system will use a cached copy. Leaving it blank or setting it to <code>0</code> means that no logs will be cached: each visit will generate an HTML log."), 
-                array(CMS_CHOICE, "displayGoogleMap",     0,  "If you typed a valid Google Maps key on your <em>config.php</em> file, the client location will be shown on a map when analyzing the logs.")
+                array(CMS_TYPE,   "recordsPerTable",      20, "Number of records to show on each tracking table. This will be the default value, and it can be overriden on the <em>Tracking report</em> section."),
+                array(CMS_TYPE,   "cacheDays",            30, "Cache (in days) for HTML logs. If the requested page was not modified in this amount of time, the system will use a cached copy. Leaving it blank or setting it to <code>0</code> means that no logs will be cached: each visit will generate one HTML log. <em>It is required to set a high cache value if you want to get a report of the page model.</em>"), 
+                array(CMS_CHOICE, "displayGoogleMap",     1,  "If you typed a valid Google Maps key on your <em>config.php</em> file, the client location will be shown on a map when analyzing the logs.")
              );
 foreach ($opts as $arrValue) 
 {
@@ -196,16 +196,16 @@ $opts = array(
                 array(CMS_TYPE, "entryPt", "99FF66", "Color for the mouse entry coordinate."),
                 array(CMS_TYPE, "exitPt",  "FF6666", "Color for the mouse exit coordinate."),
                 array(CMS_TYPE, "regPt",   "FF00FF", "Registration points color. Each registration point can give you a visual idea of the tracking accuracy."),   
-                array(CMS_TYPE, "regLn",   "00CCCC", "Mouse path color. Self explanatory ;)"),
+                array(CMS_TYPE, "regLn",   "00CCCC", "Registration lines color. Used to draw the mouse path."),
                 array(CMS_TYPE, "click",   "FF0000", "Mouse clicks color. One of the most relevant features to measure the implicit user interest in a page."),
                 array(CMS_TYPE, "dDrop",   "AABBCC", "Drag and drop color. Mouse clicks should be distinguished from drag and drop operations (such as selecting some text, for example)."),
                 array(CMS_TYPE, "varCir",  "FF9999", "Time-depending circles color. Each circle represents the amount of time that there is no mouse movement (the user is not using the mouse)."),
                 array(CMS_TYPE, "cenPt",   "DDDDDD", "Centroid color. The centroid is the geometric center of the mouse path."),
                 array(CMS_TYPE, "clust",   "0000FF", "Clusters color. The k-means algorithm assigns each registration point to the cluster whose center is nearest."),
-                array(CMS_TYPE, "bgColor", "000000", "Background layer color."),
+                array(CMS_TYPE, "bgColor", "000000", "Background layer color. Self explanatory ;)"),
                 // more JS options
-                array(CMS_CHOICE, "realTime", 1, "You can replay the mouse path in real time or as a static overlayed image."),
                 array(CMS_CHOICE, "bgLayer",  1, "Draw a semi-transparent background layer on bottom."),
+                array(CMS_CHOICE, "realTime", 1, "You can replay the mouse path in real time or as a static overlayed image."),
                 array(CMS_CHOICE, "dirVect",  0, "When replaying in <em>static</em> mode, it could be useful to display the path direction vector.")
              );
 
@@ -222,9 +222,8 @@ echo 'Settings permissions to <em>'.CACHE.'</em> dir: ';
 if (chmod(CACHE, 0777)) {
   echo '<strong class="ok">Ok.</strong><br />'; 
 } else {
-  echo '<strong class="ko">Failed.</strong> The directory '.CACHE.' must be writeable, 
-        and currently permissions are set to '.substr(sprintf("%o", CACHE), -4).'. 
-        <strong>You should set cache dir permissions manually.</strong><br />';
+  echo '<strong class="ko">Failed.</strong> The directory '.CACHE.' must be writeable.
+        <strong>You must set cache dir permissions manually!</strong><br />';
 }
 
 /* end ---------------------------------------------------------------------- */

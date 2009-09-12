@@ -1,10 +1,20 @@
 <?php
 require dirname(__FILE__).'/class.trail.php';
 
-$ut = new UserTrail($clientId);
-$visits = $ut->getData();
-foreach ($visits as $v) {
-  $trails[] = $v["id"]; 
+if (isset($id)) 
+{
+  $ut = new UserTrail($clientId);
+  $visits = $ut->getData();
+  foreach ($visits as $v) {
+    $trails[] = $v["id"]; 
+  }
+  // make it FlashVar friendly
+  $trails = implode(",", $trails);
+  
+  $currTrailId = $id;
+} else {
+  $trails = 0;
+  $currTrailId = 0;
 }
 
 // user object for tracking data
@@ -24,8 +34,8 @@ var smtData = {
     xclusters: ['.implode(",", $clusterX).'],
     yclusters: ['.implode(",", $clusterY).'],
     clustsize: ['.implode(",", $clusterSize).'],
-    trails: ['.implode(",", $trails).'],
-    currtrail: '.$id.',
+    trails: ['.$trails.'],
+    currtrail: '.$currTrailId.',
     trailurl: "'.TRACKER.'",
     fps: '.$fps.'
 };

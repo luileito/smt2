@@ -1,7 +1,7 @@
 /** 
  * (smt)2 simple mouse tracking - record mode (smt-record-2.0.0.js)
  * Copyleft (cc) 2006-2009 Luis Leiva
- * Release date: July 19th 2009 
+ * Release date: September 12th 2009 
  * http://smt.speedzinemedia.com
  * @class smt2-record
  * @requires smt2-aux Auxiliary (smt)2 functions  
@@ -36,7 +36,7 @@
      * The record script will try to find automatically the installation path, 
      * but if you used other name (i.e: http://my.server/test) 
      * you must type it explicitly here. Please do NOT place a final slash (/).      
-     * Valid paths are: "http://domain.name/smt2", "/my/smt2dir" ... and so on.
+     * Valid path names that will be recognized automatically are: "http://domain.name/smt2", "/my/smt2dir", "/server/t/tracksmt2" ... and so on.
      * @type string     
      */
     smtPath: "/smt2",
@@ -49,13 +49,24 @@
      * Text to display when advising users (if warn: true).
      * @type string     
      */
-    warnText: "Your mouse movements are going to be logged.\nDo you agree?",
+    warnText: "We'd like to track your mouse activity\nin order to improve this website's usability.\nDo you agree?",
+    /**
+     * Cookies lifetime (in days) to reset both first time users and agreed-to-track visitors.
+     * @type int     
+     */
+    cookieDays: 365,
+    /**
+     * Custom initialization routines. Here you can add more functionalities on init.
+     * @type function     
+     */
+    initFn: null,
     /** 
      * Random user selection: if true, (smt)2 is not initialized.
-     * Setting it to false means that all the population will be tracked.
+     * Setting it to false (or 0) means that all the population will be tracked.
+     * You should use random sampling for accurate statistical analysis.     
      * @type int           
      */
-    disabled: 0 //Math.round(Math.random())
+    disabled: 0 //Math.round(Math.random()) // <-- random sampling
   };
   
     
@@ -95,7 +106,7 @@
     i: 0,                                         // counter var
     mouse:    { x:0, y:0 },                       // mouse position
     viewport: { width:0, height:0 },              // data normalization
-    discrepance: {x:1, y:1 },                     // discrepance ratios
+    discrepance: { x:1, y:1 },                    // discrepance ratios
     coords:   { x:[], y:[] },                     // saved position coords
     clicks:   { x:[], y:[] },                     // saved click coords
     elem:     { hovered:[], clicked:[] },         // clicked and hovered elements
@@ -110,7 +121,7 @@
     firstTimeUser:  1,                            // assume a first time user initially
     
     /** 
-     * Pause recording. 
+     * Pauses recording. 
      * The mouse activity is tracked only when the current window has focus. 
      */
     pauseRecording: function() 
@@ -118,14 +129,14 @@
       smtRec.paused = true;
     },
     /** 
-     * Resume recording. The current window gain focus.
+     * Resumes recording. The current window gain focus.
      */
     resumeRecording: function() 
     {
       smtRec.paused = false;
     },
     /** 
-     * Normalize data on window resizing.
+     * Normalizes data on window resizing.
      */
     normalizeData: function() 
     { 
@@ -150,7 +161,7 @@
     	}
     },
     /** 
-     * Register single clicks and drag and drop operations.
+     * Registers single clicks and drag and drop operations.
      */
     setClick: function() 
     {
@@ -165,7 +176,7 @@
     },
     /** 
      * (smt)2 recording loop.
-     * Track mouse coords when they're inside the client window, 
+     * Tracks mouse coords when they're inside the client window, 
      * so zero and null values are not taken into account.     
      */
     recMouse: function() 
@@ -198,7 +209,7 @@
     	++smtRec.i;
     },
     /** 
-     * Send data in background via an XHR object (asynchronous request).
+     * Sends data in background via an XHR object (asynchronous request).
      * This function starts the tracking session.
      */   
     initMouseData: function() 
@@ -248,9 +259,9 @@
       }
     },
     /** 
-     * Send data (POST) in asynchronously mode via an XHR object.
+     * Sends data (POST) in asynchronously mode via an XHR object.
      * This appends the mouse data to the current tracking session.
-     * If user Id is not set, mouse data are queued.
+     * If user Id is not set, mouse data are queued.     
      */   
     appendMouseData: function() 
     {
@@ -274,8 +285,7 @@
       smtRec.clearMouseData();
     },
     /** 
-     * Clears mouse data from queue.
-     * @return void          
+     * Clears mouse data from queue.        
      */
     clearMouseData: function()
     {
@@ -287,8 +297,7 @@
       smtRec.elem.clicked = [];
     },
     /** 
-     * Find hovered or clicked DOM element.
-     * @return void          
+     * Finds hovered or clicked DOM element.     
      */
     findElement: function(e)
     {
@@ -302,6 +311,9 @@
         }
       });
     },
+    /** 
+     * Updates viewport size.     
+     */
     updateViewPort: function() 
     {
       var vp = aux.getWindowSize();
@@ -324,7 +336,7 @@
       // allow mouse tracking over Flash animations
       aux.allowTrackingOnFlashObjects();
       
-      // add unobstrusive events
+      // add unobtrusive events
       aux.addEvent(document, "mousemove", smtRec.getMousePos);        // get mouse coords
       aux.addEvent(document, "mousedown", smtRec.setClick);           // mouse is clicked        
       aux.addEvent(document, "mouseup",   smtRec.releaseClick);       // mouse is released
@@ -342,25 +354,38 @@
         // page is unloaded (for old browsers)
         aux.addEvent(window, "unload", smtRec.appendMouseData);
       }
-      // the fully-cross-browser method to store data successfully in all environments
+      // this is the fully-cross-browser method to store tracking data successfully
       setTimeout(smtRec.initMouseData, 2000);
+      
+      // call user-defined init function
+      if (smtOpt.initFn) { smtOpt.initFn(); }
     }
   };
 
   /* (smt)2 record initialization ------------------------------------------- */
-  if (smtOpt.disabled) { return; }
   
-  var agree = (smtOpt.warn) ? window.confirm(smtOpt.warnText) : true;
-  // if user is adviced, she must agree
-  if (!agree) {
-    return; 
-  } else {
-    // does user browse for the first time?
-    var previousUser = aux.cookies.checkCookie('isFirstTimeUser');
-    // store int numbers, not booleans
-    smtRec.firstTimeUser = (!previousUser | 0); // yes, it's a bitwise operation
-    aux.cookies.setCookie('isFirstTimeUser', smtRec.firstTimeUser, 365);
+  // does user browse for the first time?
+  var previousUser = aux.cookies.checkCookie('isFirstTimeUser');
+  // do not skip first time users when current visit is not sampled (smt disabled)
+  if (smtOpt.disabled && previousUser) { return; }
+  // check if warning is enabled
+  if (smtOpt.warn) {
+    // did she agree for tracking before?
+    var prevAgreed = aux.cookies.checkCookie('isAgreedToTrack');
+    // if user is adviced, she must agree
+    var agree = (prevAgreed) ? aux.cookies.getCookie('isAgreedToTrack') : window.confirm(smtOpt.warnText);
+    if (!agree) {
+      // will ask next day (instead of smtOpt.cookieDays value)
+      aux.cookies.setCookie('isAgreedToTrack', 0, 1);
+      return; 
+    } else {
+      aux.cookies.setCookie('isAgreedToTrack', 1, smtOpt.cookieDays);
+    }
   }
+  // store int numbers, not booleans
+  smtRec.firstTimeUser = (!previousUser | 0); // yes, it's a bitwise operation
+  aux.cookies.setCookie('isFirstTimeUser', smtRec.firstTimeUser, smtOpt.cookieDays);
+  
   // launch browser detection script (for statistical/debugging purposes)
   aux.browserDetect.init();
   

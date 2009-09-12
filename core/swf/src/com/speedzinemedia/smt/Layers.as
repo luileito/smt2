@@ -24,10 +24,10 @@ package com.speedzinemedia.smt {
          */
         public static const collection:Array = [
             { id: "bgLay", label: "background overlay",    color: "555555", visible: true  },
-            { id: "mPath", label: "user path",             color: "00CCCC", visible: true  },
-            { id: "stops", label: "user stops",            color: "FFFF99", visible: false },
+            { id: "mPath", label: "mouse path",            color: "00CCCC", visible: true  },
+            { id: "stops", label: "hesitations",           color: "FFFF99", visible: false },
             { id: "dDrop", label: "drag&drop/selections",  color: "AABBCC", visible: true  },
-            { id: "click", label: "user clicks",           color: "FF0000", visible: true  },
+            { id: "click", label: "clicks",                color: "FF0000", visible: true  },
             { id: "regPt", label: "registration points",   color: "FF00FF", visible: false },
             { id: "dDist", label: "direction & distances", color: null,     visible: false },
             { id: "clust", label: "clustering",            color: "0000FF", visible: true  },
