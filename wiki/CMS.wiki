@@ -36,4 +36,23 @@ On that section you can add new users, and assign them certain roles. Users with
 
 = Creating custom extensions =
 
-If you know how the CMS works, you can create your own extensions. Please read the PHP API documentation for better understanding. On version 2.0.0 was included a new extension called _documentation_ (you know what you'll find here).
+If you know how the CMS works, you can create your own extensions. Please read the PHP API documentation for better understanding. On version 2.0.0 a new extension called _documentation_ is provided (you know what you'll find here).
+
+*Example*: This is a base script to begin writing an extension:
+{{{
+<?php
+// config settings are required - set the relative path to smt2 root dir
+require '../../../config.php';
+// protect extension from being browsed by anyone (optional but encouraged)
+require INC_PATH.'sys/logincheck.php';
+// now you have access to all (smt) API functions
+
+
+// ... your code ges here ...
+
+
+// the script closes the HTML markup by including the common footer
+include INC_PATH.'inc/footer.php'; 
+?>
+}}}
+You can save it as `index.php` under the dir `admin/ext/mynewscript/` and you're done!
