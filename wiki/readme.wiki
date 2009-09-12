@@ -102,11 +102,13 @@ Here we are telling that the record script will live for 300 seconds, and users 
 
 Note that the last property have no ending comma.
 
-=== A note about privacy ===
+== A note about privacy ==
 
-It is up to the webmaster using this feature; however on some countries anyone who employs this type of user tracking should always inform the user about it. Furthermore, tracking of user actions should only happen for a limited amount of time. 
+It is up to the webmaster enabling the `warn` property on `smt_record.js` script; however on some countries anyone who employs this type of user tracking should always inform the user about it. Furthermore, tracking of user actions should only happen for a limited amount of time. 
 
-If you decide to warn users, a confirm dialog will promt *before* the webpage is rendered to the browser. You can write your own code to display a fancy DIV instead, as [http://smt.speedzinemedia.com/smt/comments.php#comment4976 this webmaster] did on his site. This is a good visual improvement, but unfortunately displaying a custom DIV instead of (smt)'s "ugly" javascript dialog will result in non-accurate users' metrics; e.g.: browsing time will be higher, mouse activity will be lower... and so on.
+If you decide to warn users, a confirm dialog will prompt *before* the webpage is rendered to the browser. You can write your own code to display a fancy DIV instead, as [http://smt.speedzinemedia.com/smt/comments.php#comment4976 this webmaster] did on his site. This is a good visual improvement, but unfortunately displaying a customized dialog instead of (smt)'s "ugly" javascript prompt will result in non-accurate users' metrics; e.g.: browsing time will be higher, mouse activity will be lower... and so on. 
+
+A better approach would be start recording the mouse activity and notify in some DIV on the page that she is being recorded -- i.e.: by not involving any awaiting prompt/dialog. In this way, if the user don't want to be considered in the tracking study, she could disable the recording script by simply clicking on a link.
 
 
 = Working with the gathered data =
