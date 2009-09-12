@@ -12,8 +12,13 @@ Your web server needs a *MySQL 5* database and *PHP 5* installed with the *cURL 
 
 = Download =
 
-Downloads are available in a ZIP file both from the [http://smt.speedzinemedia.com/smt/downloads.php (smt) website] and the [http://code.google.com/p/smt2/downloads/list Project Downloads page]. You can also download the sources form the [http://code.google.com/p/smt2/downloads/list Google code SVN].
+Downloads are available in a ZIP file both from the [http://smt.speedzinemedia.com/smt/downloads.php (smt) website] and the [http://code.google.com/p/smt2/downloads/list Project Downloads page].
 
+Now there are provided two zipped files: 
+ # The production version, ready for using on your webserver (~200 Kb).
+ # The sources and API documentation (~350 Kb).
+
+You can also download all the project (production, sources, documentation, etc.) from the [http://code.google.com/p/smt2/downloads/list Google code SVN].
 
 = Installing =
 
@@ -44,20 +49,24 @@ Note that order is mandatory: aux functions first.
 
 = Customizing the recording options =
 
-These are the default (smt)^2.0^ recording options that you can change:
+These are the *default* (smt)^2.0^ recording options that you can change:
 {{{
 // Tracking frequency, in frames per second.      
 fps: 24, 	
 // Tracking timeout, in seconds.
-recTime: 60, 
+recTime: 120, 
 // Path to (smt)2 installation. The record script will try to find it automatically!
 smtPath: "/smt2", 
 // You may choose to advice users (or not) that their mouse activity is going to be logged. 
 warn: false, 
 // Text to display when advising users (if warn is set to true).
-warnText: "Your mouse movements are going to be logged.\nDo you agree?", 
-// Random user selection. Setting it to false means that all the population will be tracked.      
-disabled: Math.round(Math.random())
+warnText: "We'd like to track your mouse activity\nin order to improve this website's usability.\nDo you agree?", 
+// Cookies lifetime (in days) to reset both first time users and agreed-to-track visitors
+cookieDays: 365,
+// Custom initialization routines. Here you can add more functionalities on init.
+initFn: null,
+// Random user selection. Setting it to false (or 0) means that all the population will be tracked.      
+disabled: 0 //Math.round(Math.random()) // <-- random sampling is recommended!
 }}}
 
 To override these defaults you do not need to edit manually the record script. Just create an object named `smtRecordingOptions` with the properties that you want to customize BEFORE the above mentioned 2 JavaScript lines. Take this example page:
@@ -71,7 +80,7 @@ To override these defaults you do not need to edit manually the record script. J
   <script type="text/javascript">
   var smtRecordingOptions = { 
    recTime: 300,
-   disabled: false,
+   disabled: Math.round(Math.random()),
    warn:true, 
    warnText: "We are going to record your mouse movements for a remote usability study."
   };
@@ -89,9 +98,15 @@ Your page content goes here...
 </html>
 }}}
 
-Here we are telling that the record script will live for 300 seconds, and will track *all* page views. Also, it will advice users with a custom message (they must agree to get recorded their mouse activity).
+Here we are telling that the record script will live for 300 seconds, and users will be selected randomly -- It seems that people want to track all their visits by default, so random sampling was removed on version 2.0.0. Additionally, the system will advice users with a custom message (they must agree to get recorded their mouse activity).
 
 Note that the last property have no ending comma.
+
+=== A note about privacy ===
+
+It is up to the webmaster using this feature; however on some countries anyone who employs this type of user tracking should always inform the user about it. Furthermore, tracking of user actions should only happen for a limited amount of time. 
+
+If you decide to warn users, a confirm dialog will promt *before* the webpage is rendered to the browser. You can write your own code to display a fancy DIV instead, as [http://smt.speedzinemedia.com/smt/comments.php#comment4976 this webmaster] did on his site. This is a good visual improvement, but unfortunately displaying a custom DIV instead of (smt)'s "ugly" javascript dialog will result in non-accurate users' metrics; e.g.: browsing time will be higher, mouse activity will be lower... and so on.
 
 
 = Working with the gathered data =
