@@ -3,7 +3,7 @@
  * Copyleft (cc) 2006-2009 Luis Leiva
  * Release date: July 19th 2009
  * http://smt.speedzinemedia.com  
- * @class smt2-record
+ * @class smt2-replay
  * @requires smt2-aux Auxiliary (smt)2 functions  
  * @version 2.0.0
  * @author Luis Leiva 
@@ -16,7 +16,7 @@
 (function(){
   /** 
    * (smt)2 default replaying options.
-   * This Object should be overriden from the (smt)2 CMS.
+   * This Object should be overriden from the 'customize' section at the (smt)2 CMS.
    */ 
   var smtOpt = {
     /** 
@@ -78,7 +78,7 @@
      * Background layer color
      * @type string
      */
-    bgColor:  "#000",     
+    bgColor: "#000",
     /** 
      * Show direction vector (useful if realTime: false)
      * @type boolean      
@@ -95,9 +95,9 @@
   var jsGraphics  = window.jsGraphics;
   var aux         = window.smtAuxFn;
   // check globals
-  if (typeof smtData === 'undefined') {     throw("user data is malformed or not found"); } 
-  if (typeof jsGraphics === 'undefined') {  throw("jsGraphics library not found");        } 
-  if (typeof aux === 'undefined') {         throw("auxiliar (smt) functions not found");  }
+  if (typeof smtData === 'undefined') {    throw("user data is malformed or not set");  } 
+  if (typeof jsGraphics === 'undefined') { throw("jsGraphics library not found");       } 
+  if (typeof aux === 'undefined') {        throw("auxiliar (smt) functions not found"); }
 
   // get user personalized settings
   var custom = window.smtReplayOptions;
@@ -121,10 +121,10 @@
     play:    null,                        // mouse tracking identifier
     jg:      null,                        // canvas area for drawing
     jgClust: null,                        // layer for clustering
+    jgHelper: null,                       // layer for displaying text info
     viewport: { width:0, height:0 },      // data normalization
     discrepance: {x:1, y:1 },             // discrepance ratios
     paused:  false,                       // pause the visualization
-    
     /** 
      * Create drawing canvas layer.
      */
@@ -138,8 +138,13 @@
           jg.style.left     = 0;
           jg.style.width    = 100 + '%';
           jg.style.height   = 100 + '%';
-          jg.style.zIndex   = aux.getNextHighestDepth();
+          jg.style.zIndex   = aux.getNextHighestDepth() + 1;
       
+      // helper layer for text
+      var jgHelp = document.createElement("div");
+          jgHelp.id              = layerName + "Help";
+          jgHelp.style.zIndex    = jg.style.zIndex + 1;
+          
       // layer for clustering
       var opacity = 40;
       var jgClust = document.createElement("div");
@@ -151,14 +156,16 @@
           jgClust.style.height    = 100 + '%';
           jgClust.style.opacity   = opacity/100; // for W3C browsers
           jgClust.style.filter    = "alpha(opacity="+opacity+")"; // only for IE
-          jgClust.style.zIndex    = jg.style.zIndex + 1;
+          jgClust.style.zIndex    = jg.style.zIndex + 2;
           
       var body  = document.getElementsByTagName("body")[0];
           body.appendChild(jg);
+          body.appendChild(jgHelp);
           body.appendChild(jgClust);
           
       // set the canvas areas for drawing both mouse tracking and clustering
       smtRep.jg = new jsGraphics(jg.id);
+      smtRep.jgHelper = new jsGraphics(jgHelp.id);
       smtRep.jgClust = new jsGraphics(jgClust.id);
     },
     /** 
@@ -271,6 +278,23 @@
       smtRep.jg.paint();
     },
     /** 
+     * Gives a visual clue when the user is not using the mouse.
+     */
+    drawMouseStop: function(x,y) 
+    {
+      if (!smtOpt.realTime) { return; }
+      
+      var fontSize   = 16,
+          circleSize = 50;
+      smtRep.jgHelper.setColor(smtOpt.varCir);
+      smtRep.jgHelper.fillEllipse(x - circleSize/2, y - circleSize/2, circleSize, circleSize);
+      smtRep.jgHelper.setColor("black");
+      smtRep.jgHelper.setFont("sans-serif", fontSize+'px', Font.BOLD);
+      // center the text in vertical 
+      smtRep.jgHelper.drawString("stopped...", x, y - fontSize/2);
+      smtRep.jgHelper.paint();
+    },   
+    /** 
      * Draw centroid as a star.
      */
     drawCentroid: function()
@@ -307,6 +331,15 @@
     distance: function(a,b) 
     {
       return Math.sqrt( Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2) );
+    },
+    /** 
+     * Auto scrolls the browser window.
+     */
+    checkAutoScrolling: function(x,y) 
+    {
+      if (!smtOpt.realTime) { return; }
+      // center current mouse coords on the viewport
+      aux.doScroll({xpos:x, ypos:y, width:smtRep.viewport.width, height:smtRep.viewport.height});
     },
     /** 
      * (smt)2 realtime drawing algorithm.
@@ -355,13 +388,14 @@
           // variable circles
           if (smtRep.j > 1) {
             smtRep.drawVariableCircle(iniMouse.x, iniMouse.y, smtRep.j);
+            smtRep.jgHelper.clear();
           }
           // reset variable circles size
           smtRep.j = 1;
         } else {
           // mouse stop: store variable size (circles)
           ++smtRep.j;
-          // give a visual clue while replaying in real time
+          smtRep.drawMouseStop(iniMouse.x, iniMouse.y);
         }
         // draw lines
         smtRep.drawLine(iniMouse,endMouse);
@@ -378,6 +412,8 @@
         }
         // update mouse coordinates
         ++smtRep.i;
+        // check auto scrolling
+        smtRep.checkAutoScrolling(endMouse.x, endMouse.y);
     	}
       
       // draw exit point
@@ -395,6 +431,9 @@
         // clear mouse tracking
         clearInterval(smtRep.play);
         smtRep.play = null;
+        smtRep.jgHelper.clear();
+        // load next trail
+        aux.loadNextMouseTrail(smtData);
     	}
     },
     /** 
@@ -415,7 +454,6 @@
     },
     /** 
      * Reload method: mouse tracking layers are redrawn.
-     * @deprecated     
      */
     reset: function() 
     {
@@ -444,12 +482,12 @@
         // clear main loop
         clearInterval(smtRep.play);
         smtRep.paused = false;
+        // set this flag
+        smtOpt.realTime = false;
         // end drawing from the current position
         for (var k = smtRep.i, total = smtData.xcoords.length; k <= total; ++k) {
           smtRep.playMouse();
         }
-        // set this flag
-        smtOpt.realTime = false;
       } else if (code == 32) {
         // on press space bar toggle drawing
         smtRep.paused = !smtRep.paused;
@@ -469,7 +507,7 @@
         smtRep.discrepance.x = aux.roundTo(smtData.wcurr / smtData.wprev);
         smtRep.discrepance.y = aux.roundTo(smtData.hcurr / smtData.hprev);  
       }
-      //aux.trace('info', smtRep.discrepance.x+" x "+smtRep.discrepance.y+" | "+smtRep.viewport.width+" x "+smtRep.viewport.height);
+      //aux.log(smtRep.discrepance.x+" x "+smtRep.discrepance.y+" | "+smtRep.viewport.width+" x "+smtRep.viewport.height);
           
       // precalculate the user stops: useful for time-depending circles and path centroid
       var stops = [];      
@@ -502,7 +540,7 @@
   };
   
   /* (smt)2 replay initialization ------------------------------------------- */
-  aux.addEvent(document, "keyup", smtRep.helpKeys);
+  aux.addEvent(document, "keyup",  smtRep.helpKeys);
   //aux.addEvent(window, "resize", smtRep.reset);
   aux.onDOMload(smtRep.init);
 

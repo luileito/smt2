@@ -1,23 +1,24 @@
 <?php
-// shorcuts some globals
-$coordsX = $sql['coords_x'];
-$coordsY = $sql['coords_y'];
-$clicksX = $sql['clicks_x'];
-$clicksY = $sql['clicks_y'];
-$hovered = $sql['hovered'];
-$clicked = $sql['clicked'];
-
 function computeDOMelements($arr, $name)
 {
   $widget = compute_frequency($arr, 5);
   if (!$widget) {
-    $status = 'This user did not '.$name.' any element';
+    $status = 'There were no '.$name.'ed elements';
   } else {
     foreach ($widget as $elem => $freq){
       $status .= $elem.' = '.$freq.'% of the time<br />';
     }
   }
   return $status;
+}
+
+if (isset($_GET['cid'])) { 
+  echo '<p class="center"><em>This table is computed for ALL pages that this user browsed. Thus, here you have their user model.</em></p>'; 
+}
+else if (isset($_GET['pid'])) { 
+  echo '<p class="center"><em>This table takes into account ALL users that browsed 
+        <a href="track.php?pid='.$_GET['pid'].'&amp;api=swf">this page</a>. 
+        Thus, here you have the page model.</em></p>'; 
 }
 ?>
 
@@ -30,7 +31,7 @@ function computeDOMelements($arr, $name)
   </thead>
   <tbody>
   <?php
-  $list  = '<tr class="even">'.PHP_EOL;
+  $list  = '<tr class="odd">'.PHP_EOL;
   // log data  
   $list .= '<td>'.PHP_EOL;
   $list .= computeDOMelements($hovered, "hover");

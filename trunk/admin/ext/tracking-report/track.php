@@ -3,10 +3,7 @@
 require '../../../config.php';
 // protect extension from being browsed by anyone
 require INC_PATH.'sys/logincheck.php';
-// now you have access to all (smt) API functions and constants
 
-// get log identifier
-$id  = (int) $_GET['id'];
 // use JS or SWF drawing API
 $api = $_GET['api'];
 // check API file before including more options
@@ -19,16 +16,20 @@ include './includes/kmeans.php';    // compute k-means clustering
 
 // parse HTML log
 $file = CACHE.$htmlFile;
-// check
-if (!is_file($file)) { die("Log not found on cache!"); }
 // load file
 $doc = new DOMDocument();
 $doc->preserveWhitespace = false;
 $doc->formatOutput = true;
-// hide warnings when parsing non valid (X)HTML pages
-@$doc->loadHTMLFile($file);
+// check
+if (!is_file($file)) { 
+  $file = error_webpage('<h1>Page not found on cache!</h1><p>That\'s because it was deleted from cache.</p>');
+  // hide warnings when parsing non valid (X)HTML pages
+  @$doc->loadHTML($file);
+} else {
+  @$doc->loadHTMLFile($file);
+}
 // use this constant to load more user trails, if available
-define (TRACKER, getThisURLAddress());
+define (TRACKER, $_SERVER['PHP_SELF']); //getThisURLAddress()
 // include user data
 include './includes/user.php';
 // include drawing API: SWF or JS

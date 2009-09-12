@@ -2,6 +2,16 @@
 // server settings are required
 require '../config.php';
 require INC_PATH.'sys/logincheck.php';
+
+// check this first
+$ROOT = is_root();
+// exclude the superuser from being tracked
+if ($ROOT && !$_COOKIE['smt-root']) {
+	$expires = time() + 60 * 60 * 24 * 365; // 1 year
+   setcookie('smt-root', true, $expires, '/');
+}
+
+// now render page
 include INC_PATH.'inc/header.php';
 
 // check for access errors
@@ -11,7 +21,7 @@ if (isset($_SESSION['error'][NOT_ALLOWED])) {
 }
 
 // sanitize installed/removed extensions
-if (is_root()) {
+if ($ROOT) {
   $prioritized = get_exts_order();
   // is there a new extension installed? 
   $newext = array_flip($_SESSION['allowed']);
@@ -35,11 +45,11 @@ if (is_root()) {
     }
   }
 }
-  
+
 // display header title
 echo '<h1>Admin panel</h1>';
-// check for new releases
-echo check_smt_releases();
+// check for new releases (supress errors for those servers on safe_mode or with open_basedir set)
+echo @check_smt_releases();
 
 /* connection settings ------------------------------------------------------ */
 error_reporting(0);
@@ -56,7 +66,6 @@ if (!db_check()) {
 } 
 // now enable default error reporting
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 /* version checking --------------------------------------------------------- */
 if (!check_systemversion("mysql")) {

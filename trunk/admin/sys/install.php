@@ -1,18 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+<?php 
+require '../../config.php';
+include ADMIN_PATH.'inc/doctype.php' 
+?>
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>(smt) simple mouse tracking v2 | install</title>
-  
-  <style type="text/css">
-  fieldset { border:none; }
-  body { font:100% Georgia,Times,serif; background-color:#888; }
-  #global { width:80%; margin:0 auto; padding:1em; background-color:#FFF; border:1px solid #000; }
-  h1 { margin-top:.3em; }
-  .ok { color:green; }
-  .ko { color:red; }
-  </style>
+  <link rel="stylesheet" type="text/css" href="<?=ADMIN_PATH?>css/install.css" />
 </head>
 
 <body>
@@ -22,7 +16,6 @@
 <h1>(smt) simple mouse tracking installation</h1>
 
 <?php
-require '../../config.php';
 $cnx = db_connect();
 // is already installed?
 if (mysql_query("DESC ".TBL_PREFIX.TBL_RECORDS, $cnx)) 

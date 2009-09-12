@@ -296,13 +296,15 @@ package com.speedzinemedia.smt {
         private function replayIsCompleted(e:ControlPanelEvent):void
         {   
             if (!getCheckBoxState(ID.OUT.REPLAYRT) || $isReplayFinished) { return; }
-            
+            // use browser dialog API for cross-look'n'feel
+            loadNextUserTrail();
+            /*
             if (getCheckBoxState(ID.OUT.LOADTRAIL)) {
                 loadNextUserTrail();
             } else if ($isNextTrailAvailable) {
                 showModalDialog();
             }
-
+            */
             $isReplayFinished = true;
         };
                     
@@ -317,7 +319,7 @@ package com.speedzinemedia.smt {
             o.tabIndex = $tabIndexOrder; 
             $tabIndexOrder++;
         };
-           
+        
         private function showMoveCursor(e:MouseEvent):void 
         {
             if (e.target is Panel) {
@@ -483,24 +485,25 @@ package com.speedzinemedia.smt {
         private function loadNextUserTrail(e:ModalEvent = null):void
         {   
             if (!getCheckBoxState(ID.OUT.REPLAYRT)) { return; }
-            
+            // use browser dialog API for cross-look'n'feel
+            ExternalInterface.call("window.smtAuxFn.loadNextMouseTrail", {api:"swf", trailurl:$trailUrl, trails:$trails, currtrail:$currTrailId, autoload:getCheckBoxState(ID.OUT.LOADTRAIL)});
+            /*
             if (!$isNextTrailAvailable) {
                 var noMore:ModalAlert = new ModalAlert(this, "This user did not browse more pages.");
                 return;
             }
-            
-            // if user agreed or checked the proper CheckBox and the URL is correct, load next trail
-            if (e || getCheckBoxState(ID.OUT.LOADTRAIL) && Utils.allowDomainURI($trailUrl)) {
-                //ExternalInterface.call("alert", "Error: " + e);
+            // if user agreed or checked the proper CheckBox, load next trail
+            if (e || getCheckBoxState(ID.OUT.LOADTRAIL)) { // && Utils.allowDomainURI($trailUrl)
                 var vars:URLVariables = new URLVariables();
                 vars.id = $trails[ $currTrailPos + 1 ];
                 vars.api = "swf";
                 var request:URLRequest = new URLRequest($trailUrl);
                 request.data = vars;
-                try {           
+                try {
                     navigateToURL(request, "_self"); // allow popup in Firefox ...
                 } catch (e:Error) {}
             }
+            */
         };
         
         private function selectCurrentColor(e:MouseEvent):void

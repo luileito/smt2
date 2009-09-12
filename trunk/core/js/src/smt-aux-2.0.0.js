@@ -1,7 +1,7 @@
 /** 
  * (smt)2 simple mouse tracking - auxiliary functions (smt-aux-2.0.0.js)
  * Copyleft (cc) 2006-2009 Luis Leiva
- * Release date: July 19th 2009
+ * Release date: September 12th 2009
  * http://smt.speedzinemedia.com  
  * @class smt2-aux
  * @version 2.0.0
@@ -120,7 +120,28 @@ var smtAuxFn = {
     this.addEvent(window, 'load', callback);
   },
   /**
-   * Gets the browser's window size (aka 'the viewport')     
+   * Loads more mouse trails for the current user, if available.
+   * @return void
+   * @param {object}   smtData    The user's data object
+   */
+  loadNextMouseTrail: function(smtData) 
+  {
+    if (typeof smtData.api === 'undefined') { smtData.api = "js"; }
+    var currTrailPos = this.array.indexOf(smtData.trails, smtData.currtrail);
+    // check
+    if (currTrailPos < smtData.trails.length - 1) {
+      var navigateTo = smtData.trailurl+'?id='+smtData.trails[currTrailPos + 1]+'&api='+smtData.api;
+      if (smtData.autoload) {
+        window.location.href = navigateTo;
+      } else if (confirm("This user also browsed more pages.\nDo you want to replay the next log?")) {
+        window.location.href = navigateTo;
+      }
+    } else {
+      alert("There are no more browsed pages for this user.");
+    }
+  }, 
+  /**
+   * Gets the browser's window size (aka 'the viewport').     
    * @return {object} window dimmensions - object with 2 properties: width {integer}, and height {integer}
    */
   getWindowSize: function() 
@@ -141,7 +162,7 @@ var smtAuxFn = {
    * @return {object} window offsets - object with 2 properties: x {integer}, and y {integer}
    * @deprecated     
    */
-  getWindowPosition: function()
+  getWindowOffset: function()
   {
     var d = document;
     var xpos = (window.pageXOffset) ? window.pageXOffset
@@ -193,15 +214,58 @@ var smtAuxFn = {
     // verify offsets...
     if (h < d.offsetHeight) { h = d.offsetHeight; }
     if (w < d.offsetWidth) { w = d.offsetWidth; }
-    // ...again
+    // ...and scrolls
     if (h < d.scrollHeight) { h = d.scrollHeight; }
     if (w < d.scrollWidth) { w = d.scrollWidth; }
 
     return { width: w, height: h };
   },
   /**
-   * Gets the max z-index level available in the page.
-   * @return {integer} z-index level     
+   * Failsafe function. If your pages' HTML code does not allocate the image's dimensions (width/height attributes),
+   * then the page size will not be accurately computed and the tracking layer can be cropped.
+   * This occurs sometimes due to the replaying script begins on DOM load.   
+   * @return {object} viewport dimmensions object with 2 properties: width {integer}, and height {integer}  
+   */
+  getHardcorePageSize: function()
+  {
+    // let's define some helpers
+    var w1=0, h1=0, w2=0, h2=0, w3=0, h3=0, w4=0, h4=0,
+        de = document.documentElement,
+        db = document.body;
+  
+    if (window.innerHeight) {
+  		w1 = window.innerWidth;
+  		h1 = window.innerHeight;
+  		if (window.scrollMaxY) {
+  		  w1 += window.scrollMaxY;
+  		  h1 += window.scrollMaxY;
+      }
+  	}
+  	if (de.offsetHeight) {
+      w2 = de.offsetWidth;
+      h2 = de.offsetHeight;
+  	}
+  	if (db.scrollHeight) {
+  		w3 = db.scrollWidth;
+  		h3 = db.scrollHeight;
+  	}
+  	if (db.offsetWidth) {
+      w4 = db.offsetWidth;
+      h4 = db.offsetHeight;
+      if (db.offsetLeft) {
+        w4 += db.offsetLeft;
+        h4 += db.offsetTop;
+      }
+    }
+    // now return the max value
+  	var maxHeight = Math.max(h1,h2,h3,h4);
+  	var maxWidth  = Math.max(w1,w2,w3,w4);
+  	
+    return { width: maxWidth, height: maxHeight };
+  },
+  /**
+   * Gets the max z-index level available on the page.
+   * @return {integer}    z-index level     
    * @param {object} e    DOM element (default: document)
    * @autor Jason J. Jaeger (greengeckodesign.com)   
    */
@@ -229,11 +293,11 @@ var smtAuxFn = {
     return highestIndex + 1;
   },
   /**
-   * Add event listeners unobtrusively.
+   * Adds event listeners unobtrusively.
    * @return void     
-   * @param obj   {object}    Object to add listener(s) to
-   * @param type  {string}    Event type
-   * @param type  {function}  Function to execute
+   * @param {object}    obj   Object to add listener(s) to
+   * @param {string}    type  Event type
+   * @param {function}  fn    Function to execute
    * @autor John Resig (jquery.com)   
    */
   addEvent: function(obj, type, fn) 
@@ -249,12 +313,12 @@ var smtAuxFn = {
   /**
    * Rounds a number to a given digits accuracy.
    * @return {float}
-   * @param number  {float} input number
-   * @param type    {float} precision digits
+   * @param {float}   number  input number
+   * @param {integer} digits  precision digits
    */
   roundTo: function(number,digits)
   {
-    //var d = digits || 2;
+    //if (!digits) { digits = 2; }
     var exp = 100; // faster, because (smt)2 precision is the same for all computations!
     /* in 'taliban mode' that would be ok:
      * <code>var exp = Math.pow(10,digits);</code>
@@ -262,6 +326,24 @@ var smtAuxFn = {
      * <code>for (var i = 0, exp = 1; i < digits.length; ++i, exp *= 10) {}</code>          
      */
     return Math.round(exp*number)/exp; 
+  },
+  /**
+   * Scrolls the browser window.
+   * This function is quite useful for replaying the user trails comfortably ;)   
+   * @return void
+   * @param {object}   obj    Config object
+   * @config {integer} xpos   X coordinate
+   * @config {integer} ypos   Y coordinate
+   * @config {integer} width  Viewport width
+   * @config {integer} height Viewport height
+   */
+  doScroll: function(obj)
+  {
+    var off = this.getWindowOffset();
+    // center current mouse coords on the viewport
+    var xto = Math.round(obj.xpos - obj.width) + obj.width/2;
+    var yto = Math.round(obj.ypos - obj.height) + obj.height/2;
+    window.scrollBy(xto - off.x, yto - off.y);
   },
   /**
    * Creates an XML/HTTP request to provide async communication with the server.
@@ -292,11 +374,11 @@ var smtAuxFn = {
    * Makes an asynchronous XMLHTTP request (XHR) via GET or POST.
    * Inspired on Peter-Paul Koch's XMLHttpRequest function.   
    * @return void
-   * @param {object} reqSetup   Request properties
-   * @config {string} url Request URL
-   * @config {function} [callback] Response function
-   * @config {string} [postdata]  POST vars in the form "var1=name&var2=name..."
-   * @config {object} [xmlhttp]   A previous XMLHTTP object can be reused        
+   * @param  {object}    reqSetup   Request properties
+   * @config {string}    url        Request URL
+   * @config {function} [callback]  Response function
+   * @config {string}   [postdata]  POST vars in the form "var1=name&var2=name..."
+   * @config {object}   [xmlhttp]   A previous XMLHTTP object can be reused        
    */ 
   sendAjaxRequest: function(setup)
   {
@@ -322,12 +404,12 @@ var smtAuxFn = {
     request.send(setup.postdata);
   },
   /** 
-   *  Browser detection object. This function is used only for browser stats.
-   *  As its autor said:
-   *  "The more this script is used, the less likely it is to stay current.
-   *  In order to keep this script up-to-date you should use it as little as possible."
-   *  @autor Peter-Paul Koch (quirksMode.org)   
-   *  @deprecated      
+   * Browser detection object. This function is used only for browser stats.
+   * As its autor said:
+   * "The more this script is used, the less likely it is to stay current.
+   * In order to keep this script up-to-date you should use it as little as possible."
+   * @autor Peter-Paul Koch (quirksMode.org)   
+   * @deprecated      
    */
   browserDetect: {
     /**
@@ -403,10 +485,10 @@ var smtAuxFn = {
   	]
   },
   /** 
-   *  Cookies management object.
-   *  This cookies object allows you to store and retrieve cookies easily.
-   *  Cookies can be picked up by any other web pages in the correct domain. 
-   *  Cookies are set to expire after a certain length of time.
+   * Cookies management object.
+   * This cookies object allows you to store and retrieve cookies easily.
+   * Cookies can be picked up by any other web pages in the correct domain. 
+   * Cookies are set to expire after a certain length of time.
    */
   cookies: {
     /**
@@ -444,7 +526,7 @@ var smtAuxFn = {
           if (cEnd == -1) {
             cEnd = document.cookie.length;
           }
-            
+          
           return unescape(document.cookie.substring(cStart, cEnd));
         }
       }
@@ -452,8 +534,8 @@ var smtAuxFn = {
     },
     /**
      * Checks if a cookie exists.
-     * @return {boolean}      true on success, or false on failure
-     * @param {string} name   cookie name    
+     * @return {boolean}       true on success, or false on failure
+     * @param {string}  name   cookie name    
      */
     checkCookie: function(name) 
     {
@@ -463,7 +545,8 @@ var smtAuxFn = {
   },
   /** 
    * Core for tracking widgets.
-   * The word "widget" stands for *any* HTML DOM element on the page.        
+   * The word "widget" stands for *any* HTML DOM element on the page.
+   * This snippet was developed years ago as 'DOM4CSS', and now lives in harmony with (smt).    
    */
   widget: {
     /** 
@@ -520,8 +603,7 @@ var smtAuxFn = {
     {
       // store current node first
       var elem = (o.id) ? this.getID(o) : this.getClass(o);
-      //var list = (elem) ? [elem] : [];
-      var list = [elem];
+      var list = [elem]; //(elem) ? [elem] : [];
       // get all parents until find an element with ID
       while (o.parentNode) {
         o = o.parentNode;
@@ -546,16 +628,16 @@ var smtAuxFn = {
     }
   },
   /**
-   *  Array methods -- without extending the Array prototype (best practice). 
-   *  Note: These Array methods would only work for a completely 'dense' array. 
-   *  If you're working with sparse arrays, then you should pre-process them:
-   *  <code> 
-   *    var narray = [];
-   *    for (var i = 0; i < array.length; ++i) {
-   *      if (array[i] != null) { narray.push(array[i]); }
-   *    }
-   *    // now narray is converted in a 'dense' array
-   *  </code>   
+   * Array methods -- without extending the Array prototype (best practice). 
+   * Note: These Array methods would only work for a completely 'dense' array. 
+   * If you're working with sparse arrays, then you should pre-process them:
+   * <code> 
+   *   var narray = [];
+   *   for (var i = 0; i < array.length; ++i) {
+   *     if (array[i] != null) { narray.push(array[i]); }
+   *   }
+   *   // now narray is converted in a 'dense' array
+   * </code>   
    */
   array: {
     /**

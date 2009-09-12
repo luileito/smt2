@@ -11,8 +11,8 @@ $user = db_select(TBL_PREFIX.TBL_USERS, "email", "id='".$u."'");
 if (md5($user['email']) === $v) 
 {
   $newpass = generate_password();
-  $update = db_update(TBL_PREFIX.TBL_USERS, "pass='".$newpass."'", "id='".$u."'");
-  if (!$update) { 
+  $update = db_update(TBL_PREFIX.TBL_USERS, "pass=MD5('".$newpass."')", "id='".$u."'");
+  if (!$update) {
     $_SESSION['error'] = UNDEFINED;
     exit;
   }

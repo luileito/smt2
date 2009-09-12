@@ -193,11 +193,10 @@ package com.speedzinemedia.smt {
             $cp = new ControlPanel(this, $currWindowHeight);
         };
         
-        private function fadeBackground(opacity:Number, seconds:Number = 1):void
+        private function fadeBackground(opacity:Number, seconds:Number = 2):void
         {
             var bg:Sprite = getChildByName("bgLay") as Sprite;
-            //var bg:Shape = getChildByName("bgLay") as Shape;
-            Tweener.addTween(bg, {alpha:opacity, time:seconds, transition:"easeOutQuad"});
+            Tweener.addTween(bg, {alpha:opacity, time:seconds, transition:"easeOutQuart"});
         };
         
         private function getLayerColor(layerName:String):uint 
@@ -313,6 +312,9 @@ package com.speedzinemedia.smt {
                 if ($iniClick.x != 0) {
                     // check distance to next click point
                     var clickDist:int = Math.floor( Point.distance($iniClick, $endClick) );
+//var isSingleClick:Boolean = !Boolean(clickDist);
+//ExternalInterface.call("console.log", "isSingleClick: " + isSingleClick);
+//if (clickDist > 0 ) { if ($endClick.x != 0) { drawMouseClick($iniClick, true); } else { drawMouseClick($iniClick, false); } }
                     if (clickDist == 0) {
                         // draw single click
                         drawMouseClick($iniClick, false);
@@ -323,6 +325,10 @@ package com.speedzinemedia.smt {
                 }
                 // 2.7. update mouse coordinates
                 ++$count;
+                // auto-scroll fancy function
+                if (realtime) {
+                    ExternalInterface.call("window.smtAuxFn.doScroll", {xpos:$endMouse.x, ypos:$endMouse.y, width:$currWindowWidth, height:$currWindowHeight});
+                }
                 
             } else {
                 // 2.8. exit the loop
@@ -520,7 +526,7 @@ package com.speedzinemedia.smt {
                 $paused = !$paused; 
             }
             if (e.keyCode == Keyboard.ESCAPE) {
-                dispatchEvent(new ControlPanelEvent(ControlPanelEvent.TOGGLE_REPLAY_MODE)); 
+                dispatchEvent(new ControlPanelEvent(ControlPanelEvent.TOGGLE_REPLAY_MODE, false)); 
             }
         };
         

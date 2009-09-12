@@ -37,7 +37,7 @@ function display_options($arrOptions)
 ?>
 
 
-<h1 id="<?=TBL_CMS?>">CMS Options</h1>
+<h1 id="<?=TBL_CMS?>">CMS &amp; Misc Options</h1>
 
 <?php check_notified_request(TBL_CMS); ?>
 
@@ -87,7 +87,8 @@ so if you cannot see the HTML page behind the tracking layer, please use the old
 <?php check_notified_request(TBL_JSOPT); ?>
 
 <p>If you wish to use the JavaScript (JS) visualization API, you can customize it here.
-These options are stored on your MySQL database.</p>
+These options are stored on your MySQL database. <em>Leave fields blank for default values</em>.
+</p>
 
 <form action="savesettings.php" method="post">
   <?php

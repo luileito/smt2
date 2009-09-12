@@ -1,6 +1,9 @@
 <?php
-// CMS error messages
-$ERROR = Array(
+/**
+ * CMS error messages.
+ * @date 27/March/2009  
+ */
+$ERROR = array(
                 NOT_LOGGED  =>  "Not logged in",
                 AUTH_FAILED =>  "Authentication failed",
                 NOT_ALLOWED =>  "Not allowed",

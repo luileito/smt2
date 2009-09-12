@@ -3,14 +3,32 @@
 require '../../../config.php';
 // protect extension from being browsed by anyone
 require INC_PATH.'sys/logincheck.php';
-// now you have access to all (smt) API functions and constants
 
+// protect from GET attempts
 if (!is_root()) { die("You cannot delete records!"); }
 
-// get id
-$id = (int) $_GET['id'];
-// delete DB record
-$result = db_delete(TBL_PREFIX.TBL_RECORDS, "id='".$id."'");
+if (isset($_GET['id'])) 
+{
+  $table = TBL_PREFIX.TBL_RECORDS;
+  $query = "id='".(int) $_GET['id']."'";
+} 
+else if (isset($_GET['pid'])) 
+{
+  $pageId = (int) $_GET['pid'];
+  $table = TBL_PREFIX.TBL_CACHE;
+  $query = "id='".$pageId."'";
+  // delete cached file
+  $page = db_select(TBL_PREFIX.TBL_CACHE, "file", "id='".$pageId."'");
+  if (is_file(CACHE.$page['file'])) { unlink(CACHE.$page['file']); }
+} 
+else if (isset($_GET['cid'])) 
+{
+  $table = TBL_PREFIX.TBL_RECORDS;
+  $query = "client_id='".$_GET['cid']."'";
+}
+
+// now delete row from $table
+$result = db_delete($table, $query);
 // display message
-echo ($result) ? "Record deleted!" : "Error deleting Log.";
+echo ($result) ? "Deleted!" : "Error while deleting.";
 ?>

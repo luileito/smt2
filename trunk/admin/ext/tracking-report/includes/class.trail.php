@@ -22,7 +22,7 @@ class UserTrail
   protected function query() 
   {    
     $records = db_select_all(TBL_PREFIX.TBL_RECORDS, 
-                            "id,cache_id,DATE_FORMAT(sess_date,'%W %D %M %Y (%H:%i:%s)') as udate", 
+                            "id,cache_id,DATE_FORMAT(sess_date,'%W %D %M %Y (%H:%i:%s)') as udate,sess_time", 
                             "client_id = '".$this->id."' ORDER BY id ASC");
     
     $this->num = count($records);
@@ -34,8 +34,9 @@ class UserTrail
       // to track the clickpath we only need the id of each record  
       $this->data[] = array( 
                               "id"   => $record['id'],  
-                              "date" => $record['udate'], // for 'analyze' module
-                              "url"  => $cache['url']     // for 'analyze' module
+                              "date" => $record['udate'],     // for 'analyze' module
+                              "time" => $record['sess_time'], // for 'analyze' module
+                              "url"  => $cache['url']         // for 'analyze' module
                            );
     }
   }

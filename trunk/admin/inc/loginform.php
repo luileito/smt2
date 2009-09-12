@@ -44,7 +44,7 @@
     ?>
     <fieldset>
       <label for="login">User name</label>
-      <input type="text" name="login" id="login" class="text" />
+      <input type="text" name="login" id="login" class="text" size="200" />
     </fieldset>
     
     <?php
@@ -52,7 +52,7 @@
     ?>
     <fieldset>  
       <label for="pass">Password</label>
-      <input type="password" name="pass" id="pass" class="text" />
+      <input type="password" name="pass" id="pass" class="text" size="200" />
     </fieldset>
 
     <fieldset> 

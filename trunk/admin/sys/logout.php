@@ -5,9 +5,9 @@ session_destroy();
 require '../../config.php';
 
 // delete login cookie
-if (isset($_COOKIE['logged'])) {
+if (isset($_COOKIE['smt-login'])) {
   // delete user cookie
-  setcookie("logged", null, time(), ABS_PATH);
+  setcookie("smt-login", null, time(), ABS_PATH);
 }
 
 // redirect to root dir, where user authentication will prompt

@@ -133,14 +133,26 @@ function db_check()
 }
 
 /** 
- * Shortcut for getting the total number or (smt) records in database. 
- * @return  int   Number of total DB entries   
+ * Shortcut for getting the total number of (smt) records in database, or alternatively the column names. 
+ * @param   boolean  $getColNames	return column names instead of number of records
+ * @return  mixed   						Number of total DB entries (int) or column names (array)
  */
-function db_records() 
+function db_records($getColNames = false) 
 {
-  $records = db_query("SELECT id FROM ".TBL_PREFIX.TBL_RECORDS);
+  $n = ($getColNames) ? "*" : "id";
+  $res = db_query("SELECT $n FROM ".TBL_PREFIX.TBL_RECORDS);
   
-  return mysql_num_rows($records);
+  if ($getColNames) {
+    $i = 0;
+  	while ($i < mysql_num_fields($res)) {
+  		$meta = mysql_fetch_field($res, $i); 
+  		$headers[] = $meta->name;
+  		++$i;
+  	}
+  	return $headers;
+  } else {
+    return mysql_num_rows($res);
+  } 
 }
 
 /** 
