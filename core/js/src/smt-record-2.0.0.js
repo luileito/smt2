@@ -341,8 +341,15 @@
       aux.addEvent(document, "mousedown", smtRec.setClick);           // mouse is clicked        
       aux.addEvent(document, "mouseup",   smtRec.releaseClick);       // mouse is released
       aux.addEvent(window,   "resize",    smtRec.normalizeData);      // make easy data interpretation
-      aux.addEvent(window,   "blur",      smtRec.pauseRecording);     // only record mouse when browser window is active
-      aux.addEvent(window,   "focus",     smtRec.resumeRecording);
+      // only record mouse when window is active
+      if (document.attachEvent) {
+        // see http://odondo.wordpress.com/2007/08/28/javascript-and-cross-browser-window-focus/
+        aux.addEvent(document.body, "focusout", smtRec.pauseRecording);
+        aux.addEvent(document.body, "focusin",  smtRec.continueRecording);
+      } else {
+        aux.addEvent(window,  "blur",  smtRec.pauseRecording);
+        aux.addEvent(window,  "focus", smtRec.continueRecording);
+      }
       // track also at the widget level (fine-grained mouse tracking)
       aux.addEvent(document, "mousedown", smtRec.findElement);        // elements clicked
       aux.addEvent(document, "mousemove", smtRec.findElement);        // elements hovered
@@ -378,14 +385,12 @@
       // will ask next day (instead of smtOpt.cookieDays value)
       aux.cookies.setCookie('isAgreedToTrack', 0, 1);
       return; 
-    } else {
-      aux.cookies.setCookie('isAgreedToTrack', 1, smtOpt.cookieDays);
     }
   }
   // store int numbers, not booleans
   smtRec.firstTimeUser = (!previousUser | 0); // yes, it's a bitwise operation
   aux.cookies.setCookie('isFirstTimeUser', smtRec.firstTimeUser, smtOpt.cookieDays);
-  
+  aux.cookies.setCookie('isAgreedToTrack', 1, smtOpt.cookieDays);
   // launch browser detection script (for statistical/debugging purposes)
   aux.browserDetect.init();
   
