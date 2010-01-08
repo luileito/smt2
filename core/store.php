@@ -1,17 +1,20 @@
 <?php
 // check data first (exclude the root user)
 if (empty($_POST) || $_COOKIE['smt-root']) exit;
-// use session data, if needed
-session_start();
 
 require '../config.php';
 
 $URL = $_POST['url'];
-// get remote webpage
-$request = get_remote_webpage($URL);
+// add cookie data to page request
+$request = get_remote_webpage(
+                                $URL,
+                                array(CURLOPT_COOKIE  => $_POST['cookies'])
+                             );
+
+// get remote webpage contents
 $webpage = $request['content'];
 // check request status
-if ($request['errno'] != 0 || $request['http_code'] != 200) 
+if ($request['errno'] != CURLE_OK || $request['http_code'] != 200)
 {
   $webpage = error_webpage('<h1>Could not fetch page</h1><pre>'.print_r($request, true).'</pre>');
   $parse = true;

