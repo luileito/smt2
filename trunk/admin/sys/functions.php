@@ -217,36 +217,56 @@ function mask_client($id)
 }
 
 
-/** 
- * Gets the $URL contents within the HTTP server response header fields. 
+/**
+ * Gets URL contents within the HTTP server response header fields.
  * This function uses cURL to fetch remote pages.
- * @return array          Transfer information (the web page content is in the "content" array key) 
- * @param  string   $URL  web page URL
- * @link   http://php.net/function.curl_getinfo 
+ * @param  string   $URL   web page URL
+ * @param  array    $opts  custom cURL options
+ * @return array           Transfer information (the web page content is in the "content" array key)
+ * @link  http://es2.php.net/manual/en/curl.constants.php
+ * @link  http://es2.php.net/manual/en/function.curl-setopt.php
  */
-function get_remote_webpage($URL)
+function get_remote_webpage($URL, $opts = array())
 { 
+  // basic options (regular GET requests)
   $options = array(
-                    CURLOPT_URL => $URL,
-                    CURLOPT_COOKIE => session_name().'='.session_id(),
+                    CURLOPT_URL            => $URL,
+                    CURLOPT_USERAGENT      => $_SERVER['HTTP_USER_AGENT'],
                     CURLOPT_RETURNTRANSFER => true,   // return transfer as a string
                     CURLOPT_HEADER         => false,  // don't return headers
-                    CURLOPT_FOLLOWLOCATION => true,   // follow redirects
-                    CURLOPT_MAXREDIRS      => 5,      // limit redirect loops
                     CURLOPT_ENCODING       => "",     // handle all encodings
-                    CURLOPT_CONNECTTIMEOUT => 5,      // timeout on connect
-                    CURLOPT_TIMEOUT        => 120,    // timeout on response
+                    CURLOPT_CONNECTTIMEOUT => 10,     // timeout on connect
+                    CURLOPT_TIMEOUT        => 60,     // timeout on response
                     CURLOPT_SSL_VERIFYPEER => false,  // try to fetch SSL pages too
                     CURLOPT_SSL_VERIFYHOST => false
                   );
 
+  /* cURL should follow redirections!
+   * But safe mode (deprecated) and open_basedir (useless) are incompatible
+   * with CURLOPT_FOLLOWLOCATION.
+   * Also see this solution: http://www.php.net/manual/en/function.curl-setopt.php#71313
+   */
+  if (!ini_get('safe_mode') && !ini_get('open_basedir')) {
+    $options[ CURLOPT_FOLLOWLOCATION ] = true;  // follow redirects
+    $options[ CURLOPT_AUTOREFERER ]    = true;  // automatically set the Referer: field
+    $options[ CURLOPT_MAXREDIRS ]      = 5;     // limit redirect loops
+  }
+
+  // add custom cURL options (e.g. POST requests, cookies, etc.)
+  if (count($opts) > 0)
+  {
+    foreach ($opts as $key => $value) {
+      $options[$key] = $value;
+    }
+  }
+
   $ch = curl_init();
   curl_setopt_array($ch, $options);
   
-  $content  = curl_exec($ch);    // the web page
-  $transfer = curl_getinfo($ch); // transfer information
-  $errnum   = curl_errno($ch);   // 0 on success
-  $errmsg   = curl_error($ch);   // empty string on success
+  $content  = curl_exec($ch);     // the Web page
+  $transfer = curl_getinfo($ch);  // transfer information (http://www.php.net/manual/en/function.curl-getinfo.php)
+  $errnum   = curl_errno($ch);    // codes: http://curl.haxx.se/libcurl/c/libcurl-errors.html
+  $errmsg   = curl_error($ch);    // empty string on success
 
   curl_close($ch);
   
