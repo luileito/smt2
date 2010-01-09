@@ -253,7 +253,7 @@
      */
     setUserId: function(response) 
     {
-      smtRec.userId = response;
+      smtRec.userId = parseInt(response);
       if (smtRec.userId > 0) {
         // once the session started, append mouse data
         smtRec.append = setInterval(smtRec.appendMouseData, 2000);

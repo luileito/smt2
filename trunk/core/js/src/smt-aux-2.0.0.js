@@ -1,4 +1,4 @@
-/** 
+/**
  * (smt)2 simple mouse tracking - auxiliary functions (smt-aux-2.0.0.js)
  * Copyleft (cc) 2006-2009 Luis Leiva
  * Release date: September 12th 2009
@@ -104,20 +104,21 @@ var smtAuxFn = {
     // Firefox, Opera, Webkit-based browsers (Chrome, Safari)...
     if (document.addEventListener) {
       document.addEventListener('DOMContentLoaded', callback, false);
-      document.removeEventListener('DOMContentLoaded', callback, false);
     }
     // Internet Explorer ¬¬
     else if (document.attachEvent) {
       try {
         document.write("<scr"+"ipt id=__ie_onload defer=true src=//:><\/scr"+"ipt>");
-      	var script = document.getElementById("__ie_onload"); 
-      	script.onreadystatechange = function() {
+        var script = document.getElementById("__ie_onload");
+        script.onreadystatechange = function() {
           if (this.readyState === 'complete') { callback(); }
-      	};
+        };
       } catch(e) {}
     }
-    // fallback: old browsers use the window.onload event
-    this.addEvent(window, 'load', callback);
+    else {
+      // fallback: old browsers use the window.onload event
+      this.addEvent(window, 'load', callback);
+    }
   },
   /**
    * Loads more mouse trails for the current user, if available.
@@ -395,7 +396,7 @@ var smtAuxFn = {
     }
     // check for the 'complete' request state
     request.onreadystatechange = function(){
-      if (this.readyState == 4 && typeof setup.callback === 'function') {
+      if (request.readyState == 4 && typeof setup.callback === 'function') {
         // send server response to callback function
         setup.callback(request.responseText);
       }
