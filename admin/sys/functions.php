@@ -7,7 +7,7 @@ define('REQUIRED', dirname(__FILE__));
 
 // --------------------------------------------------------- (smt) constants ---
 require REQUIRED.'/define.php';
-require REQUIRED.'/errors.php';
+require REQUIRED.'/messages.php';
 
 // --------------------------------------------------------- K-means classes ---
 require REQUIRED.'/class.cluster.php';
