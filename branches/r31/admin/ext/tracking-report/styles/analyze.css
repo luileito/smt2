@@ -1,0 +1,6 @@
+/* custom CSS for 'analyze' section */
+#map { width:90%; height:100px; margin:0 auto; }
+#graphs { width:90%; margin:0 auto; }
+
+#user-trail { border:1px solid #CCC; padding:1em; }
+  #user-trail li { display:inline; }
