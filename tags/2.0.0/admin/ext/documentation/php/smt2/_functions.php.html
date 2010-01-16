@@ -1,0 +1,1542 @@
+<html>
+<head>
+<title>Docs for page functions.php</title>
+<link rel="stylesheet" type="text/css" href="../media/style.css">
+</head>
+<body>
+
+<table border="0" cellspacing="0" cellpadding="0" height="48" width="100%">
+  <tr>
+    <td class="header_top">smt2</td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+  <tr>
+    <td class="header_menu">
+        
+                                    
+                                                  		  [ <a href="../classtrees_smt2.html" class="menu">class tree: smt2</a> ]
+		  [ <a href="../elementindex_smt2.html" class="menu">index: smt2</a> ]
+		  	    [ <a href="../elementindex.html" class="menu">all elements</a> ]
+    </td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+</table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="200" class="menu">
+      <b>Packages:</b><br />
+              <a href="../li_smt2.html">smt2</a><br />
+              <a href="../li_PHPMailer.html">PHPMailer</a><br />
+            <br /><br />
+                        <b>Files:</b><br />
+      	  <div class="package">
+			<a href="../smt2/_class.cluster.php.html">		class.cluster.php
+		</a><br>
+			<a href="../smt2/_class.point.php.html">		class.point.php
+		</a><br>
+			<a href="../smt2/_class.prettydate.php.html">		class.prettydate.php
+		</a><br>
+			<a href="../smt2/_class.readdir.php.html">		class.readdir.php
+		</a><br>
+			<a href="../smt2/_define.php.html">		define.php
+		</a><br>
+			<a href="../smt2/_errors.php.html">		errors.php
+		</a><br>
+			<a href="../smt2/_functions.db.php.html">		functions.db.php
+		</a><br>
+			<a href="../smt2/_functions.php.html">		functions.php
+		</a><br>
+	  </div><br />
+      
+      
+            <b>Classes:</b><br />
+        <div class="package">
+		    		<a href="../smt2/Cluster.html">Cluster</a><br />
+	    		<a href="../smt2/Point.html">Point</a><br />
+	    		<a href="../smt2/prettyDate.html">prettyDate</a><br />
+	    		<a href="../smt2/readDir.html">readDir</a><br />
+	  </div>
+                </td>
+    <td>
+      <table cellpadding="10" cellspacing="0" width="100%" border="0"><tr><td valign="top">
+
+<h1>Procedural File: functions.php</h1>
+Source Location: /functions.php<br /><br />
+
+<br>
+<br>
+
+
+<h2>Page Details:</h2>
+<br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>filesource:</b>&nbsp;&nbsp;</td><td><a href="../__filesource/fsource_smt2__functions.php.html">Source Code for this file</a></td>
+  </tr>
+</table>
+</div>
+<br /><br />
+<h4>Includes:</h4>
+<div class="tags">
+require(REQUIRED.'/define.php') [line <a href="../__filesource/fsource_smt2__functions.php.html#a9">9</a>]<br />
+require(REQUIRED.'/class.cluster.php') [line <a href="../__filesource/fsource_smt2__functions.php.html#a13">13</a>]<br />
+require(REQUIRED.'/functions.db.php') [line <a href="../__filesource/fsource_smt2__functions.php.html#a17">17</a>]<br />
+require(REQUIRED.'/class.point.php') [line <a href="../__filesource/fsource_smt2__functions.php.html#a14">14</a>]<br />
+require(REQUIRED.'/errors.php') [line <a href="../__filesource/fsource_smt2__functions.php.html#a10">10</a>]<br />
+</div>
+<br /><br />
+<br /><br />
+  <hr />
+	<a name="defineREQUIRED"></a>
+	<h3>REQUIRED <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a6">6</a>]</span></h3>
+	<div class="tags">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>REQUIRED = dirname(__FILE__)</code>
+    </td></tr></table>
+    </td></tr></table>
+
+    (smt)2 CMS core functions.<br /><br />    <br />
+		</div>
+	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+<br />
+  <hr />
+	<a name="functionadd_head"></a>
+	<h3>add_head <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a873">873</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void add_head(
+string $element)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Adds $element tags to all CMS extensions header.<br /><br />    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$element</b>&nbsp;&nbsp;</td>
+        <td>HTML code to insert in the HEAD of any CMS section (&lt;style&gt;, &lt;script&gt;, etc.)</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionarray_argmax"></a>
+	<h3>array_argmax <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a380">380</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>int array_argmax(
+array $inputArray)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gets the array index that has the maximum value.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Array index</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$inputArray</b>&nbsp;&nbsp;</td>
+        <td>array</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionarray_argmin"></a>
+	<h3>array_argmin <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a395">395</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>int array_argmin(
+array $inputArray)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gets the array index that has the minimum value.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Array index</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$inputArray</b>&nbsp;&nbsp;</td>
+        <td>array</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionarray_avg"></a>
+	<h3>array_avg <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a359">359</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>float array_avg(
+array $inputArray)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Computes the average sum of an array.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Array average</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$inputArray</b>&nbsp;&nbsp;</td>
+        <td>array or set of arrays</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionarray_sanitize"></a>
+	<h3>array_sanitize <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a315">315</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array array_sanitize(
+array $input)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Removes empty items (both key and value) from an associative array.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Sanitized array</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$input</b>&nbsp;&nbsp;</td>
+        <td>array to sanitize</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncheck_noscript"></a>
+	<h3>check_noscript <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a886">886</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string check_noscript(
+[string $msg = &amp;quot;Please enable JavaScript in order to work on this section.&amp;quot;])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Displays a &lt;noscript&gt; warning message. Useful for those extensions that require JavaScript functionality.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Message wrapped in a &lt;noscript&gt; tag</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$msg</b>&nbsp;&nbsp;</td>
+        <td>custom warning message. Default: &quot;Please enable JavaScript in order to work on this section.&quot;</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncheck_notified_request"></a>
+	<h3>check_notified_request <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a124">124</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void check_notified_request(
+string $name)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Displays the message saved on current PHP session. Then the $_SESSION text is unset.<br /><br />    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$name</b>&nbsp;&nbsp;</td>
+        <td>session variable name</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncheck_smt_releases"></a>
+	<h3>check_smt_releases <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a60">60</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string check_smt_releases(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Displays a message about the installed (smt) version.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>message</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncheck_systemversion"></a>
+	<h3>check_systemversion <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a26">26</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>boolean check_systemversion(
+string $type, [string $minReqVer = &amp;quot;5.0.0&amp;quot;])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Checks if server is ready to work with (smt) by comparing the server's $type version.<br /><br /><p>At least are required both PHP 5 and MySQL 5.</p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>TRUE on sucess, or FALSE on failure</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$type</b>&nbsp;&nbsp;</td>
+        <td>&quot;php&quot; or &quot;mysql&quot; by now</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$minReqVer</b>&nbsp;&nbsp;</td>
+        <td>minimun system version (default: 5.0.0)</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncompute_frequency"></a>
+	<h3>compute_frequency <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a281">281</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array compute_frequency(
+mixed $input, [int $threshold = 1])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Computes the frequency of each $input array member.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>A sorted associative array in the form '[mostFrequentMember]=&gt;frequency,...,[lessFrequentMember]=&gt;frequency'</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">mixed&nbsp;&nbsp;</td>
+        <td><b>$input</b>&nbsp;&nbsp;</td>
+        <td>input string or array of strings to parse ($_POST vars are sent as strings)</td>
+      </tr>
+		      <tr>
+        <td class="type">int&nbsp;&nbsp;</td>
+        <td><b>$threshold</b>&nbsp;&nbsp;</td>
+        <td>frequencies (in percentage) under this $threshold will not be stored (default: 1)</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionconvert_points"></a>
+	<h3>convert_points <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a412">412</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array convert_points(
+array $xcoords, array $ycoords, [array $getDistances = false])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Merges vertical and horizontal coordinates in a bidimensional point array.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>2D points or euclidean distances</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$xcoords</b>&nbsp;&nbsp;</td>
+        <td>horizontal coordinates</td>
+      </tr>
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$ycoords</b>&nbsp;&nbsp;</td>
+        <td>vertical coordinates</td>
+      </tr>
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$getDistances</b>&nbsp;&nbsp;</td>
+        <td>if TRUE, the result array contains euclidean distances</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncount_dir_files"></a>
+	<h3>count_dir_files <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a897">897</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>int count_dir_files(
+string $dir)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Count files in a dir. This function skip directories, and it is not recursive.<br /><br /><p>By now it is only used to check the cache logs.</p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>number fo files</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$dir</b>&nbsp;&nbsp;</td>
+        <td>the directory to read files from</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncreateDiv"></a>
+	<h3>createDiv <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a738">738</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string createDiv(
+object $dom, string $id, [string $content = &amp;quot;&amp;quot;])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Creates a DIV element.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>HTML element: &lt;div id=&quot;$id&quot;&gt;$content&lt;/div&gt;</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">object&nbsp;&nbsp;</td>
+        <td><b>$dom</b>&nbsp;&nbsp;</td>
+        <td>DOMDocument</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$id</b>&nbsp;&nbsp;</td>
+        <td>DIV id</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$content</b>&nbsp;&nbsp;</td>
+        <td>DIV content (plain text) (default: none)</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncreateExternalScript"></a>
+	<h3>createExternalScript <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a678">678</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string createExternalScript(
+object $dom, string $url)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Creates an external script element.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>HTML element: &lt;script type=&quot;text/javascript&quot; src=&quot;$url&quot;&gt;&lt;/script&gt;</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">object&nbsp;&nbsp;</td>
+        <td><b>$dom</b>&nbsp;&nbsp;</td>
+        <td>DOMDocument</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$url</b>&nbsp;&nbsp;</td>
+        <td>script URL</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncreateExternalStyleSheet"></a>
+	<h3>createExternalStyleSheet <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a707">707</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string createExternalStyleSheet(
+object $dom, string $url)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Creates an external stylesheet element.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>HTML element: &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;$url&quot; /&gt;</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">object&nbsp;&nbsp;</td>
+        <td><b>$dom</b>&nbsp;&nbsp;</td>
+        <td>DOMDocument</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$url</b>&nbsp;&nbsp;</td>
+        <td>stylesheet URL</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncreateInlineScript"></a>
+	<h3>createInlineScript <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a693">693</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string createInlineScript(
+object $dom, string $cdata)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Creates an inline script element.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>HTML element: &lt;script type=&quot;text/javascript&quot;&gt;$cdata&lt;/script&gt;</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">object&nbsp;&nbsp;</td>
+        <td><b>$dom</b>&nbsp;&nbsp;</td>
+        <td>DOMDocument</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$cdata</b>&nbsp;&nbsp;</td>
+        <td>javascript code (should be wrapped in a CDATA section)</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functioncreateInlineStyleSheet"></a>
+	<h3>createInlineStyleSheet <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a723">723</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string createInlineStyleSheet(
+object $dom, string $styles)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Creates an inline stylesheet element.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>HTML element: &lt;style type=&quot;text/css&quot;&gt;$styles&lt;/style&gt;</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">object&nbsp;&nbsp;</td>
+        <td><b>$dom</b>&nbsp;&nbsp;</td>
+        <td>DOMDocument</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$styles</b>&nbsp;&nbsp;</td>
+        <td>CSS styles</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functiondeployCluster"></a>
+	<h3>deployCluster <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a574">574</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array deployCluster(
+array $center, array $vectors)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Assigns points to a cluster.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>New cluster</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$center</b>&nbsp;&nbsp;</td>
+        <td>cluster center</td>
+      </tr>
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$vectors</b>&nbsp;&nbsp;</td>
+        <td>array of 2D points</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functiondistributeOverClusters"></a>
+	<h3>distributeOverClusters <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a443">443</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array distributeOverClusters(
+int $k, array $arr)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Computes K-means clustering for a given 2D array of mouse points.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>clusters (center means and mean variances)</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">int&nbsp;&nbsp;</td>
+        <td><b>$k</b>&nbsp;&nbsp;</td>
+        <td>number of clusters</td>
+      </tr>
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$arr</b>&nbsp;&nbsp;</td>
+        <td>points array</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functiondistributeOverClusters2"></a>
+	<h3>distributeOverClusters2 <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a499">499</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void distributeOverClusters2(
+ $k,  $arr)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">&nbsp;&nbsp;</td>
+        <td><b>$k</b>&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+		      <tr>
+        <td class="type">&nbsp;&nbsp;</td>
+        <td><b>$arr</b>&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionemail_exists"></a>
+	<h3>email_exists <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a1006">1006</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>boolean email_exists(
+string $email)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Searches DNS for MX records corresponding to user's email account hostname.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>TRUE on sucess, or FALSE on failure</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$email</b>&nbsp;&nbsp;</td>
+        <td>user email</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionerror_webpage"></a>
+	<h3>error_webpage <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a268">268</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string error_webpage(
+[string $bodyText = &amp;quot;&amp;quot;])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Displays a default error page.<br /><br /><p>Used when a cached page is deleted, as well as when cURL cannot fetch a remote page.</p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>The error page</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$bodyText</b>&nbsp;&nbsp;</td>
+        <td>additional info to display on page body</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionext_available"></a>
+	<h3>ext_available <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a786">786</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array ext_available(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gets all available CMS sections.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Array of strings (sections)</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionext_format"></a>
+	<h3>ext_format <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a808">808</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string ext_format(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gives format to CMS sections.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Formatted output list (LI elements)</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionext_name"></a>
+	<h3>ext_name <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a830">830</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string ext_name(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gets the current CMS extension name.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Section name</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionfilename_to_str"></a>
+	<h3>filename_to_str <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a857">857</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string filename_to_str(
+string $string)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Reverse function for str_to_filename. Dashes are converted to spaces.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Output String</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$string</b>&nbsp;&nbsp;</td>
+        <td>normalized String</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functiongenerate_password"></a>
+	<h3>generate_password <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a965">965</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void generate_password(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Random Password Generator.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>version:</b>&nbsp;&nbsp;</td><td>0.1.0 - 2006-02-14</td>
+  </tr>
+  <tr>
+    <td><b>link:</b>&nbsp;&nbsp;</td><td><a href="http://snippets.dzone.com/user/Charlie">http://snippets.dzone.com/user/Charlie</a></td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functiongetBase"></a>
+	<h3>getBase <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a660">660</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string getBase(
+string $url)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gets the base path of a URL.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Base URL</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$url</b>&nbsp;&nbsp;</td>
+        <td>input URL</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functiongetThisURLAddress"></a>
+	<h3>getThisURLAddress <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a646">646</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string getThisURLAddress(
+[boolean $fullURI = false])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gets the full path to the current PHP file (protocol + domain + paths/to/file).<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Full URL</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">boolean&nbsp;&nbsp;</td>
+        <td><b>$fullURI</b>&nbsp;&nbsp;</td>
+        <td>append the query string, if any (default: false)</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionget_client_id"></a>
+	<h3>get_client_id <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a163">163</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string get_client_id(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Assigns an unique identifier for each client machine.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Encoded client identifier</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionget_exts_order"></a>
+	<h3>get_exts_order <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a769">769</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array get_exts_order(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gets installed extensions priorities.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Array with keys: dir name (string) =&gt; order priority (int)</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionget_remote_webpage"></a>
+	<h3>get_remote_webpage <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a227">227</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array get_remote_webpage(
+string $URL)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gets the $URL contents within the HTTP server response header fields.<br /><br /><p>This function uses cURL to fetch remote pages.</p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Transfer information (the web page content is in the &quot;content&quot; array key)</td>
+  </tr>
+  <tr>
+    <td><b>link:</b>&nbsp;&nbsp;</td><td><a href="http://php.net/function.curl_getinfo">http://php.net/function.curl_getinfo</a></td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$URL</b>&nbsp;&nbsp;</td>
+        <td>web page URL</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionget_smt_releases"></a>
+	<h3>get_smt_releases <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a48">48</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>int get_smt_releases(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Checks if a new (smt) version is released.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>server response: 1 (up to date), 2 (new version found), 3 (minor build released), 0 (connection error), -1 (parsing error)</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionis_admin"></a>
+	<h3>is_admin <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a916">916</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>boolean is_admin(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Verifies that current login has admin privileges.<br /><br /><p>Note that various admin users can coexist on the CMS.</p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>TRUE on sucess, or FALSE on failure</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionis_allowed"></a>
+	<h3>is_allowed <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a938">938</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array is_allowed(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Gets all allowed CMS extensions for the current user.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Array of strings (sections)</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionis_email"></a>
+	<h3>is_email <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a996">996</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>boolean is_email(
+string $email)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Checks if an email address is valid.<br /><br /><p>The chars # $ % &amp; ' * + / = ? ^ ` { | } ~ are theoretically allowed on the local part,  but in practice they are discarded.</p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>TRUE on sucess, or FALSE on failure</td>
+  </tr>
+  <tr>
+    <td><b>link:</b>&nbsp;&nbsp;</td><td><a href="http://tools.ietf.org/html/rfc5322">http://tools.ietf.org/html/rfc5322</a></td>
+  </tr>
+  <tr>
+    <td><b>link:</b>&nbsp;&nbsp;</td><td><a href="http://tools.ietf.org/html/rfc5321">http://tools.ietf.org/html/rfc5321</a></td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$email</b>&nbsp;&nbsp;</td>
+        <td>email to check</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionis_root"></a>
+	<h3>is_root <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a927">927</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>boolean is_root(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Verifies that current login is the superadmin user.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>TRUE on sucess, or FALSE on failure</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionmask_client"></a>
+	<h3>mask_client <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a211">211</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string mask_client(
+string $id)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Masks a given client ID string.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Pretty-formatted client ID</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$id</b>&nbsp;&nbsp;</td>
+        <td>client ID</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionnotify_request"></a>
+	<h3>notify_request <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a94">94</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void notify_request(
+string $id, boolean $success, [string $customErr = &amp;quot;&amp;quot;])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Redirects the browser to a specified anchor on the page that sent a form.<br /><br />    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$id</b>&nbsp;&nbsp;</td>
+        <td>HTML element id</td>
+      </tr>
+		      <tr>
+        <td class="type">boolean&nbsp;&nbsp;</td>
+        <td><b>$success</b>&nbsp;&nbsp;</td>
+        <td>no errors to display</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$customErr</b>&nbsp;&nbsp;</td>
+        <td>if $success is false, type here your own custom message</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionnotify_request_warning"></a>
+	<h3>notify_request_warning <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a115">115</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void notify_request_warning(
+string $id, string $msg)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Redirects the browser to a specified anchor on the page that sent a form.<br /><br />    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$id</b>&nbsp;&nbsp;</td>
+        <td>HTML element id</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$msg</b>&nbsp;&nbsp;</td>
+        <td>message to display</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionscriptExists"></a>
+	<h3>scriptExists <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a753">753</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>boolean scriptExists(
+object $dom, string $source)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Checks if a javascript file exists in the DOM,  by comparing the provided $source with the script's &quot;src&quot; attribute.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>TRUE on succes or FALSE on failure</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">object&nbsp;&nbsp;</td>
+        <td><b>$dom</b>&nbsp;&nbsp;</td>
+        <td>DOMDocument</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$source</b>&nbsp;&nbsp;</td>
+        <td>JavaScript source attribute</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionstr_to_filename"></a>
+	<h3>str_to_filename <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a842">842</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string str_to_filename(
+string $string)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Assigns a valid filename to a given string: only alphanumeric chars. Spaces are converted to dashes.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Normalized String</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$string</b>&nbsp;&nbsp;</td>
+        <td>input string</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functiontrim_text"></a>
+	<h3>trim_text <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a140">140</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string trim_text(
+string $text, [int $words = 5])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Shows only the first $words of a text, plus a [...] symbol.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>The trimmed text</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$text</b>&nbsp;&nbsp;</td>
+        <td>text to trim</td>
+      </tr>
+		      <tr>
+        <td class="type">int&nbsp;&nbsp;</td>
+        <td><b>$words</b>&nbsp;&nbsp;</td>
+        <td>number of words to display (default: 5)</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionvectorNorm"></a>
+	<h3>vectorNorm <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a597">597</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>float vectorNorm(
+array $array, string $type)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Vector Norm calculation<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Vector Norm</td>
+  </tr>
+  <tr>
+    <td><b>link:</b>&nbsp;&nbsp;</td><td><a href="http://w3.gre.ac.uk/~physica/phy3.00/theory/node97.htm">http://w3.gre.ac.uk/~physica/phy3.00/theory/node97.htm</a></td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$array</b>&nbsp;&nbsp;</td>
+        <td>input Array</td>
+      </tr>
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$type</b>&nbsp;&nbsp;</td>
+        <td>norm calculation type: &quot;L1&quot;, &quot;uL2&quot;, &quot;sL2&quot;, &quot;Linf&quot;</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
+	<a name="functionweighted_avg"></a>
+	<h3>weighted_avg <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__functions.php.html#a343">343</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>array weighted_avg(
+array $inputArray, array $weights)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		Does a weighted sum for a given multidimensional array and computed weights.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>Weighted sum</td>
+  </tr>
+  <tr>
+    <td><b>link:</b>&nbsp;&nbsp;</td><td><a href="http://www.compapp.dcu.ie/~humphrys/PhD/e.html">http://www.compapp.dcu.ie/~humphrys/PhD/e.html</a></td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$inputArray</b>&nbsp;&nbsp;</td>
+        <td>multidimensional array (matrix)</td>
+      </tr>
+		      <tr>
+        <td class="type">array&nbsp;&nbsp;</td>
+        <td><b>$weights</b>&nbsp;&nbsp;</td>
+        <td>weights</td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+
+        <div class="credit">
+		    <hr />
+		    Documentation generated on Sat, 12 Sep 2009 13:54:19 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
+	      </div>
+      </td></tr></table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
