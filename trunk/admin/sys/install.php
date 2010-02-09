@@ -1,6 +1,6 @@
 <?php 
 require '../../config.php';
-include ADMIN_PATH.'inc/doctype.php' 
+include INC_PATH.'inc/doctype.php';
 ?>
 
 <head>
