@@ -131,7 +131,7 @@
     /** 
      * Resumes recording. The current window gain focus.
      */
-    resumeRecording: function() 
+    continueRecording: function() 
     {
       smtRec.paused = false;
     },
