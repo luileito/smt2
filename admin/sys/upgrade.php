@@ -47,7 +47,8 @@ $opts = array(
                 // disabled by default
                 array(CMS_CHOICE, "mergeCacheUrl",      0, "Merges all logs that have the same URL. Useful when grouping records by page ID, and one wants to analyze all common URLs."),
                 array(CMS_CHOICE, "displayWidgetInfo",  0, "Display hover and click frequency for each interacted DOM element."),
-                array(CMS_CHOICE, "refreshOnResize",    0, "Reload visualization page on resize window &ndash; <em>use with care</em>, as on some browsers the resize event will fire endlessly.")
+                array(CMS_CHOICE, "refreshOnResize",    0, "Reload visualization page on resize window &ndash; <em>use with care</em>, as on some browsers the resize event will fire endlessly."),
+                array(CMS_CHOICE, "displayWidgetInfo",  0, "Display hover and click frequency for most interacted DOM elements.")
              );
 // update CMS options table
 foreach ($opts as $arrValue) {

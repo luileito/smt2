@@ -21,7 +21,7 @@ foreach ($head as $h) {
   $h->appendChild($js_aux);
   $h->appendChild($js_user);
   $h->appendChild($js_selector);
-  $h->appendChild($js_widget);
+  if (isset($js_widget)) $h->appendChild($js_widget);
   $h->appendChild($api_comm);
   if ($api == "js") {
     $h->appendChild($js_graphics);
