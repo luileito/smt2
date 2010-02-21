@@ -27,7 +27,7 @@ function check_systemversion($type, $minReqVer = "5.0.0")
 {
   switch (strtolower($type)) {
     case 'mysql':
-      $ver = mysql_get_client_info();
+      $ver = mysql_get_server_info();
       break;
     case 'php':
       $ver = phpversion();
