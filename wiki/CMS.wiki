@@ -11,15 +11,15 @@ The (smt)^2.0^ CMS is composed by _extensions_ (aka _functional modules_ or simp
 
 == Dashboard ==
 
-This is the admin base dir. Here you will check your database server status and new (smt) ^2.0^ releases.
+This is the admin base dir. Here you will check your database server status and new (smt) ^2^ releases.
 
 == Customize ==
 
-Here you can set the basic CMS options, change the extensions' order priority, and customize the visualization options. More features will be addded in a future.
+Here you can set the basic CMS options, change the extensions' order priority, and customize the visualization options.
 
 == Tracking Report ==
 
-This is the most featured extension. Here you will manage all tracked visits (visualize, analyze and delete). You can sort the records table by client ID, date and session time.
+This is the most featured extension. Here you will manage all tracked visits (visualize, analyze and delete). You can sort the records table by client ID, date and session time. Additionally, you can filter and refine your saved logs.
 
 == Roles ==
 
@@ -36,7 +36,7 @@ On that section you can add new users, and assign them certain roles. Users with
 
 = Creating custom extensions =
 
-If you know how the CMS works, you can create your own extensions. Please read the PHP API documentation for better understanding. On version 2.0.0 a new extension called _documentation_ is provided (you know what you'll find here).
+If you know how the CMS works, you can create your own extensions. Please read the PHP API documentation for better understanding. Since version 2.0.0 a extension called _documentation_ is provided (you know what you'll find there).
 
 *Example*: This is a base script to begin writing an extension:
 {{{
@@ -44,15 +44,16 @@ If you know how the CMS works, you can create your own extensions. Please read t
 // config settings are required - set the relative path to smt2 root dir
 require '../../../config.php';
 // protect extension from being browsed by anyone (optional but encouraged)
-require INC_PATH.'sys/logincheck.php';
-// now you have access to all (smt) API functions
+require SYS_DIR.'logincheck.php';
+// include CMS base header
+include INC_DIR.'header.php';
 
 
-// ... your code ges here ...
+// ... your code goes here ...
 
 
 // the script closes the HTML markup by including the common footer
-include INC_PATH.'inc/footer.php'; 
+include INC_DIR.'footer.php'; 
 ?>
 }}}
 You can save it as `index.php` under the dir `admin/ext/mynewscript/` and you're done!
