@@ -14,7 +14,7 @@
     <td class="header_menu">
         
                                     
-                                                  		  [ <a href="../classtrees_smt2.html" class="menu">class tree: smt2</a> ]
+                                                                      		  [ <a href="../classtrees_smt2.html" class="menu">class tree: smt2</a> ]
 		  [ <a href="../elementindex_smt2.html" class="menu">index: smt2</a> ]
 		  	    [ <a href="../elementindex.html" class="menu">all elements</a> ]
     </td>
@@ -27,6 +27,7 @@
     <td width="200" class="menu">
       <b>Packages:</b><br />
               <a href="../li_smt2.html">smt2</a><br />
+              <a href="../li_PegasusPHP.html">PegasusPHP</a><br />
               <a href="../li_PHPMailer.html">PHPMailer</a><br />
             <br /><br />
                   
@@ -93,7 +94,7 @@
 <li><div class="src-line"><a name="a53"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$dayYesterday&nbsp;</span>=&nbsp;<a href="http://www.php.net/date">date</a><span class="src-sym">(</span><span class="src-str">'d'</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/mktime">mktime</a><span class="src-sym">(</span><span class="src-num">0</span><span class="src-sym">,&nbsp;</span><span class="src-num">0</span><span class="src-sym">,&nbsp;</span><span class="src-num">0</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/date">date</a><span class="src-sym">(</span><span class="src-str">'m'</span><span class="src-sym">)</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/date">date</a><span class="src-sym">(</span><span class="src-str">'d'</span><span class="src-sym">)&nbsp;</span>-&nbsp;<span class="src-num">1</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/date">date</a><span class="src-sym">(</span><span class="src-str">'y'</span><span class="src-sym">)))</span><span class="src-sym">;</span></div></li>
 <li><div class="src-line"><a name="a54"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;If&nbsp;the&nbsp;timestamp&nbsp;set&nbsp;is&nbsp;later&nbsp;than&nbsp;the&nbsp;actually&nbsp;time,&nbsp;return&nbsp;nothing.</span></div></li>
 <li><div class="src-line"><a name="a55"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">if&nbsp;</span><span class="src-sym">(</span><a href="http://www.php.net/is_nan">is_nan</a><span class="src-sym">(</span><span class="src-var">$dayDiff</span><span class="src-sym">)&nbsp;</span>||&nbsp;<span class="src-var">$dayDiff&nbsp;</span>&lt;&nbsp;<span class="src-num">0</span><span class="src-sym">)&nbsp;</span><span class="src-sym">{</span></div></li>
-<li><div class="src-line"><a name="a56"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">return&nbsp;</span><span class="src-str">''</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a56"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">return&nbsp;</span><span class="src-var">$justNow</span><span class="src-sym">;</span></div></li>
 <li><div class="src-line"><a name="a57"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
 <li><div class="src-line"><a name="a58"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;If&nbsp;the&nbsp;timestamp&nbsp;is&nbsp;less&nbsp;than&nbsp;24&nbsp;hours&nbsp;from&nbsp;now,&nbsp;do&nbsp;the&nbsp;following...</span></div></li>
 <li><div class="src-line"><a name="a59"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">if&nbsp;</span><span class="src-sym">(</span><span class="src-var">$dayDiff&nbsp;</span>==&nbsp;<span class="src-num">0</span><span class="src-sym">)&nbsp;</span><span class="src-sym">{</span></div></li>
@@ -133,7 +134,7 @@
 </div>
         <div class="credit">
 		    <hr />
-		    Documentation generated on Sat, 12 Sep 2009 13:54:18 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
+		    Documentation generated on Sun, 21 Feb 2010 16:08:02 +0100 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
 	      </div>
       </td></tr></table>
     </td>

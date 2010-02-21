@@ -17,36 +17,34 @@ function try_sql_query($sql)
 echo 'Creating database <em>'.DB_NAME.'</em>: ';
 try_sql_query('CREATE DATABASE IF NOT EXISTS '.DB_NAME);
 
-
 // now enable default error reporting
-error_reporting(E_ALL ^ E_NOTICE);
-
+error_reporting(E_ALL & ~E_NOTICE);
 
 /* create records table ----------------------------------------------------- */
 echo 'Creating table <em>'.TBL_PREFIX.TBL_RECORDS.'</em>: ';
 
 $sql  = 'CREATE TABLE IF NOT EXISTS `'.TBL_PREFIX.TBL_RECORDS.'` (';
-$sql .= '`id`           BIGINT        unsigned  NOT NULL auto_increment, '; // log id
-$sql .= '`client_id`    VARCHAR(20)             NOT NULL, ';                // client identifier
-$sql .= '`cache_id`     BIGINT        unsigned  NOT NULL, ';                // client Operating System
-$sql .= '`os_id`        TINYINT       unsigned  NOT NULL, ';                // client Operating System
-$sql .= '`browser_id`   TINYINT       unsigned  NOT NULL, ';                // client browser (255 different browsers can be tracked)
-$sql .= '`browser_ver`  FLOAT(2,1)    unsigned  NOT NULL, ';                // client browser version
-$sql .= '`user_agent`   VARCHAR(255)            NOT NULL, ';                // full user agent string
-$sql .= '`ftu`          TINYINT(1)              NOT NULL, ';                // first time visitor
-$sql .= '`scr_width`    SMALLINT      unsigned  NOT NULL, ';                // client screen resolution
+$sql .= '`id`           BIGINT        unsigned  NOT NULL auto_increment, ';     // log id
+$sql .= '`client_id`    VARCHAR(20)             NOT NULL, ';                    // client identifier
+$sql .= '`cache_id`     BIGINT        unsigned  NOT NULL, ';                    // client Operating System
+$sql .= '`os_id`        TINYINT       unsigned  NOT NULL, ';                    // client Operating System
+$sql .= '`browser_id`   TINYINT       unsigned  NOT NULL, ';                    // client browser (255 different browsers can be tracked)
+$sql .= '`browser_ver`  FLOAT(2,1)    unsigned  NOT NULL, ';                    // client browser version
+$sql .= '`user_agent`   VARCHAR(255)            NOT NULL, ';                    // full user agent string
+$sql .= '`ftu`          TINYINT(1)              NOT NULL, ';                    // first time visitor
+$sql .= '`scr_width`    SMALLINT      unsigned  NOT NULL, ';                    // client screen resolution
 $sql .= '`scr_height`   SMALLINT      unsigned  NOT NULL, ';     
-$sql .= '`vp_width`     SMALLINT      unsigned  NOT NULL, ';                // client viewport size
+$sql .= '`vp_width`     SMALLINT      unsigned  NOT NULL, ';                    // client viewport size
 $sql .= '`vp_height`    SMALLINT      unsigned  NOT NULL, ';
 $sql .= '`sess_date`    TIMESTAMP     default   CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, '; // session timestamp    
-$sql .= '`sess_time`    FLOAT(5,2)    unsigned  NOT NULL, ';                // tracking session time
-$sql .= '`fps`          TINYINT       unsigned  NOT NULL, ';                // registration accuracy
-$sql .= '`coords_x`     MEDIUMTEXT              NOT NULL, ';                // mouse coordinates (max 16777215 chars in one mouse trail)
+$sql .= '`sess_time`    FLOAT(5,2)    unsigned  NOT NULL, ';                    // tracking session time
+$sql .= '`fps`          TINYINT       unsigned  NOT NULL, ';                    // registration accuracy
+$sql .= '`coords_x`     MEDIUMTEXT              NOT NULL, ';                    // mouse coordinates (max 16777215 chars in one mouse trail)
 $sql .= '`coords_y`     MEDIUMTEXT              NOT NULL, ';  
-$sql .= '`clicks_x`     MEDIUMTEXT              NOT NULL, ';                // mouse clicks
+$sql .= '`clicks_x`     MEDIUMTEXT              NOT NULL, ';                    // mouse clicks
 $sql .= '`clicks_y`     MEDIUMTEXT              NOT NULL, ';
-$sql .= '`hovered`      LONGTEXT                NOT NULL, ';                // most hovered widgets (max 4294967298 chars)
-$sql .= '`clicked`      LONGTEXT                NOT NULL, ';                // ...and clicked
+$sql .= '`hovered`      LONGTEXT                NOT NULL, ';                    // most hovered widgets (max 4294967298 chars)
+$sql .= '`clicked`      LONGTEXT                NOT NULL, ';                    // ...and clicked
 $sql .= 'PRIMARY KEY (`id`) ) DEFAULT CHARSET utf8';
 
 try_sql_query($sql);
@@ -55,11 +53,11 @@ try_sql_query($sql);
 echo 'Creating table <em>'.TBL_PREFIX.TBL_CACHE.'</em>: ';
 
 $sql  = 'CREATE TABLE IF NOT EXISTS `'.TBL_PREFIX.TBL_CACHE.'` (';
-$sql .= '`id`           BIGINT        unsigned  NOT NULL auto_increment, '; // cache log id
-$sql .= '`file`         VARCHAR(255)            NOT NULL, ';                // cache log file name
-$sql .= '`url`          TEXT                    NOT NULL, ';                // tracked page url (http://www.boutell.com/newfaq/misc/urllength.html)
-$sql .= '`title`        VARCHAR(255)            NOT NULL, ';                // tracked page title
-$sql .= '`saved`        DATETIME                NOT NULL, ';                // tracked page title
+$sql .= '`id`           BIGINT        unsigned  NOT NULL auto_increment, ';     // cache log id
+$sql .= '`file`         VARCHAR(255)            NOT NULL, ';                    // cache log file name
+$sql .= '`url`          TEXT                    NOT NULL, ';                    // tracked page url (http://www.boutell.com/newfaq/misc/urllength.html)
+$sql .= '`title`        VARCHAR(255)            NOT NULL, ';                    // tracked page title
+$sql .= '`saved`        DATETIME                NOT NULL, ';                    // tracked page title
 $sql .= 'PRIMARY KEY (`id`) ) DEFAULT CHARSET utf8';
 
 try_sql_query($sql);
@@ -69,8 +67,8 @@ try_sql_query($sql);
 echo 'Creating table <em>'.TBL_PREFIX.TBL_OS.'</em>: ';
 
 $sql  = 'CREATE TABLE IF NOT EXISTS `'.TBL_PREFIX.TBL_OS.'` (';
-$sql .= '`id`           TINYINT        unsigned  NOT NULL auto_increment, ';// OS id
-$sql .= '`name`         VARCHAR(20)              NOT NULL, ';               // OS name
+$sql .= '`id`           TINYINT        unsigned  NOT NULL auto_increment, ';    // OS id
+$sql .= '`name`         VARCHAR(20)              NOT NULL, ';                   // OS name
 $sql .= 'PRIMARY KEY (`id`) ) DEFAULT CHARSET utf8';
 
 try_sql_query($sql);
@@ -80,8 +78,8 @@ try_sql_query($sql);
 echo 'Creating table <em>'.TBL_PREFIX.TBL_BROWSERS.'</em>: ';
 
 $sql  = 'CREATE TABLE IF NOT EXISTS `'.TBL_PREFIX.TBL_BROWSERS.'` (';
-$sql .= '`id`           TINYINT        unsigned  NOT NULL auto_increment, ';// browser id
-$sql .= '`name`         VARCHAR(128)             NOT NULL, ';               // browser name
+$sql .= '`id`           TINYINT        unsigned  NOT NULL auto_increment, ';    // browser id
+$sql .= '`name`         VARCHAR(128)             NOT NULL, ';                   // browser name
 $sql .= 'PRIMARY KEY (`id`) ) DEFAULT CHARSET utf8';
 
 try_sql_query($sql);
@@ -91,14 +89,14 @@ try_sql_query($sql);
 echo 'Creating table <em>'.TBL_PREFIX.TBL_USERS.'</em>: ';
 
 $sql  = 'CREATE TABLE IF NOT EXISTS `'.TBL_PREFIX.TBL_USERS.'` (';
-$sql .= '`id`           TINYINT       unsigned  NOT NULL auto_increment, '; // user id
-$sql .= '`role_id`      TINYINT       unsigned  NOT NULL, ';                // role id
-$sql .= '`login`        VARCHAR(60)             NOT NULL, ';                // user login
-$sql .= '`pass`         VARCHAR(60)             NOT NULL, ';                // user pass
-$sql .= '`name`         VARCHAR(200)            NOT NULL, ';                // user name
-$sql .= '`email`        VARCHAR(100)            NOT NULL, ';                // email
-$sql .= '`website`      VARCHAR(100)            NULL,     ';                // url
-$sql .= '`registered`   DATETIME                NOT NULL, ';                // registered date
+$sql .= '`id`           TINYINT       unsigned  NOT NULL auto_increment, ';     // user id
+$sql .= '`role_id`      TINYINT       unsigned  NOT NULL, ';                    // role id
+$sql .= '`login`        VARCHAR(60)             NOT NULL, ';                    // user login
+$sql .= '`pass`         VARCHAR(60)             NOT NULL, ';                    // user pass
+$sql .= '`name`         VARCHAR(200)            NOT NULL, ';                    // user name
+$sql .= '`email`        VARCHAR(100)            NOT NULL, ';                    // email
+$sql .= '`website`      VARCHAR(100)            NULL,     ';                    // url
+$sql .= '`registered`   DATETIME                NOT NULL, ';                    // registered date
 $sql .= '`last_access`  TIMESTAMP     default   CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, '; // last login
 $sql .= 'PRIMARY KEY (`id`) ) DEFAULT CHARSET utf8';
 
@@ -107,35 +105,39 @@ try_sql_query($sql);
 // create default admin password. Will be displayed at the end of installation
 $ADMINPASS = generate_password();
 // insert admin user
-$sql  = "INSERT INTO ".TBL_PREFIX.TBL_USERS." (role_id, login, pass, name, email, registered)";
-$sql .= " VALUES (1, 'root', MD5('".$ADMINPASS."'), 'System Administrator', '".$EMAIL."', NOW())";
-db_query($sql);
+if (!db_select(TBL_PREFIX.TBL_USERS, "id", "login = 'root'")) {
+  $sql  = "INSERT INTO ".TBL_PREFIX.TBL_USERS." (role_id, login, pass, name, email, registered)";
+  $sql .= " VALUES (1, 'root', MD5('".$ADMINPASS."'), 'System Administrator', '".$EMAIL."', NOW())";
+  db_query($sql);
+}
 
 
 /* create roles table ------------------------------------------------------- */
 echo 'Creating table <em>'.TBL_PREFIX.TBL_ROLES.'</em>: ';
 
 $sql  = 'CREATE TABLE IF NOT EXISTS `'.TBL_PREFIX.TBL_ROLES.'` (';
-$sql .= '`id`           TINYINT       unsigned  NOT NULL auto_increment, '; // role id (max. 255 roles)
-$sql .= '`name`         VARCHAR(100)            NOT NULL, ';  // role title 
-$sql .= '`description`  VARCHAR(255)            NOT NULL, ';  // role description
-$sql .= '`ext_allowed`  VARCHAR(255)            NOT NULL, ';  // allowed extensions for this role
+$sql .= '`id`           TINYINT       unsigned  NOT NULL auto_increment, ';     // role id (max. 255 roles)
+$sql .= '`name`         VARCHAR(100)            NOT NULL, ';                    // role title
+$sql .= '`description`  VARCHAR(255)            NOT NULL, ';                    // role description
+$sql .= '`ext_allowed`  VARCHAR(255)            NOT NULL, ';                    // allowed extensions for this role
 $sql .= 'PRIMARY KEY (`id`) ) DEFAULT CHARSET utf8';
 
 try_sql_query($sql);
 
 // insert admin role
-$sql  = "INSERT INTO ".TBL_PREFIX.TBL_ROLES." (name, description)";
-$sql .= " VALUES ('admin', 'sysadmin users group')";
-db_query($sql);
+if (!db_select(TBL_PREFIX.TBL_ROLES, "id", "name = 'admin'")) {
+  $sql  = "INSERT INTO ".TBL_PREFIX.TBL_ROLES." (name, description)";
+  $sql .= " VALUES ('admin', 'sysadmin users group')";
+  db_query($sql);
+}
 
 /* create extensions table -------------------------------------------------- */
 echo 'Creating table <em>'.TBL_PREFIX.TBL_EXTS.'</em>: ';
 
 $sql  = 'CREATE TABLE IF NOT EXISTS `'.TBL_PREFIX.TBL_EXTS.'` (';
-$sql .= '`id`         TINYINT       unsigned   NOT NULL auto_increment, '; // ext (max. 255 modules)
-$sql .= '`dir`        VARCHAR(20)              NOT NULL, ';  // ext dir
-$sql .= '`priority`   TINYINT       unsigned   NOT NULL, ';  // stack order (0 means no order -> alphabetical sorting) 
+$sql .= '`id`         TINYINT       unsigned   NOT NULL auto_increment, ';      // ext (max. 255 modules)
+$sql .= '`dir`        VARCHAR(20)              NOT NULL, ';                     // ext dir
+$sql .= '`priority`   TINYINT       unsigned   NOT NULL, ';                     // stack order (0 means no order -> alphabetical sorting)
 $sql .= 'PRIMARY KEY (`id`) ) DEFAULT CHARSET utf8';
 
 try_sql_query($sql);
@@ -144,8 +146,10 @@ try_sql_query($sql);
 $exts = ext_available();
 foreach ($exts as $dir) 
 {
-  $sql  = "INSERT INTO ".TBL_PREFIX.TBL_EXTS." (dir) VALUES ('".$dir."')";
-  db_query($sql); 
+  if (!db_select(TBL_PREFIX.TBL_EXTS, "id", "dir = '".$dir."'")) {
+    $sql  = "INSERT INTO ".TBL_PREFIX.TBL_EXTS." (dir) VALUES ('".$dir."')";
+    db_query($sql);
+  }
 }
 
 
@@ -165,15 +169,22 @@ try_sql_query($sql);
 /* insert default options --------------------------------------------------- */
 $opts = array(
                 // admin options
-                array(CMS_TYPE,   "recordsPerTable",      20, "Number of records to show on each tracking table. This will be the default value, and it can be overriden on the <em>Tracking report</em> section."),
-                array(CMS_TYPE,   "cacheDays",            30, "Cache (in days) for HTML logs. If the requested page was not modified in this amount of time, the system will use a cached copy. Leaving it blank or setting it to <code>0</code> means that no logs will be cached: each visit will generate one HTML log. <em>It is required to set a high cache value if you want to get a report of the page model.</em>"), 
-                array(CMS_CHOICE, "displayGoogleMap",     1,  "If you typed a valid Google Maps key on your <em>config.php</em> file, the client location will be shown on a map when analyzing the logs.")
+                array(CMS_TYPE,   "recordsPerTable",    20, "Number of records to show on each tracking table. This will be the default value, and it can be overriden on the <em>Tracking report</em> section."),
+                array(CMS_TYPE,   "cacheDays",          60, "Cache (in days) for HTML logs. If the requested page was not modified in this amount of time, the system will use a cached copy. Leaving it blank or setting it to <code>0</code> means that no logs will be cached: each visit will generate one HTML log."),
+                array(CMS_TYPE,   "maxSampleSize",      0,  "Number of logs to replay/analyze simultaneously (0 means no limit). If your database has a lot of records for the same URL, you can take into account only a small subset of logs."),
+                // disabled by default
+                array(CMS_CHOICE, "mergeCacheUrl",      0,  "Merge all logs that have the same URL. Useful if cache is disabled and one wants to group records by page ID."),
+                array(CMS_CHOICE, "displayWidgetInfo",  0,  "Display hover and click frequency for each interacted DOM element."),
+                array(CMS_CHOICE, "refreshOnResize",    0,  "Reload visualization page on resize window &ndash; <em>use with care</em>, as on some browsers the resize event will fire endlessly."),
+                array(CMS_CHOICE, "displayGoogleMap",   0,  "If you typed a valid Google Maps key on your <em>config.php</em> file, the client location will be shown on a map when analyzing the logs.")
              );
 foreach ($opts as $arrValue) 
 {
-  $sql  = "INSERT INTO ".TBL_PREFIX.TBL_CMS." (type,name,value,description)";
-  $sql .= " VALUES ('".$arrValue[0]."','".$arrValue[1]."','".$arrValue[2]."','".$arrValue[3]."')";
-  db_query($sql); 
+  if (!db_select(TBL_PREFIX.TBL_CMS, "id", "name = '".$arrValue[1]."'")) {
+    $sql  = "INSERT INTO ".TBL_PREFIX.TBL_CMS." (type,name,value,description)";
+    $sql .= " VALUES ('".$arrValue[0]."','".$arrValue[1]."','".$arrValue[2]."','".$arrValue[3]."')";
+    db_query($sql);
+  }
 }
 
 
@@ -204,22 +215,25 @@ $opts = array(
                 array(CMS_TYPE, "clust",   "0000FF", "Clusters color. The k-means algorithm assigns each registration point to the cluster whose center is nearest."),
                 array(CMS_TYPE, "bgColor", "000000", "Background layer color. Self explanatory ;)"),
                 // more JS options
-                array(CMS_CHOICE, "bgLayer",  1, "Draw a semi-transparent background layer on bottom."),
-                array(CMS_CHOICE, "realTime", 1, "You can replay the mouse path in real time or as a static overlayed image."),
-                array(CMS_CHOICE, "dirVect",  0, "When replaying in <em>static</em> mode, it could be useful to display the path direction vector.")
+                array(CMS_CHOICE, "bgLayer",        1, "Draw a semi-transparent background layer on bottom."),
+                array(CMS_CHOICE, "realTime",       1, "You can replay the mouse path in real time or as a static overlayed image."),
+                array(CMS_CHOICE, "dirVect",        0, "When replaying in <em>static</em> mode, it could be useful to display the path direction vector."),
+                array(CMS_CHOICE, "loadNextTrail",  0, "Load more trails automatically (if available) for the current tracked user.")
              );
 
 // insert default options
 foreach ($opts as $arrValue) 
 {
-  $sql  = "INSERT INTO ".TBL_PREFIX.TBL_JSOPT." (type,name,value,description)";
-  $sql .= " VALUES ('".$arrValue[0]."','".$arrValue[1]."','".$arrValue[2]."','".$arrValue[3]."')";
-  db_query($sql);
+  if (!db_select(TBL_PREFIX.TBL_CMS, "id", "name = '".$arrValue[1]."'")) {
+    $sql  = "INSERT INTO ".TBL_PREFIX.TBL_JSOPT." (type,name,value,description)";
+    $sql .= " VALUES ('".$arrValue[0]."','".$arrValue[1]."','".$arrValue[2]."','".$arrValue[3]."')";
+    db_query($sql);
+  }
 }
                      
 /* set permissions ---------------------------------------------------------- */
-echo 'Settings permissions to <em>'.CACHE.'</em> dir: ';
-if (chmod(CACHE, 0777)) {
+echo 'Settings permissions to <em>'.CACHE_DIR.'</em> dir: ';
+if (chmod(CACHE_DIR, 0777)) {
   echo '<strong class="ok">Ok.</strong><br />'; 
 } else {
   echo '<strong class="ko">Failed.</strong> The directory '.CACHE.' must be writeable.

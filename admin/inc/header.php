@@ -1,18 +1,18 @@
 <?php
-include INC_PATH.'inc/doctype.php'; 
+include INC_DIR.'doctype.php';
 ?>
 
 <head>
-  <?php include INC_PATH.'inc/header-base.php'; ?>
+  <?php include INC_DIR.'header-base.php'; ?>
 </head>
 
 <body>
 
   <div id="header" class="foothead">
       
-    <h1>(smt) simple mouse tracking</h1>
+    <h1><strong>(smt)<sup>2</sup></strong> &middot; simple mouse tracking</h1>
     
-    <p id="logged">Logged in as <strong><?=$_SESSION['login']?></strong> &mdash; 
+    <p id="logged"><a href="<?=ABS_PATH?>">Logged in</a> as <strong><?=$_SESSION['login']?></strong> &mdash;
     <a id="logout" href="<?=ADMIN_PATH?>sys/logout.php">disconnect</a></p>
     
   </div><!-- end header -->

@@ -2,7 +2,7 @@
 // server settings are required - relative path to smt2 root dir
 require '../../../config.php';
 // protect extension from being browsed by anyone
-require INC_PATH.'sys/logincheck.php';
+require SYS_DIR.'logincheck.php';
 
 // use JS or SWF drawing API
 $api = $_GET['api'];
@@ -12,26 +12,30 @@ if (!file_exists($apiFile)) { die("API file not found!"); }
 
 include './includes/settings.php';  // custom tracking analysis options
 include './includes/sql.php';       // load tracking data from database
-include './includes/kmeans.php';    // compute k-means clustering
 
 // parse HTML log
-$file = CACHE.$htmlFile;
+$file = CACHE_DIR.$htmlFile;
 // load file
-$doc = new DOMDocument();
-$doc->preserveWhitespace = false;
-$doc->formatOutput = true;
+$doc = new DOMUtil();
 // check
 if (!is_file($file)) { 
-  $file = error_webpage('<h1>Page not found on cache!</h1><p>That\'s because it was deleted from cache.</p>');
+  $file = error_webpage('<h1>Page not found on cache!</h1><p>Either it was deleted from cache or the request could not be processed.</p>');
   // hide warnings when parsing non valid (X)HTML pages
   @$doc->loadHTML($file);
 } else {
-  @$doc->loadHTMLFile($file);
+  // load (UTF-8 encoded) log
+  @$doc->loadHTMLFile( utf8_decode($file) );
 }
 // use this constant to load more user trails, if available
-define (TRACKER, $_SERVER['PHP_SELF']); //getThisURLAddress()
+define ('TRACKER', get_current_URL());
 // include user data
 include './includes/user.php';
+
+if (db_option(TBL_PREFIX.TBL_CMS, "displayWidgetInfo")) {
+  // hilite hovered/clicked elements
+  include './includes/widget.php';
+}
+
 // include drawing API: SWF or JS
 include $apiFile;
 include './includes/api-parse.php';

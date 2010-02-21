@@ -1,41 +1,56 @@
 <?php
 /** Installed (smt) version. */
-define ('SMT_VERSION',   "2.0.0");
-/** Path to (smt) admin system. This absolute URL is used to resolve links, redirections, an so on. */
+define ('SMT_VERSION',  "2.0.1");
+
+/** Title for CMS pages. */
+define ('CMS_TITLE',   "simple mouse tracking " . SMT_VERSION);
+/** Path to admin dir. This absolute URL is used to resolve links, redirections, an so on. */
 define ('ADMIN_PATH',    ABS_PATH."admin/");
-/** Path to core (smt) javascript functions. */
-define ('JS_PATH',       ABS_PATH."core/js/");
-/** Path to core (smt) flash functions. */
+/** Path to CSS styles. */
+define ('CSS_PATH',      ADMIN_PATH."css/");
+/** Path to core ActionScript functions. */
 define ('SWF_PATH',      ABS_PATH."core/swf/");
-/** (smt) record script. */
+/** Path to core JavaScript functions. */
+define ('JS_PATH',       ABS_PATH."core/js/");
+/** smt2 record script. */
 define ('SMT_RECORD',    JS_PATH."smt-record.min.js");
-/** (smt) replay script. */
+/** smt2 replay script. */
 define ('SMT_REPLAY',    JS_PATH."smt-replay.min.js");
-/** (smt) auxiliar functions. */
+/** smt2 auxiliar functions. */
 define ('SMT_AUX',       JS_PATH."smt-aux.min.js");
-/** JavaScript graphics libary. */
+/** WZ JavaScript graphics libary. */
 define ('WZ_JSGRAPHICS', JS_PATH."wz_jsgraphics.min.js");
-/** SWFObject libary. */
+/** JSON parser. */
+define ('JSON_PARSER',   JS_PATH."json2.min.js");
+/** JavaScript DOM selector library (Sizzle, Peppy, Selector, etc.). */
+define ('JS_SELECTOR',    JS_PATH."selector.min.js");
+/** SWFObject library. */
 define ('SWFOBJECT',     ADMIN_PATH."js/swfobject.js");
+
 /** HTML logs dir. Do not use absolute URLs because fopen wrappers could be disabled. */
-define ('CACHE',         INC_PATH."cache/");
-/** Table for storing (smt) records. */
+define ('CACHE_DIR',     INC_PATH."cache/");
+/** Path to system dir. */
+define ('SYS_DIR',       INC_PATH."sys/");
+/** Path to common includes (header, footer, and so on). */
+define ('INC_DIR',       INC_PATH."inc/");
+
+/** Table for storing smt2 records. */
 define ('TBL_RECORDS',   "records");
 /** Table for caching HTML logs. */
 define ('TBL_CACHE',     "cache");
-/** Table for storing browsers' name. */
+/** Table for storing browser names. */
 define ('TBL_BROWSERS',  "browsers");
-/** Table for storing operating system's name. */
+/** Table for storing operating system names. */
 define ('TBL_OS',        "os");
 /** Table for registered users. */
 define ('TBL_USERS',     "users");
-/** Table to manage users' roles. */
+/** Table for managing user roles. */
 define ('TBL_ROLES',     "roles");
-/** Table for extension modules. */
+/** Table for registering extension modules. */
 define ('TBL_EXTS',      "exts");
-/** Table for customize CMS options. */
+/** Table for customizing CMS options. */
 define ('TBL_CMS',       "cms");
-/** Table for customize JS replay options. */
+/** Table for customizing JS replay options. */
 define ('TBL_JSOPT',     "jsopt");
 /** Form input type: User must enter some value (input text) */
 define ('CMS_TYPE',      0);

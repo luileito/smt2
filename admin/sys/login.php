@@ -15,7 +15,7 @@ switch ($_POST['action'])
     // get user pass
     $user = db_select(TBL_PREFIX.TBL_USERS, "pass", "login='".$login."'");
     // authenticate user
-    if (md5($pass) == $user['pass']) 
+    if (md5($pass) === $user['pass'])
     {
       // user can proceed
       $_SESSION['login'] = $login;
@@ -33,35 +33,42 @@ switch ($_POST['action'])
     } 
     else 
     {
-      $_SESSION['error'] = AUTH_FAILED;
+      $_SESSION['error'] = "AUTH_FAILED";
     }
   break;
     
   case 'lostpass':
     $user = db_select(TBL_PREFIX.TBL_USERS, "id,email", "login='".$login."'");
-    if (!$user) break;
+    
+    if (!$user) {
+      $_SESSION['error'] = "USER_ERROR";
+      break;
+    }
     // set message
-    $msg  = "It seems that you requested a new password. If you did not request it, please ignore this email.".PHP_EOL;
-    $msg .= "To reset your (smt) user password follow this link:".PHP_EOL;
+    $msg  = "It seems that you requested a new (smt) password. If you did not request it, please ignore this email.".PHP_EOL.PHP_EOL;
+    
+    $msg .= "To reset $login's password follow this link:".PHP_EOL;
     $msg .= ADMIN_PATH.'sys/resetpass.php?u='.$user['id'].'&v='.md5($user['email']).PHP_EOL;
-    $msg .= "--------------".PHP_EOL;
+    
+    $msg .= PHP_EOL."--------------".PHP_EOL;
     $msg .= "(smt) simple mouse tracking";
+    
     // compose email    
     require './class.phpmailer.php';
     $mail = new PHPMailer;
-    $mail->FromName  = "(smt)2";
+    $mail->FromName  = "smt2";
     $mail->From      = "no-reply@".$_SERVER['HTTP_HOST'];
     $mail->CharSet   = "utf-8";
-    $mail->Subject   = "(smt)2 - Requested password for ".$login;
+    $mail->Subject   = "smt2 - Requested password for ".$login;
     $mail->Body      = $msg;
     $mail->AddAddress($user['email']);
     // send
-    $_SESSION['error'] = $mail->Send() ? MAIL_SENT : MAIL_ERROR;
+    $_SESSION['error'] = $mail->Send() ? "MAIL_SENT" : "MAIL_ERROR";
   break;
     
   default:
     // otherwise, require authentication
-    $_SESSION['error'] = AUTH_FAILED;
+    $_SESSION['error'] = "AUTH_FAILED";
   break;
 }
 

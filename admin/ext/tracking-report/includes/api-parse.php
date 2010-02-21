@@ -1,14 +1,16 @@
 <?php 
 // a BASE element is needed to link correctly CSS, scripts, etc.
 $base = $doc->createElement('base');
-$base->setAttribute('href', getBase($url)); // $_SERVER['SERVER_ADDR']
+$base->setAttribute('href', get_base($url));
 
 $ini_comm = $doc->createComment(" begin (smt)2 tracking code ");
 $end_comm = $doc->createComment(" end (smt)2 tracking code ");
 $api_comm = $doc->createComment(" load (smt)2 drawing API ");
 
 // point to (smt) aux functions
-$js_aux = createExternalScript($doc, SMT_AUX);
+$js_aux = $doc->createExternalScript(SMT_AUX);
+// and peppy selector library
+$js_selector = $doc->createExternalScript(JS_SELECTOR);
 
 // rebuild parsed page
 $head = $doc->getElementsByTagName('head');
@@ -18,11 +20,14 @@ foreach ($head as $h) {
   $h->appendChild($ini_comm);
   $h->appendChild($js_aux);
   $h->appendChild($js_user);
+  $h->appendChild($js_selector);
+  $h->appendChild($js_widget);
   $h->appendChild($api_comm);
   if ($api == "js") {
     $h->appendChild($js_graphics);
-    $h->appendChild($js_options);
+    $h->appendChild($js_json);
     $h->appendChild($js_replay);
+    $h->appendChild($js_options);
   } else if ($api == "swf") {
     $h->appendChild($swfobject);
     $h->appendChild($js_swf);

@@ -9,17 +9,17 @@ package com.speedzinemedia.smt.events {
 	public class BaseEvent extends Event
     {
         // pass params to event additionally
-        public var params:Object;
+        public var data:Object;
         
         public function BaseEvent(type:String, obj:Object = null, bubbles:Boolean = false, cancelable:Boolean = false)
         {
             super(type, bubbles, cancelable);
-            this.params = obj;
+            this.data = obj;
         };
         
         override public function clone():Event
         {
-            return new BaseEvent(type, this.params, bubbles, cancelable);
+            return new BaseEvent(type, this.data, bubbles, cancelable);
         };
         
     } // end class

@@ -1,79 +1,100 @@
-/**
- *  @version    2.0 - 12 Feb 2009    
- *  @autor      Luis Leiva
- *  @usage      package {
- *                  ... imports ...
- *                  class TtExample {
- *                      ... 
- *                      private var $tip:Tooltip;
- *                      ...
- *                      public function TtExample(){
- *                          ...
- *                          var s:Shape = new Shape();
- *                          s.name = "this is the text that will be shown";
- *                          s.addEventListener(MouseEvent.MOUSE_OVER, showTip);
- *                          s.addEventListener(MouseEvent.MOUSE_OUT, hideTip);   
- *                          ...
- *                          $tip = new Tooltip();
- *                          addChild($tip);
- *                      };
- *                      private function showTip(e:MouseEvent):void {
- *                          $tip.show(e.target.name); 
- *                      };
- *                      private function hideTip(e:MouseEvent):void {
- *                          $tip.hide(); 
- *                      };  
- *                  } 
- *              }    
- */
 package com.speedzinemedia.smt.text {
 
     import flash.events.Event;
     import flash.events.MouseEvent;
+    import flash.display.InteractiveObject;
     import flash.text.TextField;
     import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-    
+    /**
+     *  Tooltip class.
+     *  This is a singleton class, and can only be accessed through Tooltip.instance() method.
+     *  The basic idea is to reuse a single tooltip instance for all interactive objects on the stage.
+     *  Basic html markup (those tags supported by Flash Player) may be used in the tooltip text as well.
+     *  @version    2.0 - 12 Feb 2009
+     *  @autor      Luis Leiva
+     *  @usage      package {
+     *                  class TtExample {
+     *                      private var tip:Tooltip;
+     *                      public function TtExample() {
+     *                          tip = Tooltip.instance();
+     *                          addChild(tip);
+     *
+     *                          var s:Shape = new Shape();
+     *                          s.name = "this is a <b>tooltip</b> example";
+     *
+     *                          tip.addItem(s);
+     *                      };
+     *                  }
+     *              }
+     */
     public class Tooltip extends TextField 
     {
-        private var $local:Boolean; // useful when scaling Sprite containers
+        private static var _instance:Tooltip = new Tooltip();
+        //private static var _tabIndex:int = 0;
         
-        public function Tooltip(local2global:Boolean = false)
+        public static function instance():Tooltip
         {
-            var fmt:TextFormat = new TextFormat("_sans", 10);
-            this.defaultTextFormat = fmt;
-            this.autoSize = TextFieldAutoSize.LEFT;
-            this.selectable = false;
-            this.background = true;
-            this.backgroundColor = 0xFFFFFF;
-            this.border = true;
-            this.borderColor = 0x000000;
-            this.visible = false;
-            this.mouseEnabled = false; // avoid flickering
+            return _instance;
+        };
+
+        /** @private */
+        public function Tooltip()
+        {
+            if (_instance) {
+                throw new Error("Tooltip is a singleton class, and can only be accessed through Tooltip.instance() method");
+            } else init();
+        };
+
+        private function init():void
+        {
+            this.defaultTextFormat  = new TextFormat("_sans", 11);
             
-            $local = local2global;
+            // customizable properties
+            this.background         = true;
+            this.backgroundColor    = 0xFFFFFF;
+            this.border             = true;
+            this.borderColor        = 0x000000;
+            
+            // non-customizable properties (actually they can be overridden)
+            this.autoSize           = TextFieldAutoSize.LEFT;
+            this.selectable         = false;
+            // avoid flickering between tiny objects
+            this.mouseEnabled = false;
+            this.visible      = false;
         };
         
-        public function show(str:String):void
+        /**
+         * Registers an element to be "tooltiped"
+         * @param   elem    InteractiveObject (e.g. Sprite, Shape, DisplayObjectContainer...)
+         */
+        public function addItem(elem:InteractiveObject):void
         {
-            this.text = str;
+            elem.addEventListener(MouseEvent.MOUSE_OVER, show);
+            elem.addEventListener(MouseEvent.MOUSE_OUT, hide);
+            //elem.tabIndex = _tabIndex++;
+        };
+
+        private function show(e:MouseEvent):void
+        {
+            this.htmlText = e.target.name;
             this.visible = true;
-            if (!$local) { 
-                this.addEventListener(Event.ENTER_FRAME, repos); 
-            } else {
-                updatePos();
+            
+            this.addEventListener(Event.ENTER_FRAME, repos);
+            // check
+            if (stage.hasEventListener(MouseEvent.MOUSE_MOVE)) {
+                stage.removeEventListener(MouseEvent.MOUSE_MOVE, updateCoords);
             }
         };
-        
-        public function hide():void
+
+        private function hide(e:MouseEvent):void
         {
-            this.text = "";
+            this.htmlText = "";
             this.visible = false;
-            if (!$local) { 
-                this.removeEventListener(Event.ENTER_FRAME, repos); 
-            } else {
-                updatePos();
-            }
+            
+            this.removeEventListener(Event.ENTER_FRAME, repos);
+            // meanwhile update Tooltip coordinates
+            stage.addEventListener(MouseEvent.MOUSE_MOVE, updateCoords);
         };
 
         private function repos(e:Event):void
@@ -87,11 +108,11 @@ package com.speedzinemedia.smt.text {
                       stage.mouseY - this.height :
                       stage.mouseY;
         };
-        
-        private function updatePos():void
+
+        private function updateCoords(e:MouseEvent):void
         {
-            this.x = mouseX;
-            this.y = mouseY;
+            this.x = stage.mouseX;
+            this.y = stage.mouseY;
         };
         
     } // end class

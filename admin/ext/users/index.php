@@ -2,9 +2,9 @@
 // server settings are required - relative path to smt2 root dir
 require '../../../config.php';
 // protect extension from being browsed by anyone
-require INC_PATH.'sys/logincheck.php';
-// now you have access to all (smt) API functions and constants
-include INC_PATH.'inc/header.php';
+require SYS_DIR.'logincheck.php';
+// now you have access to all CMS API
+include INC_DIR.'header.php';
 
 $ROLES = db_select_all(TBL_PREFIX.TBL_ROLES, "*", "1");
 $ROOT = is_root();
@@ -32,7 +32,7 @@ function format_fields($user, $isAdmin)
   }
   
   if ($isAdmin) {
-    $f .= '<div class="wrapper pl">'.PHP_EOL;
+    $f .= '<div class="wrapper smallround pl">'.PHP_EOL;
   }
   // check user status ---------------------------------------------------------
   if ($user !== null) 
@@ -122,7 +122,7 @@ function format_fields($user, $isAdmin)
   $f .= '</div>'.PHP_EOL;
   
   $f .= '</fieldset>'.PHP_EOL;
-  
+
   // float right
   $f .= '<div class="fr">'.PHP_EOL;
   $form = ($user === null) ? "create" : "manage";
@@ -131,11 +131,11 @@ function format_fields($user, $isAdmin)
   if ($user !== null) {
     $f .= '<input type="hidden" name="login" value="'.$user['login'].'" />'.PHP_EOL;
   }
-  
-  $display = ($user === null) ? "Create new" : "Update";
-  $f .= '<input type="submit" class="button round"'.$disabled.' value="'.$display.' account" />'.PHP_EOL;
+
+  $display = ($user === null) ? "Create" : "Update";
+  $f .= '<input type="submit" class="button round"'.$disabled.' value="'.$display.'" />'.PHP_EOL;
   $f .= '</div>'.PHP_EOL;
-  
+
   $f .= '</form>'.PHP_EOL;
   
   // the superadmin user cannot delete itself 
@@ -144,7 +144,7 @@ function format_fields($user, $isAdmin)
     $f .= '<div class="fr">'.PHP_EOL;
     $f .= '<input type="hidden" name="login" value="'.$user['login'].'" />'.PHP_EOL;
     $f .= '<input type="hidden" name="form" value="delete" />'.PHP_EOL;
-    $f .= '<input type="submit" class="button round delete conf" value="Delete account" />'.PHP_EOL;
+    $f .= '<input type="submit" class="button round delete conf" value="Delete" />'.PHP_EOL;
     $f .= '</div>'.PHP_EOL;
     $f .= '</form>'.PHP_EOL;
   }
@@ -154,7 +154,8 @@ function format_fields($user, $isAdmin)
   if ($isAdmin) {
     $f .= '</div><!-- end wrapper -->'.PHP_EOL;
   }
-
+  
+  
   return $f;
 }
 // end helper function ---------------------------------------------------------
@@ -190,4 +191,4 @@ else
 }
 ?>
 
-<?php include INC_PATH.'inc/footer.php'; ?>
+<?php include INC_DIR.'footer.php'; ?>

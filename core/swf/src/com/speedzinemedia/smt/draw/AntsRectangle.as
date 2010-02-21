@@ -28,13 +28,8 @@ package com.speedzinemedia.smt.draw {
             $rect = new Rectangle(0,0, parent.width,parent.height);
             $horizontalBitmap = new BitmapData(4, 2, false, 0xFFFFFF);
             $verticalBitmap = new BitmapData(2, 4, false, 0xFFFFFF);
+            
             initBitmaps();
-        };
-        
-        private function scrollBitmaps():void
-        {
-            ++$bitmapScroll;
-            if ($bitmapScroll > 3) { $bitmapScroll = 0; }
         };
         
         private function initBitmaps():void
@@ -67,8 +62,16 @@ package com.speedzinemedia.smt.draw {
             graphics.beginBitmapFill($verticalBitmap,new Matrix(1, 0, 0, 1, 0, $bitmapScroll),true,false);
             graphics.drawRect($rect.x - $lineThickness, $rect.y - $lineThickness, $lineThickness, $rect.height + $lineThickness * 2);
             graphics.drawRect($rect.x + $rect.width, $rect.y - $lineThickness, $lineThickness, $rect.height + $lineThickness * 2);
+            
             //stage.invalidate(); // if Event.ENTER_FRAME?
             //e.updateAfterEvent(); // if TimerEvent?
+        };
+        
+        private function scrollBitmaps():void
+        {
+            ++$bitmapScroll;
+            
+            if ($bitmapScroll > 3) { $bitmapScroll = 0; }
         };
 
     } // end class

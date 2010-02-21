@@ -1,9 +1,9 @@
 <div class="loginwrap">
 
-  <h1 class="title center">(smt)</h1>
+  <h1 class="title center">(smt)<sup>2</sup></h1>
   <h2 class="center">simple mouse tracking</h2>
   <?php
-  if ($_SESSION['login']) {
+  if (!empty($_SESSION['login'])) {
     echo '<p class="center"><em>You are already <a href="'.ADMIN_PATH.'">logged in</a> as <strong>'.$_SESSION['login'].'</strong></em></p>'; 
   }
   ?>
@@ -13,27 +13,30 @@
     <?php
     if ( isset($_GET['lostpassword']) ) 
     {
-      echo '<p class="warning">Write your user name and soon you will receive an email with your new password.</p>';
+      echo '<p class="warning">Write your login name and soon you will receive an email with your new password.</p>';
     } 
     else if ( isset($_SESSION['error']) ) 
     {
       $e = $_SESSION['error'];    
-      echo '<h1>'.$ERROR[ $e ].'</h1>';
+      echo '<h1>'.$_loginMsg[ $e ].'</h1>';
       switch ($e) 
       {
-        case AUTH_FAILED:
+        case "AUTH_FAILED":
           echo '<p><a href="'.ABS_PATH.'?lostpassword">Lost your password?</a></p>';
           break;
-        case MAIL_SENT:
+        case "USER_ERROR":
+          echo '<p>The login name that you requested does not exist.</p>';
+          break;
+        case "MAIL_SENT":
           echo '<p>Check your mailbox for instructions. Just in case you should check also your SPAM folder.</p>';
           break;
-        case MAIL_ERROR:
+        case "MAIL_ERROR":
           echo '<p class="error">Could not send email.</p>';
           break;
-        case RESET_PASS:
+        case "RESET_PASS":
           echo '<p>A new password was sent to your mailbox.</p>';
           break;
-        case UNDEFINED:
+        case "UNDEFINED":
           echo '<p>An unknown error occurred.</p>';
           break;
         default:
@@ -43,7 +46,7 @@
     }
     ?>
     <fieldset>
-      <label for="login">User name</label>
+      <label for="login">Login name</label>
       <input type="text" name="login" id="login" class="text" size="200" />
     </fieldset>
     

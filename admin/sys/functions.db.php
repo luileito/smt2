@@ -6,6 +6,9 @@
  * and use different database engines.
  * @date 27/March/2009    
  */
+ 
+/** @global array   look for (smt)2 tables */
+$_lookupTables = array(TBL_RECORDS,TBL_CACHE,TBL_BROWSERS,TBL_OS,TBL_USERS,TBL_ROLES,TBL_EXTS,TBL_CMS,TBL_JSOPT);
 
 /** 
  * Opens or reuses a connection against the database server. 
@@ -33,8 +36,8 @@ function db_query($sql)
 }
 
 /** 
- * Gets a row column(s) value(s) from table. 
- * This function can be used to check if a row field exists.
+ * Gets column(s) value(s) of a single row from a table.
+ * This function can be used also to check if a row field exists.
  * @param   string    $column     column(s) name(s) 
  * @param   string    $table      table name
  * @param   string    $condition  WHERE condition. To allow row ordering without WHERE clause, you can use "1 ORDER BY ..."  
@@ -52,7 +55,7 @@ function db_select($table, $column, $condition)
 }
 
 /** 
- * Selects ALL rows and columns from table that match the given $condition.
+ * Selects ALL rows and columns from table that match the given condition.
  * @param   string  $table      table name
  * @param   string  $column     column name
  * @param   string  $condition  WHERE condition. To allow row ordering without WHERE clause, you can use "1 ORDER BY ..."
@@ -61,8 +64,10 @@ function db_select($table, $column, $condition)
 function db_select_all($table, $column, $condition)
 {
   $sql = "SELECT $column FROM $table WHERE $condition";
+  
   $res = db_query($sql);
   // get ALL rows
+  $opt = array();
   while ($row = mysql_fetch_assoc($res)) {
     $opt[] = $row;
   }
@@ -120,15 +125,16 @@ function db_update($table, $tuples, $condition)
  */
 function db_check() 
 {
+  global $_lookupTables;
   // try to connect first
   $cnx = db_connect() or exit(0);
-  // look for (smt)2 tables
-  $lookup = array(TBL_RECORDS,TBL_CACHE,TBL_BROWSERS,TBL_OS,TBL_USERS,TBL_ROLES,TBL_EXTS,TBL_CMS,TBL_JSOPT); 
-  foreach ($lookup as $table) {
+  
+  foreach ($_lookupTables as $table) {
     if (!mysql_num_rows(mysql_query("SHOW TABLES LIKE '".TBL_PREFIX.$table."'", $cnx))) {
       return false;
     }
   }
+  
   return true;
 }
 

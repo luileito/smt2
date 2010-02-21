@@ -9,8 +9,8 @@ package com.speedzinemedia.smt.modal {
     import flash.events.MouseEvent;
 
     import com.bit101.components.PushButton;
-    import com.speedzinemedia.smt.modal.ModalDialog;
     import com.speedzinemedia.smt.events.ModalEvent;
+    import com.speedzinemedia.smt.modal.ModalDialog;
     
     public class ModalConfirm extends ModalDialog
     {
@@ -19,7 +19,7 @@ package com.speedzinemedia.smt.modal {
         {   
             super(parent, displayText);
             
-            var yes:PushButton = new PushButton(this, 0, 10 + parent.y + this.height, ModalEvent.MODAL_ACCEPT, acceptMe);
+            var yes:PushButton = new PushButton(this, 0, parent.y + this.height, ModalEvent.MODAL_ACCEPT, acceptMe);
             var no:PushButton = new PushButton(this, yes.x + yes.width + 10, yes.y, ModalEvent.MODAL_CANCEL, cancelMe);
         };
         

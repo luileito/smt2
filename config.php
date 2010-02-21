@@ -1,20 +1,20 @@
 <?php
 /**
- * This is the directory where you put (smt)2.
+ * This is the directory where you put smt2.
  * This path will be used to look for the core files, 
  * and may be detected automatically unless you decide to use a strange dir path
  * (i.e. /aqwa/mmkia/jd65sa/ -- silly example).
  * You can use also full URLs like http://myserver.name/smt2/
  */
-define ('ABS_PATH', "/smt2/"); // always place here an ending slash (/)
+define ('ABS_PATH', "http://localhost/smt2/"); // always place here an ending slash (/)
 
 // ----------------------------------------------------- MySQL database info ---
 
 /** 
  * Your MySQL database name. 
- * If you did not create one, (smt)2 will do it for you. 
+ * If you did not create one, smt2 will do it for you.
  * If you cannot create *new* databases, write the name of your current database
- * and (smt)2 will store their tables there.
+ * and smt2 will store their tables there.
  */
 define ('DB_NAME',     "smt");
 /** 
@@ -32,7 +32,7 @@ define ('DB_PASSWORD', "admin");
  */
 define ('DB_HOST',     "localhost");
 /** 
- * Prefix for creating (smt)2 tables. 
+ * Prefix for creating smt2 tables.
  * That's really useful if you have only one database.
  */
 define ('TBL_PREFIX',  "smt2_");
@@ -40,14 +40,8 @@ define ('TBL_PREFIX',  "smt2_");
 // ----------------------------------------------------------------- Add-ons ---
 
 /** 
- * Internal encoding to handle cache logs creation.
- * This constant is only available if the function mb_convert_encoding exists.
- */
-define ('LOG_ENCODING',  "UTF-8");
-
-/** 
- * Your Google maps key. This one is for localhost. 
- * If you put (smt)2 on your own production server, you should register (for free) at
+ * Your Google maps key for Log localization. This one is for localhost.
+ * If you put smt2 on your own production server, you should register (for free) at
  * http://code.google.com/apis/maps/signup.html 
  */
 define ('GG_KEY', "ABQIAAAAElGM1_G8Y0SLRJtsUmEeART2yXp_ZAY8_ufC3CFXhHIE1NvwkxTjJAIz5IfhLGJPdYN9-8jws6kgmQ");

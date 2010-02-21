@@ -5,8 +5,9 @@ function computeDOMelements($arr, $name)
   if (!$widget) {
     $status = 'There were no '.$name.'ed elements';
   } else {
+    $status = "";
     foreach ($widget as $elem => $freq){
-      $status .= $elem.' = '.$freq.'% of the time<br />';
+      $status .= $elem.' = '.$freq.'%<br />';
     }
   }
   return $status;
@@ -17,16 +18,18 @@ if (isset($_GET['cid'])) {
 }
 else if (isset($_GET['pid'])) { 
   echo '<p class="center"><em>This table takes into account ALL users that browsed 
-        <a href="track.php?pid='.$_GET['pid'].'&amp;api=swf">this page</a>. 
+        <a rel="external" href="track.php?pid='.$_GET['pid'].'&amp;api=swf">this page</a>.
         Thus, here you have the page model.</em></p>'; 
 }
 ?>
 
-<table cellpadding="10" cellspacing="1">
+<h3 class="mt">Interacted elements</h3>
+
+<table class="cms" cellpadding="10" cellspacing="1">
   <thead>
       <tr>
-        <th>hovered elements</th>
-        <th>clicked elements</th>
+        <th>hovered elements (frequency)</th>
+        <th>clicked elements (frequency)</th>
       </tr>
   </thead>
   <tbody>

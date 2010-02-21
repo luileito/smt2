@@ -1,6 +1,8 @@
 <?php
 // create jsGraphics script
-$js_graphics = createExternalScript($doc, WZ_JSGRAPHICS);
+$js_graphics = $doc->createExternalScript(WZ_JSGRAPHICS);
+// load JSON parser
+$js_json = $doc->createExternalScript(JSON_PARSER);
 
 // retrieve JS info from DB
 $arrOptions = db_select_all(TBL_PREFIX.TBL_JSOPT, "*", "1");
@@ -27,13 +29,24 @@ foreach ($arrOptions as $o)
 
 $cdata_options = '
 //<![CDATA[
-var smtReplayOptions = {
-'.implode(",".PHP_EOL, $customprop).'
-};
+smt2.replay({
+  '.implode(",".PHP_EOL, $customprop).'
+});
+';
+
+if (db_option(TBL_PREFIX.TBL_CMS, "refreshOnResize")) {
+  $cdata_options .= '
+    (function(){
+      smt2fn.addEvent(window, "resize", smt2fn.reloadPage);
+    })();
+  ';
+}
+
+$cdata_options .= '
 //]]>
 ';
 // create user data script
-$js_options = createInlineScript($doc, $cdata_options);
-// create (smt) replay script
-$js_replay = createExternalScript($doc, SMT_REPLAY);
+$js_options = $doc->createInlineScript($cdata_options);
+// create replay script (and insert it before $js_options)
+$js_replay = $doc->createExternalScript(SMT_REPLAY);
 ?>

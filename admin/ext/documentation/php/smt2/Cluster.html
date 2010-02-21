@@ -14,7 +14,7 @@
     <td class="header_menu">
         
                                     
-                                                  		  [ <a href="../classtrees_smt2.html" class="menu">class tree: smt2</a> ]
+                                                                      		  [ <a href="../classtrees_smt2.html" class="menu">class tree: smt2</a> ]
 		  [ <a href="../elementindex_smt2.html" class="menu">index: smt2</a> ]
 		  	    [ <a href="../elementindex.html" class="menu">all elements</a> ]
     </td>
@@ -27,25 +27,28 @@
     <td width="200" class="menu">
       <b>Packages:</b><br />
               <a href="../li_smt2.html">smt2</a><br />
+              <a href="../li_PegasusPHP.html">PegasusPHP</a><br />
               <a href="../li_PHPMailer.html">PHPMailer</a><br />
             <br /><br />
                         <b>Files:</b><br />
       	  <div class="package">
 			<a href="../smt2/_class.cluster.php.html">		class.cluster.php
 		</a><br>
+			<a href="../smt2/_class.domutil.php.html">		class.domutil.php
+		</a><br>
+			<a href="../smt2/_class.kmeans.php.html">		class.kmeans.php
+		</a><br>
 			<a href="../smt2/_class.point.php.html">		class.point.php
 		</a><br>
 			<a href="../smt2/_class.prettydate.php.html">		class.prettydate.php
 		</a><br>
-			<a href="../smt2/_class.readdir.php.html">		class.readdir.php
-		</a><br>
 			<a href="../smt2/_define.php.html">		define.php
-		</a><br>
-			<a href="../smt2/_errors.php.html">		errors.php
 		</a><br>
 			<a href="../smt2/_functions.db.php.html">		functions.db.php
 		</a><br>
 			<a href="../smt2/_functions.php.html">		functions.php
+		</a><br>
+			<a href="../smt2/_messages.php.html">		messages.php
 		</a><br>
 	  </div><br />
       
@@ -53,9 +56,10 @@
             <b>Classes:</b><br />
         <div class="package">
 		    		<a href="../smt2/Cluster.html">Cluster</a><br />
+	    		<a href="../smt2/DOMUtil.html">DOMUtil</a><br />
+	    		<a href="../smt2/KMeans.html">KMeans</a><br />
 	    		<a href="../smt2/Point.html">Point</a><br />
 	    		<a href="../smt2/prettyDate.html">prettyDate</a><br />
-	    		<a href="../smt2/readDir.html">readDir</a><br />
 	  </div>
                 </td>
     <td>
@@ -84,6 +88,8 @@ Source Location: /class.cluster.php<br /><br />
 <h3><a href="#class_vars">Variables</a></h3>
 <ul>
     <li><a href="../smt2/Cluster.html#var$avgPoint">$avgPoint</a></li>
+    <li><a href="../smt2/Cluster.html#var$maxPoint">$maxPoint</a></li>
+    <li><a href="../smt2/Cluster.html#var$medPoint">$medPoint</a></li>
     <li><a href="../smt2/Cluster.html#var$points">$points</a></li>
     <li><a href="../smt2/Cluster.html#var$variance">$variance</a></li>
   </ul>
@@ -95,7 +101,9 @@ Source Location: /class.cluster.php<br /><br />
 <ul>
     <li><a href="../smt2/Cluster.html#method__construct">__construct</a></li>
     <li><a href="../smt2/Cluster.html#methodcalculateAverage">calculateAverage</a></li>
+    <li><a href="../smt2/Cluster.html#methodcalculateMedian">calculateMedian</a></li>
     <li><a href="../smt2/Cluster.html#methodcalculateVariance">calculateVariance</a></li>
+    <li><a href="../smt2/Cluster.html#methodsetMaxPoint">setMaxPoint</a></li>
   </ul>
 </td>
 
@@ -116,7 +124,7 @@ Source Location: /class.cluster.php<br /><br />
 <h3>Class Details</h3>
 <div class="tags">
 [line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a8">8</a>]<br />
-Defines a Cluster.<br /><br /><p>Each cluster is a set of $points (x,y), with a center (x,y) and variance (x,y)</p><br /></div><br /><br />
+Defines a Cluster.<br /><br /><p>Each cluster is a set of $points (x,y), with a center (x,y) and variance on (x,y) directions</p><br /></div><br /><br />
 <div class="top">[ <a href="#top">Top</a> ]</div><br />
 
 <hr />
@@ -126,8 +134,56 @@ Defines a Cluster.<br /><br /><p>Each cluster is a set of $points (x,y), with a 
 	<a name="var$avgPoint"></a>
 	<p></p>
 	<h4>$avgPoint = <span class="value"></span></h4>
+	<p>[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a15">15</a>]</p>
+  Cluster center (mean)<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>mixed</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$maxPoint"></a>
+	<p></p>
+	<h4>$maxPoint = <span class="value"></span></h4>
 	<p>[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a13">13</a>]</p>
-  Cluster center<br /><br /><br /><br />
+  Maximum point value from sample<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>mixed</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$medPoint"></a>
+	<p></p>
+	<h4>$medPoint = <span class="value"></span></h4>
+	<p>[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a17">17</a>]</p>
+  Cluster meadian<br /><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -174,7 +230,7 @@ Defines a Cluster.<br /><br /><p>Each cluster is a set of $points (x,y), with a 
 	<a name="var$variance"></a>
 	<p></p>
 	<h4>$variance = <span class="value"></span></h4>
-	<p>[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a15">15</a>]</p>
+	<p>[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a19">19</a>]</p>
   Cluster variance<br /><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
@@ -204,17 +260,131 @@ Defines a Cluster.<br /><br /><p>Each cluster is a set of $points (x,y), with a 
 
   <hr />
 	<a name="method__construct"></a>
-	<h3>constructor __construct <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a17">17</a>]</span></h3>
+	<h3>constructor __construct <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a21">21</a>]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
 		<code>Cluster __construct(
 
-$point)</code>
+$center)</code>
     </td></tr></table>
     </td></tr></table><br />
 	
 		<br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+	
+        <h4>Parameters:</h4>
+    <div class="tags">
+    <table border="0" cellspacing="0" cellpadding="0">
+          <tr>
+        <td class="type">&nbsp;&nbsp;</td>
+        <td><b>$center</b>&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+        </table>
+    </div><br />
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodcalculateAverage"></a>
+	<h3>method calculateAverage <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a36">36</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void calculateAverage(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Computes the cluster center (mean)<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+	
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodcalculateMedian"></a>
+	<h3>method calculateMedian <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a61">61</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void calculateMedian(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Computes the cluster median<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+	
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodcalculateVariance"></a>
+	<h3>method calculateVariance <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a88">88</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void calculateVariance(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Computes the cluster variance, defined as the second sample central moment.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>link:</b>&nbsp;&nbsp;</td><td><a href="http://mathworld.wolfram.com/SampleVariance.html">http://mathworld.wolfram.com/SampleVariance.html</a></td>
+  </tr>
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+	
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodsetMaxPoint"></a>
+	<h3>method setMaxPoint <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a30">30</a>]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void setMaxPoint(
+
+$point)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Sets the maximum point value from vectors sample<br /><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -238,79 +408,12 @@ $point)</code>
     </div><br />
         <div class="top">[ <a href="#top">Top</a> ]</div>
   </div>
-  <hr />
-	<a name="methodcalculateAverage"></a>
-	<h3>method calculateAverage <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a26">26</a>]</span></h3>
-	<div class="function">
-    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
-    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
-		<code>void calculateAverage(
-
-$maxX, 
-$maxY)</code>
-    </td></tr></table>
-    </td></tr></table><br />
-	
-		Sets the cluster center<br /><br /><br /><br />
-<h4>Tags:</h4>
-<div class="tags">
-<table border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
-  </tr>
-</table>
-</div>
-<br /><br />
-
-	
-        <h4>Parameters:</h4>
-    <div class="tags">
-    <table border="0" cellspacing="0" cellpadding="0">
-          <tr>
-        <td class="type">&nbsp;&nbsp;</td>
-        <td><b>$maxX</b>&nbsp;&nbsp;</td>
-        <td></td>
-      </tr>
-          <tr>
-        <td class="type">&nbsp;&nbsp;</td>
-        <td><b>$maxY</b>&nbsp;&nbsp;</td>
-        <td></td>
-      </tr>
-        </table>
-    </div><br />
-        <div class="top">[ <a href="#top">Top</a> ]</div>
-  </div>
-  <hr />
-	<a name="methodcalculateVariance"></a>
-	<h3>method calculateVariance <span class="smalllinenumber">[line <a href="../__filesource/fsource_smt2__class.cluster.php.html#a48">48</a>]</span></h3>
-	<div class="function">
-    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
-    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
-		<code>void calculateVariance(
-)</code>
-    </td></tr></table>
-    </td></tr></table><br />
-	
-		Sets the cluster variance<br /><br /><br /><br />
-<h4>Tags:</h4>
-<div class="tags">
-<table border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
-  </tr>
-</table>
-</div>
-<br /><br />
-
-	
-        <div class="top">[ <a href="#top">Top</a> ]</div>
-  </div>
 </div><br />
 
 
         <div class="credit">
 		    <hr />
-		    Documentation generated on Sat, 12 Sep 2009 13:54:13 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
+		    Documentation generated on Sun, 21 Feb 2010 16:07:56 +0100 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
 	      </div>
       </td></tr></table>
     </td>
