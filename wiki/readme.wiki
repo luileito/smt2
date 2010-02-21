@@ -2,19 +2,16 @@
 #labels Featured
 
 
-This first release is for beta testing purposes, so please follow these instructions carefully.
-
-
 = Requirements =
 
-Your web server needs a *MySQL 5* database and *PHP 5* installed with the *cURL library*. These settings are very common on most web servers. If you don't know if your server has these requirements, you will be adviced when installing the system.
+Your Web server needs a *MySQL 5* database and *PHP 5* installed with the libraries *cURL* and *json*. These settings are very common on most Web servers. If you don't know if your server has these requirements, you will be adviced when installing the system.
 
 
 = Download =
 
-Downloads are available in a ZIP file both from the [http://smt.speedzinemedia.com/smt/downloads.php (smt) website] and the [http://code.google.com/p/smt2/downloads/list Project Downloads page].
+Downloads are available in a ZIP file either from the [http://smt.speedzinemedia.com/smt/downloads.php (smt) website] or the [http://code.google.com/p/smt2/downloads/list Project Downloads page].
 
-Now there are provided two zipped files: 
+You may grab two zipped files:
  # The production version, ready for using on your webserver (~200 Kb).
  # The sources and API documentation (~350 Kb).
 
@@ -28,7 +25,7 @@ It is recommended to put the system in a directory named `/smt2` on your localho
 
 == Steps ==
 
-First of all, you must configure the basic stuff by editing the file `config.php` and typing your MySQL database settings. Then, just upload the `smt2` folder to your web server.
+First of all, you must configure the basic stuff by editing the file `config.php`. Then, just upload the `smt2` folder to your Web server.
 
 Assuming that you've uploaded the files to a server called `mysite.com`:
 
@@ -49,27 +46,30 @@ Note that order is mandatory: aux functions first.
 
 = Customizing the recording options =
 
-These are the *default* (smt)^2.0^ recording options that you can change:
+These are the *default* (smt)^2^ recording options that you can change:
 {{{
 // Tracking frequency, in frames per second.      
 fps: 24, 	
 // Tracking timeout, in seconds.
 recTime: 120, 
-// Path to smt2 installation. The record script will try to find it automatically!
-smtPath: "/smt2", 
+// Interval to send data, in seconds
+postInterval: 2,
+// Path to smt2 installation. The record script will try to find it automatically.
+dirPath: "/smt2", 
 // You may choose to advice users (or not) that their mouse activity is going to be logged. 
 warn: false, 
 // Text to display when advising users (if warn is set to true).
 warnText: "We'd like to track your mouse activity\nin order to improve this website's usability.\nDo you agree?", 
 // Cookies lifetime (in days) to reset both first time users and agreed-to-track visitors
 cookieDays: 365,
-// Custom initialization routines. Here you can add more functionalities on init.
-initFn: null,
 // Random user selection. Setting it to false (or 0) means that all the population will be tracked.      
 disabled: 0 //Math.round(Math.random()) // <-- random sampling is recommended!
 }}}
 
-To override these defaults you do not need to edit manually the record script. Just create an object named `smtRecordingOptions` with the properties that you want to customize BEFORE the above mentioned 2 JavaScript lines. Take this example page:
+To override these defaults you do not need to edit manually the record script. 
+
+== version 2.0.0 ==
+Create an object named `smtRecordingOptions` with the properties that you want to customize BEFORE the above mentioned 2 JavaScript lines. Take this example page:
 {{{
 <html>
 
@@ -102,15 +102,48 @@ Here we are telling that the record script will live for 300 seconds, and users 
 
 Note that the last property have no ending comma.
 
-== A note about privacy ==
+== version 2.0.1 ==
 
-It is up to the webmaster enabling the `warn` property on `smt_record.js` script; however on some countries anyone who employs this type of user tracking should always inform the user about it. Furthermore, tracking of user actions should only happen for a limited amount of time. 
+Now you must call the `record` method explicitly.
+This is how to invoke it, based on the previous example:
+{{{
+<html>
+
+<head>
+
+  <title>My document title</title>
+
+  <script type="text/javascript" src="/smt2/core/js/smt-aux.min.js"></script>  
+  <script type="text/javascript" src="/smt2/core/js/smt-record.min.js"></script>
+  <script type="text/javascript">
+  try {
+    smt2.record({
+      recTime: 300,
+      disabled: Math.round(Math.random()),
+      warn:true, 
+      warnText: "We are going to record your mouse movements for a remote usability study."
+    });
+  } catch(err) {}
+  </script>
+
+</head>
+
+<body>
+Your page content goes here...
+</body>
+
+</html>
+}}}
+
+= A note about privacy =
+
+It is up to the webmaster enabling the `warn` property on `smt-record.js` script; however on some countries anyone who employs this type of user tracking should always inform the user about it. Furthermore, tracking of user actions should only happen for a limited amount of time. 
 
 If you decide to warn users, a confirm dialog will prompt *before* the webpage is rendered to the browser. You can write your own code to display a fancy modal window (or DIV) instead, as [http://smt.speedzinemedia.com/smt/comments.php#comment4976 this webmaster] did on his site. This is a good visual improvement, but unfortunately displaying a customized layered dialog instead of smt2's "ugly" javascript prompt will result in non-accurate users' metrics; e.g.: browsing time will be higher, mouse activity will be lower... and so on. 
 
-A better approach would be start recording the mouse activity and notify in some DIV on the page that she is being recorded -- i.e.: by not involving any awaiting prompt/dialog. In this way, if the user don't want to be considered in the tracking study, she could disable the recording script by simply clicking on a link that remove this user from database.
+*If you are using version 2.0.0*, a better approach would be start recording the mouse activity and notify in some DIV on the page that she is being recorded -- i.e.: by not involving any awaiting prompt/dialog. In this way, if the user don't want to be considered in the tracking study, she could disable the recording script by simply clicking on a link that remove this user from database.
 
-Another approach is on the way: to initialize explicitly the tracking script via JavaScript -- something like `smt2.init()`. That option will be included on version 2.0.1.
+*If you are using version 2.0.1*, you can tweak the initialization, as now the tracking script is called explicitly via JavaScript.
 
 
 = Recording issues? =
@@ -124,6 +157,6 @@ Please take into account this checklist before reporting a new bug about _empty 
 
 = Working with the gathered data =
 
-All recorded user visits can be managed on the _tracking report_ section of the CMS. It is recommended to use the SWF visualization tool, as it is dramatically more advanced and interactive than the JavaScript one.
+All recorded user visits can be managed on the _tracking report_ section of the CMS. The system will use the SWF visualization tool, if Flash plugin is available. Otherwise the JavaScript visualization API will be used.
 
 Read more about the CMS on the [http://code.google.com/p/smt2/wiki/CMS wiki page].
