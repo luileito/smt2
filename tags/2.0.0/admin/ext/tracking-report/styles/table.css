@@ -1,0 +1,21 @@
+/* table sorter */
+th.headerNormal {
+	background:#69C url(bg.gif) no-repeat left center;
+	cursor:pointer;
+}
+th.headerSortUp {
+	background:#69F url(asc.gif) no-repeat left center;
+	cursor:pointer;
+}
+th.headerSortDown {
+	background:#69F url(desc.gif) no-repeat left center;
+	cursor:pointer;
+}
+td.ftu {
+  background:transparent url(star.png) no-repeat left center;
+}
+
+/* filter options */
+form#filter fieldset { border:1px solid #CCC; padding:1em; }
+  form#filter fieldset legend { background:#555; color:#FFF; padding:0 1em; font:bold 80% sans-serif;}
+hr { border:1px solid #CCC; }
