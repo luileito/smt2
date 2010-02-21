@@ -1,12 +1,12 @@
 <?php
 // load base functions
-define('REL_URL', "../../../");
-require_once REL_URL.'config.php';
+require_once '../../../config.php';
 
 // get prioritized sections
 $prioritized = get_exts_order();
 // and availabe sections too
 $exts = ext_available();
+$div = "";
 foreach ($prioritized as $dirname => $priority) 
 {
   // skip deleted sections (do not remove from DB)

@@ -2,9 +2,9 @@
 // server settings are required - relative path to smt2 root dir
 require '../../../config.php';
 // protect extension from being browsed by anyone
-require INC_PATH.'sys/logincheck.php';
-// now you have access to all (smt) API functions and constants
-include INC_PATH.'inc/header.php';
+require SYS_DIR.'logincheck.php';
+// now you have access to all CMS API
+include INC_DIR.'header.php';
 
 // retrieve extensions 
 $MODULES = ext_available();
@@ -20,11 +20,11 @@ function table_row($role, $new = false)
   $self = ($role['id'] == $_SESSION['role_id']);
   
   // wrap table row in a form, so each user can be edited separately
-  $row .= '<form action="saveroles.php" method="post">';
+  $row  = '<form action="saveroles.php" method="post">';
   $row .= '<tr>';
   $row .= ' <td>';
   $row .= (!$new) ? '<strong>'.$role['name'].'</strong>' : 
-                    '<input type="text" class="text center" name="name" value="new role?" size="10" maxlength="100" />';
+                    '<input type="text" class="text center" id="newrole" name="name" value="type role name" size="15" maxlength="100" />';
   $row .= ' </td>';
   
   $allowed = explode(",", $role['ext_allowed']);
@@ -42,19 +42,22 @@ function table_row($role, $new = false)
   $row .= ' <td>';
   if ($role['id'] == 1) 
   {
-    $row .= '<em>not editable</em>';
+    $row .= '<p><em>not editable</em></p>';
   } 
   else 
   {
-    $row .= '<input type="hidden" name="submit" value="manage" />';
+    $row .= '<input type="hidden" name="form" value="manage" />';
     if ($new) {
-      $row .= '<input type="image" src="'.ADMIN_PATH.'css/add.png" name="create" alt="create" title="Create new role" />'; 
+      //$row .= '<input type="image" src="'.ADMIN_PATH.'css/add.png" name="create" alt="create" title="Create new role" />';
+      $row .= ' <input type="submit" name="create" class="button round" value="Create" />'; 
     } else {
       // if a role is allowed to this section, they should be able to change/create roles 
       $row .= '<input type="hidden" name="id" value="'.$role['id'].'" />';
-      $row .= ' <input type="image" src="'.ADMIN_PATH.'css/accept.png" name="update" alt="update" title="Update role" />';
+      //$row .= ' <input type="image" src="'.ADMIN_PATH.'css/accept.png" name="update" alt="update" title="Update role" />';
+      $row .= ' <input type="submit" name="update" class="button round small fl" value="apply" />';
       if ($ROOT) {
-        $row .= ' <input type="image" src="'.ADMIN_PATH.'css/remove.png" name="delete" alt="delete" class="ml del" title="Delete role" />';
+        //$row .= ' <input type="image" src="'.ADMIN_PATH.'css/remove.png" name="delete" alt="delete" class="ml del" title="Delete role" />';
+        $row .= ' <input type="submit" name="delete" class="button round small delete conf" value="del" />';
       }
     }
   }
@@ -70,7 +73,7 @@ function table_row($role, $new = false)
 
 <?php check_notified_request("manage"); ?>
 
-<table border="0" cellpadding="10" cellspacing="1" class="mb">
+<table cellspacing="0" class="cms">
   <caption>check those sections that each role can access to</caption>
   <thead>
     <tr>
@@ -98,7 +101,7 @@ function table_row($role, $new = false)
 
 
 
-<h1 id="describe">Describe Roles</h1>
+<h1 id="describe" class="mt">Describe Roles</h1>
 
 <?php check_notified_request("describe"); ?>
 
@@ -115,7 +118,7 @@ function table_row($role, $new = false)
     $disabled = ($role['id'] == 1 && !$ROOT) ? ' disabled="disabled"' : null;
     
     $rnd = mt_rand(); // to match label with id correctly
-    $f .= '<fieldset>';
+    $f  = '<fieldset>';
     
     $f .= '<div class="fl mr">';
     $f .= '<label for="check'.$rnd.'">change</label>'; 
@@ -133,22 +136,14 @@ function table_row($role, $new = false)
     $f .= '</div>';
     
     $f .= '</fieldset>';
+    
+    echo $f;
   }
-  echo $f;
   ?>
-  <input type="hidden" name="submit" value="describe" />
-  <input type="submit" class="button round" value="update roles" />
+  <input type="hidden" name="form" value="describe" />
+  <input type="hidden" name="action" value="update" />
+  <input type="submit" class="button round" value="Update" />
   </fieldset>
 </form>
 
-<script type="text/javascript">
-// <![CDATA[
-$(function(){
-  $('.del').click(function(e){
-    return confirm("Are you sure?");
-  });
-});
-// ]]>
-</script>
-
-<?php include INC_PATH.'inc/footer.php'; ?>
+<?php include INC_DIR.'footer.php'; ?>

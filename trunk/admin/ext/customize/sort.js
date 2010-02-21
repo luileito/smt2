@@ -35,7 +35,7 @@ $(function(){
     function delayCallback()
     {
       setTimeout(function(){
-        infoDiv.fadeOut("slow", resetInfoDiv);
+        infoDiv.slideUp("slow", resetInfoDiv);
       }, 1000);
     };
     

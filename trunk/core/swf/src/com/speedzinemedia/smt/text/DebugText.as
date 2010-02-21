@@ -12,26 +12,22 @@ package com.speedzinemedia.smt.text {
     
     public class DebugText extends TextField
     {
-        private var $displayLabel:Boolean;
-        
-        public function DebugText(parent:DisplayObjectContainer, showBackground:Boolean = false, displayLabel:Boolean = true, select:Boolean = false) 
+        public function DebugText(parent:DisplayObjectContainer, showBackground:Boolean = false, select:Boolean = false, color:uint = 0x000000)
         {
-            $displayLabel = displayLabel;
-            
             this.autoSize = TextFieldAutoSize.LEFT;
             this.selectable = select;
             this.mouseEnabled = select;
             this.background = showBackground;
             this.backgroundColor = 0xEEEEEE;
-            this.defaultTextFormat = new TextFormat("_sans", 12, 0x000000);
-            this.visible = false; // to avoid displaying a empty square when the textField is empty
+            this.defaultTextFormat = new TextFormat("_sans", 14, color);
+            this.visible = false; // avoid displaying a empty square when the textField is empty
                         
             parent.addChild(this);
         };
         
-        public function msg(str:*, label:String = "Info"):void
+        public function msg(str:*, label:String = ""):void
         {
-            this.htmlText = ($displayLabel) ? "<b>"+label+"</b>: "+str : String(str);
+            this.htmlText = (label) ? "<b>"+label+"</b>: "+str : String(str);
             this.visible = true;
         };
         

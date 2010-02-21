@@ -1,7 +1,7 @@
 <?php
 session_start();
-define('REL_URL', "../../../");
-require REL_URL.'config.php';
+
+require '../../../config.php';
 
 // check root user
 if (!is_root()) { exit; }

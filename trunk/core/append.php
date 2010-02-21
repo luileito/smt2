@@ -4,7 +4,7 @@ if (empty($_POST)) exit;
 
 require '../config.php';
 
-$values .= "sess_time = '".                         (float) $_POST['time']    ."',";
+$values  = "sess_time = '".                         (float) $_POST['time']    ."',";
 $values .= "coords_x  = CONCAT(COALESCE(coords_x, ''), ',". $_POST['xcoords'] ."'),";
 $values .= "coords_y  = CONCAT(COALESCE(coords_y, ''), ',". $_POST['ycoords'] ."'),";
 $values .= "clicks_x  = CONCAT(COALESCE(clicks_x, ''), ',". $_POST['xclicks'] ."'),";

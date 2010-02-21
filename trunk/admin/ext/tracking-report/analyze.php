@@ -2,14 +2,14 @@
 // server settings are required - relative path to smt2 root dir
 require '../../../config.php';
 // protect extension from being browsed by anyone
-require INC_PATH.'sys/logincheck.php';
+require SYS_DIR.'logincheck.php';
 // now you have access to all (smt) API functions and constants
 
-// insert custom css
+// insert custom elements on HEAD section
 add_head('<link rel="stylesheet" type="text/css" href="styles/analyze.css" />');
 add_head('<script type="text/javascript" src="'.SWFOBJECT.'"></script>');
 
-include INC_PATH.'inc/header.php';
+include INC_DIR.'header.php';
 ?>
 
 
@@ -33,7 +33,9 @@ include INC_PATH.'inc/header.php';
                      $r.".* AS record, ".$c.".* AS cache, ".$b.".name AS browser, ".$o.".name AS os", 
                      TBL_PREFIX.TBL_RECORDS.".id = '".$id."'");
                      
-    if (!$log) { die("User log #$id was not found on database."); }
+    if (!$log) { 
+      die('<strong>Error</strong>: User log #'.$id.' was not found on database.'); 
+    }
     
     // user globals
     $clientId = $log['client_id'];
@@ -42,38 +44,47 @@ include INC_PATH.'inc/header.php';
     $vpHeight[] = $log['vp_height'];
     $coordsX[] = explode(",", $log['coords_x']);
     $coordsY[] = explode(",", $log['coords_y']);
-	 $clicksX[] = explode(",", $log['clicks_x']);
-	 $clicksY[] = explode(",", $log['clicks_y']);
+    $clicksX[] = explode(",", $log['clicks_x']);
+  	$clicksY[] = explode(",", $log['clicks_y']);
     $hovered = $log['hovered'];
     $clicked = $log['clicked'];
     
-    include './includes/rawlog-header.php';
+    include './includes/rawlog-client.php';
     
     if (db_option(TBL_PREFIX.TBL_CMS, "displayGoogleMap")) {
-      include './includes/location.php';
+      include './includes/rawlog-location.php';
     }
-  } 
+  }
   else if (isset($_GET['pid'])) 
   {
     $page = (int) $_GET['pid'];
-    $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "id,sess_time,vp_width,vp_height,coords_x,coords_y,clicks_x,clicks_y,hovered,clicked",
-                          "cache_id = '".$page."'");
+    // merge logs?
+    $add = (db_option(TBL_PREFIX.TBL_CMS, "mergeCacheUrl")) ? get_common_url($page) : null;
+    $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "cache_id = '".$page."'".$add);
     
     if (!$logs) { die("Error retrieving logs."); }
-    //var_dump($logs); exit;
-  } 
+  }
   else if (isset($_GET['cid'])) 
   {
     $clientId = $_GET['cid'];
     // skip visualization items from log data
-    $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "id,sess_time,vp_width,vp_height,coords_x,coords_y,clicks_x,clicks_y,hovered,clicked",
-                          "client_id = '".$clientId."'");
+    $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "client_id = '".$clientId."'");
   }
   
-  // compute grouped metrics
+  
+  // now compute grouped metrics
   if (isset($_GET['cid']) || isset($_GET['pid'])) 
   {
-    foreach ($logs as $log) {
+    $sampleSize = db_option(TBL_PREFIX.TBL_CMS, "maxSampleSize");
+    if ($sampleSize > 0)
+      $keys = array_rand($logs, $sampleSize);
+
+    // group metrics
+    $hovered = ""; $clicked = "";
+    foreach ($logs as $i => $log)
+    {
+      if( isset($_GET['pid']) && (isset($keys) && !in_array($i, $keys)) ) continue;
+      
       $time[] = $log['sess_time'];
       $vpWidth[] = $log['vp_width'];
       $vpHeight[] = $log['vp_height'];
@@ -92,10 +103,11 @@ include INC_PATH.'inc/header.php';
   </div><!-- end rawlog -->
 
   <?php
-  if (isset($_GET['id']) || isset($_GET['cid'])) {
+  if (isset($_GET['id']) || isset($_GET['cid'])) 
+  {
     include './includes/clickpath.php';
   }
   ?>
 
 
-<?php include INC_PATH.'inc/footer.php'; ?>
+<?php include INC_DIR.'footer.php'; ?>

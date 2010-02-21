@@ -1,9 +1,9 @@
 <?php
+session_start();
 /** 
  * This file is included in any PHP file that needs to check the user login.
  * In that way, anonymous or ungranted users cannot access.  
  */
-session_start();
 
 // check persistent login first
 if (isset($_COOKIE['smt-login'])) {
@@ -13,13 +13,13 @@ if (isset($_COOKIE['smt-login'])) {
 if (empty($_SESSION['login'])) 
 {
   // redirect to root dir, where user authentication will prompt
-  $_SESSION['error'] = NOT_LOGGED;
+  $_SESSION['error'] = "NOT_LOGGED";
   header("Location: ".ABS_PATH."?redirect=".urlencode(getThisURLAddress(true)));
   exit;
 }
-// check current session login
 else 
 {  
+  // check current session login
   $user = db_select(TBL_PREFIX.TBL_USERS, "role_id", "login='".$_SESSION['login']."'");
   $role = db_select(TBL_PREFIX.TBL_ROLES, "ext_allowed", "id='".$user['role_id']."'");
   // save session
@@ -33,7 +33,7 @@ else
   if (!in_array(ext_name(), $_SESSION['allowed'])) 
   {
     // redirect to admin dir
-    $_SESSION['error'] = NOT_ALLOWED;
+    $_SESSION['error'] = "NOT_ALLOWED";
     header("Location: ".ADMIN_PATH);
     exit;
   } 

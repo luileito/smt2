@@ -32,5 +32,16 @@ if ( function_exists("curl_init") )
 else 
 {
   die('<strong class="ko">Error:</strong> Please follow <a href="http://php.net/manual/en/curl.setup.php">these instructions</a>.');
-} 
+}
+
+/* check JSON library ------------------------------------------------------- */
+echo 'Checking JSON support: ';
+if ( function_exists("json_encode") )
+{
+  echo '<strong class="ok">Ok.</strong><br />';
+}
+else
+{
+  die('<strong class="ko">Error:</strong> Please follow <a href="http://php.net/manual/en/json.setup.php">these instructions</a>.');
+}
 ?>

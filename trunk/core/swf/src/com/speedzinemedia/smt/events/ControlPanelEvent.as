@@ -9,9 +9,9 @@ package com.speedzinemedia.smt.events {
 	public class ControlPanelEvent extends BaseEvent
     {
         // notify from ControlPanel to Tracking application
-        public static const TOGGLE_REPLAY_MODE:String = "toggleReplayMode";
+        public static const TOGGLE_REPLAY_MODE:String   = "toggleReplayMode";
         // notify from Tracking to ControlPanel
-        public static const REPLAY_COMPLETE:String = "replayComplete";
+        public static const REPLAY_COMPLETE:String      = "replayComplete";
         
         public function ControlPanelEvent(type:String, obj:Object = null)
         {

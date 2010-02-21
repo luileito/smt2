@@ -8,20 +8,19 @@ package com.speedzinemedia.smt.draw {
     import flash.geom.Matrix;
     import flash.geom.Point;
     
-    import com.speedzinemedia.smt.Utils;
+    import com.speedzinemedia.smt.utils.Utils;
 
     public class Arrow extends Shape 
     {
     
-        public function Arrow(ini:Point, end:Point, 
-                              lineSytle:int = 0, head:int = 5, color:uint = 0x000000, filled:Boolean = true) 
+        public function Arrow(ini:Point, end:Point,
+                              filled:Boolean = false, lineSytle:int = 0, head:int = 5, color:uint = 0x000000) 
         {
             // draw arrow first
             if (filled) { 
                 graphics.beginFill(color); 
             }
             graphics.lineStyle(lineSytle, color);
-            
             graphics.moveTo(end.x, end.y);
             graphics.lineTo(end.x - head, end.y - head);
             graphics.moveTo(end.x, end.y);
@@ -32,7 +31,7 @@ package com.speedzinemedia.smt.draw {
             }
             
             // then rotate around center
-            const theta:Number = Utils.checkAngle(ini, end);
+            const theta:Number = Utils.angle(ini, end);
             var m:Matrix = transform.matrix;
             m.tx -= end.x;  // displace first
             m.ty -= end.y;
@@ -41,7 +40,6 @@ package com.speedzinemedia.smt.draw {
             m.tx += end.x;  // place later
             m.ty += end.y;
             transform.matrix = m;
-
         };
 
     } // end class

@@ -53,7 +53,7 @@ class prettyDate
           $dayYesterday = date('d', mktime(0, 0, 0, date('m'), date('d') - 1, date('y')));
           // If the timestamp set is later than the actually time, return nothing.
           if (is_nan($dayDiff) || $dayDiff < 0) {
-              return '';
+              return $justNow;
           }
           // If the timestamp is less than 24 hours from now, do the following...
           if ($dayDiff == 0) {

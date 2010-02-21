@@ -2,19 +2,22 @@
 //echo '<pre>'.print_r($_POST).'</pre>';exit;
 require '../../../config.php';
 // protect extension from being browsed by anyone
-require INC_PATH.'sys/logincheck.php';
+require SYS_DIR.'logincheck.php';
 
 $defaults = array(
                     "cache_id"    => "all",
+                    "url"         => "all",
                     "client_id"   => "all",
                     "os_id"       => "all",
                     "browser_id"  => "all",
                     "newusers"    => "all",
+                    //"from"        => date("Y/m/d H:i", strtotime("last year")),
                     "fromyear"    => date("Y") - 1,
                     "frommonth"   => 1,
                     "fromday"     => 1,
                     "fromhour"    => 0,
                     "fromminute"  => 0,
+                    //"to"          => date("Y/m/d H:i"),
                     "toyear"      => date("Y"),
                     "tomonth"     => date("m"),
                     "today"       => date("d"),
@@ -40,57 +43,68 @@ foreach ($defaults as $key => $value)
       $sql .= " AND ".$key." = '".$_POST[$key]."'";
     }
     // save?
-    if (!isset($_POST['reset'])) { $_SESSION[$key] = $_POST[$key]; }
-    else { unset($_SESSION[$key]); }
+    if (!isset($_POST['reset']) && isset($_POST[$key])) { $_SESSION[$key] = $_POST[$key]; }
+    else if (isset($_SESSION[$key])) { unset($_SESSION[$key]); }
   } 
   else 
   {
     // create new var
-    $$key = strip_tags(trim($_POST[$key]));
+    if (isset($_POST[$key])) { ${$key} = strip_tags(trim($_POST[$key])); }
     // check value, otherwise use default
-    if (empty($$key)) 
+    if ( empty(${$key}) ) 
     {
-      if (isset($_SESSION[$key])) {
-        $$key = $_SESSION[$key];
+      if ( isset($_SESSION[$key]) && isset($_POST[$key]) ) {
+        ${$key} = $_SESSION[$key];
         // sanitize zero values. Skip empty values on time range, but not break the loop because it should be unset if "save" is not checked
-        if ($key != "min" && $key != "max" && (int)$_POST[$key] === 0 && $_POST[$key] <= $_SESSION[$key]) { $$key = 0; }
+        if ($key != "min" && $key != "max" && (int)$_POST[$key] === 0 && $_POST[$key] <= $_SESSION[$key]) { ${$key} = 0; }
       } else {
-        $$key = $value;
+        ${$key} = $value;
       }      
     }
     // save?
-    if (!isset($_POST['reset'])) { $_SESSION[$key] = $$key; }
-    else { unset($_SESSION[$key]); }
+    if (!isset($_POST['reset'])) { $_SESSION[$key] = ${$key}; }
+    else if (isset($_SESSION[$key])) { unset($_SESSION[$key]); }
   }
 }
- 
+
+// parse date
+$from = $_POST['from'];
+$to   = $_POST['to'];
+$pattern = "/\d{2}\/\d{2}\/\d{4}\s\d{2}:\d{2}\s(a|p)m{1}/i";
+if ( (!empty($from) && !preg_match($pattern,$from)) || (!empty($to) && !preg_match($pattern,$to)) ) {
+  notify_request("mine", false, "Please use this date format: <em>mm/dd/yyyy hh:mm (a|p)m</em> &rarr; example: <em>07/23/2009 11:30 am</em>");
+}
+
 // date range
-$fromdate = date("Y-m-d H:i:s", mktime($fromhour, $fromminute, 0, $frommonth, $fromday, $fromyear) );
-$todate = date("Y-m-d H:i:s", mktime($tohour, $tominute, 59, $tomonth, $today, $toyear) );
-$sql .= " AND (sess_date BETWEEN '$fromdate' AND '$todate')"; 
+$sfrom  = (!empty($from)) ? strtotime($from) : strtotime("last year");
+$sto    = (!empty($to)) ? strtotime($to) : strtotime("now"); // +1 day?
+$fromdate = date("Y-m-d H:i:s", $sfrom);
+$todate   = date("Y-m-d H:i:s", $sto);
+$sql .= " AND (sess_date BETWEEN '$fromdate' AND '$todate')";
+
 // time range
 $sql .= " AND (sess_time BETWEEN ".$min." AND ".$max.")";
-// grouping
-if (!empty($groupby)) { $sql .= " GROUP BY ".$groupby; }
 
-// save or delete previous queries
+// grouping
+if (!empty($groupby)) {
+  $sql .= " GROUP BY ".$groupby;
+}
+
+// save or delete previous querie
 if (isset($_POST['reset'])) {
-  unset($_SESSION['filterquery']); 
+  unset($_SESSION['filterquery'], $_SESSION['groupby'], $_SESSION['from'], $_SESSION['to']);
 } else {
   // anyway, save this for redirecting
   $_SESSION['filterquery'] = $sql;
   $_SESSION['limit'] = $limit;
+  // save dates
+  $_SESSION['from'] = date("m/d/Y h:i a", $sfrom);
+  $_SESSION['to'] = date("m/d/Y h:i a", $sto);
 }
 
-//var_dump($_POST); exit;
 if (isset($_POST['download'])) {
 	include 'download.php';
 } else {
 	header("Location: ./");
 }
-/*
-echo "<br><br>".$sql."<br><br>";
-$records = db_select_all(TBL_PREFIX.TBL_RECORDS, "id,client_id,cache_id,os_id,browser_id,ftu,sess_date,sess_time", $sql);
-var_dump($records);
-*/
 ?>

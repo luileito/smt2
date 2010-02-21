@@ -1,4 +1,5 @@
 <?php
+$JSON = array();
 // get log of group pages
 if (!empty($_GET['id'])) 
 {
@@ -9,46 +10,70 @@ if (!empty($_GET['id']))
                    TBL_PREFIX.TBL_RECORDS.".id = '".$id."'");
   // log fields
   $clientId       = $log['client_id'];
+  $timestamp      = mask_client($clientId).'\n'.date("h:i A", strtotime($log['sess_date']));
   $htmlFile       = $log['file'];
   $url            = $log['url'];
   $viewportWidth  = (int) $log['vp_width'];
   $viewportHeight = (int) $log['vp_height'];
   $fps            = (int) $log['fps'];
-  $coordsX        = $log['coords_x'];
-  $coordsY        = $log['coords_y'];
-  $clicksX        = $log['clicks_x'];
-  $clicksY        = $log['clicks_y'];
+  $coordsX        = array_sanitize($log['coords_x']);
+  $coordsY        = array_sanitize($log['coords_y']);
+  $clicksX        = implode(",", array_null($log['clicks_x']));
+  $clicksY        = implode(",", array_null($log['clicks_y']));
   $hovered        = $log['hovered'];
-  $clicked        = $log['clicked'];                
+  $clicked        = $log['clicked'];
+  
+  // build JavaScript object
+  $JSON[] = '{"xcoords": ['.$coordsX.'], "ycoords": ['.$coordsY.'], "xclicks": ['.$clicksX.'], "yclicks": ['.$clicksY.'], "timestamp": "'.$timestamp.'", "wprev": '.$log['vp_width'].', "hprev": '.$log['vp_height'].'}';
 } 
 
 else if (!empty($_GET['pid'])) 
 {
   // get page identifier
-  $pid  = (int) $_GET['pid'];
-  $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, 
-                        "id,sess_time,vp_width,vp_height,fps,coords_x,coords_y,clicks_x,clicks_y,hovered,clicked", 
-                        "cache_id = '".$pid."'");
+  $pgid  = (int) $_GET['pid'];
+  // merge logs?
+  $add = (db_option(TBL_PREFIX.TBL_CMS, "mergeCacheUrl")) ? get_common_url($pgid) : null;
+  $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "cache_id = '".$pgid."'".$add);
+  
+  $sampleSize = db_option(TBL_PREFIX.TBL_CMS, "maxSampleSize");
+  if ($sampleSize > 0)
+    $keys = array_rand($logs, $sampleSize);
+    
   // group metrics
+  $hovered = ""; $clicked = "";
   foreach ($logs as $i => $log) 
   {
+    if (isset($keys) && !in_array($i, $keys)) continue;
+    
     $viewportWidth[]  = (int) $log['vp_width'];
     $viewportHeight[] = (int) $log['vp_height'];
-    $coordsX[] = explode(",", $log['coords_x']);
-    $coordsY[] = explode(",", $log['coords_y']);
+    $cX = explode(",", $log['coords_x']);
+    $cY = explode(",", $log['coords_y']);
+    $coordsX[] = $cX;
+    $coordsY[] = $cY;
+    $weights[] = count($cX);
     //$clicksX[] = explode(",", $log['clicks_x']);
     //$clicksY[] = explode(",", $log['clicks_y']);
-    //$weights[] = (int) round($log['sess_time']);
-    $weights[] = count($coordsX[$i]);
     $fps[]     = (int) $log['fps'];
     $hovered .= $log['hovered'];
     $clicked .= $log['clicked'];
+
+    // build JavaScript object
+    $timestamp = mask_client($log['client_id']).'\n'.date("h:i A", strtotime($log['sess_date']));
+    $cdX = array_sanitize($log['coords_x']);
+    $cdY = array_sanitize($log['coords_y']);
+    $clX = implode(",", array_null($log['clicks_x']));
+    $clY = implode(",", array_null($log['clicks_y']));
+    
+    // build JavaScript object
+    $JSON[] = '{"xcoords": ['.$cdX.'], "ycoords": ['.$cdY.'], "xclicks": ['.$clX.'], "yclicks": ['.$clY.'], "timestamp": "'.$timestamp.'", "wprev": '.$log['vp_width'].', "hprev": '.$log['vp_height'].'}';
   }
-  // now create the average user path
+  
+  // now compute the average user path -----------------------------------------
   $fps = ceil(array_avg($fps));
   $viewportWidth  = ceil(array_avg($viewportWidth));
   $viewportHeight = ceil(array_avg($viewportHeight));
-  // preprocess: pad all vectors
+  // preprocess: pad all mouse vectors
   $maxWeight = max($weights);
   foreach ($weights as $i => $w) 
   {
@@ -88,13 +113,17 @@ else if (!empty($_GET['pid']))
   $coordsY = implode(",", $avgCoordsY);
   //$clicksX = implode(",", $avgClicksX);
   //$clicksY = implode(",", $avgClicksY);
+  if (count($JSON) > 1) {
+    $JSON[] = '{"xcoords": ['.$coordsX.'], "ycoords": ['.$coordsY.'], "xclicks": [], "yclicks": [], "avg": true, "wprev": '.$viewportWidth.', "hprev": '.$viewportHeight.'}';
+  }
   
-  $cache = db_select(TBL_PREFIX.TBL_CACHE, "file,url", "id = '".$pid."'");
+  // set page that matches the given cache id (via GET)
+  $cache = db_select(TBL_PREFIX.TBL_CACHE, "file,url", "id = '".$pgid."'");
   $htmlFile = $cache['file']; 
   $url = $cache['url'];
 } 
 
 else { 
-  die('No tracking data'); 
+  die_msg("No tracking data");
 }
 ?>

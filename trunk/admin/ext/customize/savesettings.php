@@ -3,8 +3,7 @@ session_start();
 // check data first
 if (empty($_POST)) { exit; }
 
-define('REL_URL', "../../../");
-require REL_URL.'config.php';
+require '../../../config.php';
 
 
 // check DB table
@@ -14,7 +13,7 @@ $options = db_select_all(TBL_PREFIX.$form, "*", "1");
 foreach ($options as $row => $arrValue) 
 {
   $name = $arrValue['name'];
-  $value = $_POST[$name];
+  if (isset($_POST[$name])) { $value = $_POST[$name]; }
    
   if ($arrValue['type'] == CMS_CHOICE) {
     // store int numbers instead of "on" string from checkboxes

@@ -7,11 +7,11 @@
 body { font:90% Georgia,serif; }
 
 /* headings */
-h1,h2 { font:lighter 150% sans-serif; letter-spacing:-0.02em; }
+h1,h2 { font:normal 150% sans-serif; letter-spacing:-0.02em; }
 h1 { font-size:200%; }
 h2 { margin:.3em auto; }
 
-/* links marked as external (rel attribute) will open in a new browser tab */
+/* links marked as external (rel attribute) will open in a new browser tab, so mark'em */
 a[rel~="external"] { background:url(external.png) center right no-repeat; padding-right:13px; }
 
 /* useful, common styles */
@@ -22,7 +22,8 @@ a[rel~="external"] { background:url(external.png) center right no-repeat; paddin
 .heading { margin:.5em auto; }
 .block { display:block; }
 .valign { vertical-align:middle; }
-.mini { font-size:55%; }
+.small { font-size:75% !important; }
+.mini { font-size:55% !important; }
 
 .clear { clear:both; }
 .fl { float:left; }
@@ -39,35 +40,38 @@ a[rel~="external"] { background:url(external.png) center right no-repeat; paddin
 .pl { padding-left:1em; }
 
 /* tables */
-table { width:100%; margin:auto; table-layout:fixed; }
-caption { font-size:100%; padding:.5em; margin:0 auto; }
-th { text-align:center; font:80% sans-serif; font-weight:bold; padding:.3em; }
-tr { text-align:center; }
-td { padding:0 1em; /*vertical-align:top;*/ }
+table.cms { width:100%; margin:auto; table-layout:fixed; /*border-collapse:collapse;*/ }
+table.cms caption { font-size:100%; padding:.5em; margin:0 auto; }
+table.cms th { text-align:center; font:80% sans-serif; font-weight:bold; padding:.3em; }
+table.cms tr { text-align:center; }
+table.cms td { /*vertical-align:top;*/ }
 
 /* forms */
 fieldset { margin:.7em auto; display:block; }
-legend { font-size:75%; }
-label { font-weight:bold; font-size:75%; }
+legend { font-size:75%; text-align:left; }
+label { font-weight:bold; font-size:75%; color:#036; }
 input,select { vertical-align:middle; }
-  .text { border:1px solid #555; padding:2px; }
+  select, .text { border:1px solid #555; padding:2px; }
   .radio { margin-left:.5em; }
-  .button { margin:auto 1em; padding:.3em 1em; cursor:pointer; font:bold italic 90% Georgia,serif; }
+  /*.button { margin:auto 1em; padding:.3em 1em; cursor:pointer; font:bold italic 90% Georgia,serif; }*/
+  .button { margin:auto 1em; padding:.3em .7em; cursor:pointer; font:bold 100% sans-serif; }
+  
 .readonly { background-color:#AAA; }
 
 /* system messages */
 .error, .success, .warning { display:block; clear:both; color:#000; text-align:left; padding:.5em .5em .5em 30px; margin-bottom:1em; 
                              border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; }
-  .error { border:1px solid #C00; background:#FCC url(icon-error.png) no-repeat 5px center; }
-  .success { border:1px solid #393; background:#CFF url(icon-success.png) no-repeat 5px center; }
-  .warning { border:1px solid #FC6; background:#FFC url(icon-warning.png) no-repeat 5px center; }
+  .error { border:1px solid #C00; background:#FCC url(icon-error.png) no-repeat 5px 5px; }
+  .success { border:1px solid #393; background:#CFF url(icon-success.png) no-repeat 5px 5px; }
+  .warning { border:1px solid #FC6; background:#FFC url(icon-warning.png) no-repeat 5px 5px; }
 
 /* first time users will be starred on tracking report section */
 .ftu { background:transparent url(icon-star.png) no-repeat center left; }
 
 /* round corners */
 .round { border-radius:10px; -moz-border-radius:10px; -webkit-border-radius:10px; }
+.smallround { border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; }
 
 /* other elements */
-acronym { cursor:help; border-bottom: 1px dotted #000; }
+abbr { cursor:help !important; border-bottom:1px dotted #000; }
 p { margin-bottom:.5em; }

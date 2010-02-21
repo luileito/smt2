@@ -1,25 +1,49 @@
 <?php
 /**
- * (smt)2 CMS core functions.
- * @date 27/March/2009    
+ * smt2 CMS core functions.
+ * @date 27/March/2009  
+ * @rev 20/December/2009
  */
+error_reporting(E_ALL | E_STRICT);
+
+unregister_GLOBALS();
+
+// ignore PHP strict notice if time zone has not been set in php.ini
+$defaultTimeZone = @date_default_timezone_get();
+
+if ($defaultTimeZone) {
+  $location = $defaultTimeZone;
+} else if (ini_get('date.timezone')) {
+  $location = ini_get('date.timezone');
+} else {
+  $location = 'UTC';
+}
+// set date
+date_default_timezone_set($location);
+
+// load base files
 define('REQUIRED', dirname(__FILE__));
 
-// --------------------------------------------------------- (smt) constants ---
+// ---------------------------------------------------------- smt2 constants ---
 require REQUIRED.'/define.php';
 require REQUIRED.'/messages.php';
-
-// --------------------------------------------------------- K-means classes ---
-require REQUIRED.'/class.cluster.php';
+// --------------------------------------------------------------- utilities ---
+require REQUIRED.'/class.domutil.php';
+require REQUIRED.'/class.browser.php';
 require REQUIRED.'/class.point.php';
-
-// ------------------------------------------------------- (smt) backend API ---
+// ------------------------------------------------------------ database API ---
 require REQUIRED.'/functions.db.php';
 
 /** 
- * Checks if server is ready to work with (smt) by comparing the server's $type version.
+ * Additional head tags. Enable inserting custom tags on page head.
+ * @global array $_headAdded
+ */
+$_headAdded = array();
+
+/** 
+ * Checks if server is ready to work with smt2 by comparing the server's $type version.
  * At least are required both PHP 5 and MySQL 5.
- * @param   string    $type       "php" or "mysql" by now
+ * @param   string    $type       "php" or "mysql", by now
  * @param   string    $minReqVer  minimun system version (default: 5.0.0) 
  * @return  boolean               TRUE on sucess, or FALSE on failure 
  */
@@ -27,7 +51,7 @@ function check_systemversion($type, $minReqVer = "5.0.0")
 {
   switch (strtolower($type)) {
     case 'mysql':
-      $ver = mysql_get_server_info();
+      $ver = mysql_get_client_info();
       break;
     case 'php':
       $ver = phpversion();
@@ -42,8 +66,8 @@ function check_systemversion($type, $minReqVer = "5.0.0")
 }
 
 /** 
- * Checks if a new (smt) version is released.
- * @return  int   server response: 1 (up to date), 2 (new version found), 3 (minor build released), 0 (connection error), -1 (parsing error) 
+ * Checks if a new smt2 version is released.
+ * @return  int   Server response: 1 (up to date), 2 (new version found), 3 (minor build released), 0 (connection error), -1 (parsing error) 
  */
 function get_smt_releases()
 {
@@ -54,35 +78,53 @@ function get_smt_releases()
 }
 
 /** 
- * Displays a message about the installed (smt) version.
- * @return  string   message 
+ * Displays a message about the installed smt2 version.
+ * @return  string   Message 
  */
 function check_smt_releases()
 {
+  global $_displayType;
+  
   $dwnurl = "http://smt.speedzinemedia.com/smt/downloads.php";
   
   $code = get_smt_releases();
   
   switch ($code) {
     case -1:  // parsing/reading error
-      $msg = '<p class="error">Error while retrieving new (smt) releases.</p>';
+      $type = $_displayType["ERROR"];
+      $text = 'Error while retrieving new (smt)<sup>2</sup> releases.';
       break;
     case 0:   // connection error
     default:
-      $msg = '<p class="error">Could not find new (smt) releases. If your Internet connection is OK, maybe the server is temporarily down.</p>';
+      $type = $_displayType["ERROR"];
+      $text = 'Could not find new (smt)<sup>2</sup> releases. If your Internet connection is OK, maybe the server is temporarily down.';
       break;
     case 1:   // up to date
-      $msg = '<p class="success">You are using the latest (smt) version: '.SMT_VERSION.'</p>';
+      $type = $_displayType["SUCCESS"];
+      $text = 'You are using the latest (smt)<sup>2</sup> version: '.SMT_VERSION;
       break;
     case 2:   // new version found
-      $msg = '<p class="warning">A new (smt) version is available. <a href="'.$dwnurl.'">Please upgrade</a>.</p>';
+      $type = $_displayType["WARNING"];
+      $text = 'A new (smt)<sup>2</sup> version is available. <a href="'.$dwnurl.'">Please upgrade</a>.';
       break;
     case 3:   // minor build released
-      $msg = '<p class="warning">It seems that there is a <a href="'.$dwnurl.'">new (smt) build available</a>.</p>';
+      $type = $_displayType["WARNING"];
+      $text = 'It seems that there is a <a href="'.$dwnurl.'">new (smt)<sup>2</sup> build available</a>.';
       break;
   }
   
-  return $msg;
+  return display_text($type, $text);
+}
+
+/**
+ * Displays a text paragraph on page.
+ * @param   string    $type "warning", "error" or "success"
+ * @param   string    $msg  message to display
+ * @param   string    $elem DOM element to enclose message (default: p)
+ */
+function display_text($type, $msg, $elem = 'p')
+{
+  return '<'.$elem.' class="'.$type.'">'.$msg.'</'.$elem.'>';
 }
 
 /**
@@ -93,31 +135,22 @@ function check_smt_releases()
  */
 function notify_request($id, $success, $customErr = "")
 {
-  $errorMessage = "An error occurred while processing your request.";
+  global $_displayType, $_notifyMsg;
+  
+  $errorMessage = $_notifyMsg["ERROR"];
   if (!$success && !empty($customErr)) {
     $errorMessage = $customErr;
   }
   
   $_SESSION[ $id ] = ($success) ? 
-                     '<p class="success">Data were processed successfully.</p>' :
-                     '<p class="error">'.$errorMessage.'</p>';
+                     display_text($_displayType["SUCCESS"], $_notifyMsg["SAVED"])
+                     :
+                     display_text($_displayType["ERROR"],   $errorMessage);
   
-  header("Location: ".dirname($_SERVER['PHP_SELF'])."/#".$id);
-  // stop processing more PHP instructions
-  exit;
+  redirect( dirname($_SERVER['SCRIPT_NAME'])."/#".$id );
 }
 
 /**
- * Redirects the browser to a specified anchor on the page that sent a form.
- * @param   string    $id   HTML element id
- * @param   string    $msg  message to display  
- */
-function notify_request_warning($id, $msg)
-{
-  $_SESSION[ $id ] = '<p class="warning">'.$msg.'</p>';
-}
-
-/** 
  * Displays the message saved on current PHP session. Then the $_SESSION text is unset.
  * @param   string  $name   session variable name 
  */
@@ -142,6 +175,7 @@ function trim_text($text, $words = 5)
   $space = " ";  
   $text = explode($space, $text);
   
+  $show = "";
   foreach ($text as $i => $str) {
     if ($i < $words) { 
       $show .= $str.$space; 
@@ -205,8 +239,8 @@ function get_client_id()
 
 /** 
  * Masks a given client ID string.
- * @return string         Pretty-formatted client ID 
  * @param  string   $id   client ID 
+ * @return string         Pretty-formatted client ID 
  */
 function mask_client($id)
 {
@@ -217,17 +251,17 @@ function mask_client($id)
 }
 
 
-/**
+/** 
  * Gets URL contents within the HTTP server response header fields.
- * This function uses cURL to fetch remote pages.
+ * This function uses cURL to fetch remote pages. 
  * @param  string   $URL   web page URL
- * @param  array    $opts  custom cURL options
+ * @param  array    $opts  custom cURL options  
  * @return array           Transfer information (the web page content is in the "content" array key)
  * @link  http://es2.php.net/manual/en/curl.constants.php
  * @link  http://es2.php.net/manual/en/function.curl-setopt.php
  */
 function get_remote_webpage($URL, $opts = array())
-{ 
+{
   // basic options (regular GET requests)
   $options = array(
                     CURLOPT_URL            => $URL,
@@ -241,17 +275,18 @@ function get_remote_webpage($URL, $opts = array())
                     CURLOPT_SSL_VERIFYHOST => false
                   );
 
-  /* cURL should follow redirections!
+  /* cURL should follow redirections! 
    * But safe mode (deprecated) and open_basedir (useless) are incompatible
    * with CURLOPT_FOLLOWLOCATION.
-   * Also see this solution: http://www.php.net/manual/en/function.curl-setopt.php#71313
+   * Also see this solution: http://www.php.net/manual/en/function.curl-setopt.php#71313      
    */
   if (!ini_get('safe_mode') && !ini_get('open_basedir')) {
     $options[ CURLOPT_FOLLOWLOCATION ] = true;  // follow redirects
     $options[ CURLOPT_AUTOREFERER ]    = true;  // automatically set the Referer: field
     $options[ CURLOPT_MAXREDIRS ]      = 5;     // limit redirect loops
+    
   }
-
+  
   // add custom cURL options (e.g. POST requests, cookies, etc.)
   if (count($opts) > 0)
   {
@@ -259,17 +294,18 @@ function get_remote_webpage($URL, $opts = array())
       $options[$key] = $value;
     }
   }
-
-  $ch = curl_init();
-  curl_setopt_array($ch, $options);
   
+  $ch = curl_init();
+
+  curl_setopt_array($ch, $options);
+
   $content  = curl_exec($ch);     // the Web page
   $transfer = curl_getinfo($ch);  // transfer information (http://www.php.net/manual/en/function.curl-getinfo.php)
   $errnum   = curl_errno($ch);    // codes: http://curl.haxx.se/libcurl/c/libcurl-errors.html
   $errmsg   = curl_error($ch);    // empty string on success
 
   curl_close($ch);
-  
+
   // extend transfer info
   $transfer['errnum']  = $errnum;
   $transfer['errmsg']  = $errmsg;
@@ -281,13 +317,13 @@ function get_remote_webpage($URL, $opts = array())
 
 /** 
  * Displays a default error page.
- * Used when a cached page is deleted, as well as when cURL cannot fetch a remote page.
- * @return string             The error page 
+ * Used when a cached page is deleted, as well as when cURL cannot fetch a remote page. 
  * @param  string   $bodyText additional info to display on page body
+ * @return string             The error page 
  */
 function error_webpage($bodyText = "") 
 {  
-  $webpage = '<html><head><title>Not found!</title></head><body>'.$bodyText.'</body></html>';
+  $webpage = '<html><head><title>Error</title></head><body>'.$bodyText.'</body></html>';
   
   return $webpage; 
 } 
@@ -328,12 +364,14 @@ function compute_frequency($input, $threshold = 1)
 }
 
 /** 
- * Removes empty items (both key and value) from an associative array.
- * @param   array  $input   array to sanitize
- * @return  array           Sanitized array
+ * Removes empty items (both key and value) from an associative numeric array.
+ * @param   mixed  $input   array or string to sanitize
+ * @return  mixed           Sanitized array or string (used for widget tracking)
  */
-function array_sanitize($input) 
+function array_sanitize($input)
 {
+  $isString = false;
+  
   if (!is_array($input)) { 
     $input = explode(",", $input);
     $isString = true; 
@@ -354,54 +392,128 @@ function array_sanitize($input)
 }
 
 /** 
- * Does a weighted sum for a given multidimensional array and computed weights.
- * @param   array  $inputArray  multidimensional array (matrix)
- * @param   array  $weights     weights 
- * @return  array               Weighted sum
+ * Convert null values to empty strings. Used to generate valid JSON arrays.
+ * @param   array  $input   array
+ * @return  array           Parsed array
+ */
+function array_null($input)
+{
+  if (!is_array($input)) {
+    $input = explode(",", $input);
+  }
+  
+  $temp = array(); 
+  foreach ($input as $key => $value) {
+    // store valid data
+    $temp[$key] = (!empty($value)) ? $value : 0;
+  }
+  
+  return $temp;
+}
+
+/** 
+ * Does a weighted sum for a given multidimensional numeric array and computed weights.
+ * @param   array  $input     multidimensional array (matrix)
+ * @param   array  $weights   weights 
+ * @return  array             Weighted sum
  * @link    http://www.compapp.dcu.ie/~humphrys/PhD/e.html 
  */
-function weighted_avg($inputArray, $weights) 
+function weighted_avg($input, $weights) 
 {
   $sumArray = array();
   
-  foreach ($inputArray as $arrItem) {
-    $sumArray[] = array_avg($arrItem) * count($arrItem)/max($weights);
+  foreach ($input as $arrItem) {
+    $sumArray[] = array_avg($arrItem) * count($arrItem) / max($weights);
   }
   
   return $sumArray;
 }
 
 /** 
- * Computes the average sum of an array.
- * @param   array  $inputArray   array or set of arrays
- * @return  float                Array average  
+ * Computes the average sum of a numeric array.
+ * @param   array  $input   array or set of arrays (matrix)
+ * @return  float           Array average
  */
-function array_avg($inputArray) 
+function array_avg($input)
 {
-  $arrArgs = (func_num_args() === 1) ? $inputArray : func_get_args();
+  return round( array_sum($input) / count($input), 2);
+}
+
+/**
+ * Computes the average sum of a matrix, assuming that each row is a numeric array.
+ * @param   array $matrix a set of arrays (matrix)
+ * @return  float         matrix average value
+ */
+function matrix_avg($matrix)
+{
+  $sum = 0;
   $count = 0;
-  
-  foreach ($arrArgs as $arrItem) 
+
+  foreach ($matrix as $arrItem)
   {
     if (!is_array($arrItem)) { $arrItem = explode(",", $arrItem); }
-    
-    $sum += array_sum($arrItem)/count($arrItem);
+
+    $sum += array_avg($arrItem);
+    // note that this is an accumulative sum
+    ++$count;
+  }
+
+  return round( $sum/$count, 2 );
+}
+
+/**
+ * Computes the variance of a numeric array.
+ * @param   array  $input   array
+ * @return  int             Array index
+ */
+function array_sd($input)
+{
+  $variance = 0;
+  $mean = array_avg($input);
+  foreach ($input as $elem) {
+    $variance += ($elem - $mean) * ($elem - $mean);
+  }
+
+  return round( sqrt($variance/count($input)), 2 );
+}
+
+/**
+ * Computes the standard deviation of a matrix, assuming that each row is a numeric array.
+ * @param   array $matrix a set of arrays (matrix)
+ * @return  float         matrix average value
+ */
+function matrix_sd($matrix)
+{
+  $sd = 0;
+  $count = 0;
+
+  foreach ($matrix as $arrItem)
+  {
+    if (!is_array($arrItem)) { $arrItem = explode(",", $arrItem); }
+
+    $sd += array_sd($arrItem);
+
+    // note that we can have more than one input array
     ++$count;
   }
   
-  return round($sum/$count, 2);
+  return round( $sd/$count, 2 );
 }
 
 /** 
  * Gets the array index that has the maximum value.
- * @param   array  $inputArray   array
- * @return  int                  Array index  
+ * @param   array  $input   array
+ * @return  int             Array index
  */
-function array_argmax($inputArray) 
+function array_argmax($input)
 {
-  $max = max($inputArray);
-  foreach ($inputArray as $key => $value) {
-    if ($value == $max) { $maxIndex = $key; }
+  $max = max($input);
+  foreach ($input as $key => $value)
+  {
+    if ($value == $max) {
+      $maxIndex = $key;
+      break;
+    }
   }
   
   return $maxIndex;
@@ -409,36 +521,63 @@ function array_argmax($inputArray)
 
 /** 
  * Gets the array index that has the minimum value.
- * @param   array  $inputArray   array
- * @return  int                  Array index  
+ * @param   array  $input   array
+ * @return  int             Array index
  */
-function array_argmin($inputArray) 
+function array_argmin($input)
 {
-  $min = min($inputArray);
-  foreach ($inputArray as $key => $value) {
-    if ($value == $min) { $minIndex = $key; }
+  $min = min($input);
+  foreach ($input as $key => $value)
+  {
+    if ($value == $min) {
+      $minIndex = $key;
+      break;
+    }
   }
   
   return $minIndex;
 }
 
+/**
+ * Denests nested arrays within the given array.
+ * @autor DZone Snippets
+ * @link  http://snippets.dzone.com/posts/show/4660
+ */
+function array_flatten($input)
+{
+  $i = 0;
+  while ($i < count($input))
+  {
+    if (is_array($input[$i])) {
+      array_splice($input, $i, 1, $input[$i]);
+    } else {
+      ++$i;
+    }
+  }
+
+  return $input;
+}
+
 /** 
  * Merges vertical and horizontal coordinates in a bidimensional point array.
+ * Stops coordinates (hesitations) are removed. 
  * @param   array  $xcoords        horizontal coordinates
  * @param   array  $ycoords        vertical coordinates
  * @param   array  $getDistances   if TRUE, the result array contains euclidean distances
- * @return  array                  2D points or euclidean distances
+ * @return  array                  2D points or euclidean distances array
  */
 function convert_points($xcoords, $ycoords, $getDistances = false) 
 {
   // initialize points array
   $pointArray = array();
+  // check for illegal offsets on $coords
+  $maxCount = count($xcoords) - 1;
   // transform arrays in a single points array
   foreach ($xcoords as $i => $value) 
   {
     $p = new Point($value, $ycoords[$i]); 
     // check if next point exists 
-    if ($xcoords[$i + 1] === null) { break; }
+    if ($i >= $maxCount) { break; }
     // ok
     $q = new Point($xcoords[$i + 1], $ycoords[$i + 1]);
     $distance = $p->getDistance($q);
@@ -454,220 +593,83 @@ function convert_points($xcoords, $ycoords, $getDistances = false)
   return $pointArray;
 }
 
-/** 
- * Computes K-means clustering for a given 2D array of mouse points.
- * @param   int    $k     number of clusters  
- * @param   array  $arr   points array
- * @return  array         clusters (center means and mean variances)
+/**
+ * Counts the number of mouse clicks.
+ * Drag and drop traces are removed.
+ * @param   array  $xclicks   horizontal click coordinates
+ * @param   array  $yclicks   vertical click coordinates
+ * @return  int               number of clicks
  */
-function distributeOverClusters($k, $arr)
+function count_clicks($xclicks, $yclicks)
 {
-  // set 1 minute timeout for dealing with large vectors
-  ini_set('max_execution_time', 60);
-
-  $maxX = 0; $maxY = 0;
-  foreach ($arr as $point) 
-  {
-    if ($point->x > $maxX) { $maxX = $point->x; }
-    if ($point->y > $maxY) { $maxY = $point->y; }
-  }
-    
-  for ($i = 0; $i < $k; ++$i) 
-  {
-    // initialize clusters centers randomly
-    $center = new Point(rand(0, $maxX), rand(0, $maxY));
-    // create clusters
-    $clusters[] = new Cluster($center);
-  }
+  $numClicks = 0;
   
-  // now deploy points to closest center
-  for ($a = 0; $a < 10; ++$a)         // 10 iterations is enough...
-  {       
-    foreach ($clusters as $cluster) {
-      $cluster->points = array();     // reinitialize points
-    }
-    // compute best distance
-    foreach ($arr as $pnt) 
-    {
-      $bestcluster = $clusters[0];
-      $bestdist = $clusters[0]->avgPoint->getDistance($pnt);
-      
-      foreach ($clusters as $cluster) {
-        $distance = $cluster->avgPoint->getDistance($pnt);
-        if ($distance < $bestdist) {
-          $bestcluster = $cluster;
-          $bestdist = $distance;
-        }
-      }
-      // add the point to the best cluster.
-      $bestcluster->points[] = $pnt;
-    }
-    // recalculate the centers and sample variance
-    foreach ($clusters as $cluster) {
-      $cluster->calculateAverage($maxX, $maxY);
-      $cluster->calculateVariance();
-    }
-    
-  } // end loop
-  
-  return $clusters;
-}
-
-/* Katsavounidis et al. "A New Initialization Technique for Generalized
- * Lloyd Iteration", IEEE Signal Proc. Lett. 1 (10), 144-146, 1994. 
- */
-function distributeOverClusters2($k, $arr)
-{
-  // set 1 minute timeout for dealing with large vectors
-  ini_set('max_execution_time', 60);
-  
-  $maxX = 0; $maxY = 0; $maxNorm = 0; $maxIndex = 0;
-  // init
-  foreach ($arr as $i => $point) 
-  {
-    if ($point->x > $maxX) { $maxX = $point->x; }
-    if ($point->y > $maxY) { $maxY = $point->y; }
-    // calculate the L2 norm of all mouse points (2D vector)
-    $norm = vectorNorm($point, "uL2");
-    if ($norm > $maxNorm) { 
-      $maxNorm = $norm;
-      $maxIndex = $i; 
-    }
-  }
-  
-  $clusters = array();
-  // choose the vector with the maximum norm as the first codeword
-  $clusters[0] = new Cluster($arr[$maxIndex]);
   // check
-  if ($k < 2) {
-    $clusters->points = $arr;
-    return $clusters;
-  }
-  /* Calculate the distance of all mouse points from the first codeword
-   * and choose the vector with larger distance as the second codeword
-   */  
-  $clusters[1] = deployCluster($clusters[0]->avgPoint, $arr);
+  if (!is_array($xclicks)) { $xclicks = array_null($xclicks); }
+  if (!is_array($yclicks)) { $yclicks = array_null($yclicks); }
   
-  /* With codebook of size > 2, compute the distance between any remaining
-   * vector and all existing codewords
-   */  
-  for ($i = 2; $i < $k; ++$i) {
-    $center = new Point(rand(0, $maxX), rand(0, $maxY));
-    $clusters[$i] = deployCluster($center, $arr);
-  }
-  for ($a = 0; $a < 5; ++$a)         // 5 iterations is enough...
-  {       
-    foreach ($clusters as $cluster) {
-      $cluster->points = array();     // reinitialize points
-    }
-    // compute best distance
-    foreach ($arr as $pnt) 
-    {
-      $bestcluster = $clusters[0];
-      $bestdist = $clusters[0]->avgPoint->getDistance($pnt);
-      
-      foreach ($clusters as $cluster) {
-        $distance = $cluster->avgPoint->getDistance($pnt);
-        if ($distance < $bestdist) {
-          $bestcluster = $cluster;
-          $bestdist = $distance;
-        }
-      }
-      // add the point to the best cluster.
-      $bestcluster->points[] = $pnt;
-    }
-    // recalculate the centers and sample variance
-    foreach ($clusters as $cluster) {
-      $cluster->calculateAverage($maxX, $maxY);
-      $cluster->calculateVariance();
-    } 
-  } // end loop 
-  return $clusters;
-}
-
-/** 
- * Assigns points to a cluster.
- * @param   array   $center   cluster center  
- * @param   array   $vectors  array of 2D points
- * @return  array             New cluster
- */
-function deployCluster($center, $vectors)
-{
-  foreach ($vectors as $v) 
+  $maxCount = count($xclicks) - 1;
+  // transform points
+  foreach ($xclicks as $i => $value)
   {
-    $distance = $center->getDistance($v);
-    
-    if ($distance > $bestDist) {
-      $nextCluster = $v;
-      $bestDist = $distance;
+    $p = new Point($value, $yclicks[$i]);
+    // check if next point exists
+    if ($i >= $maxCount) { break; }
+
+    $q = new Point($xclicks[$i + 1], $yclicks[$i + 1]);
+    if ($p->getDistance($q) > 0 && !$q->x) {
+      $numClicks++;
     }
   }
-  $cluster = new Cluster($nextCluster);
-  
-  return $cluster;
-}
 
-/** 
- * Vector Norm calculation
- * @param   array   $array  input Array  
- * @param   string  $type   norm calculation type: "L1", "uL2", "sL2", "Linf"
- * @return  float           Vector Norm
- * @link http://w3.gre.ac.uk/~physica/phy3.00/theory/node97.htm 
+  return $numClicks;
+}
+      
+/**
+ * Makes an HTTP 1.1 compliant redirect.
+ * Absolute URLs are required, though all modern browsers support relative URLs.
+ * @param   string    $path  where to go to, starting at server root (default: none)
  */
-function vectorNorm($array, $type) 
+function redirect($path = "")
 {
-  /* Note: mouse coordinates are positive values always, so we don't need 
-   * to compute the absolute values first for cases "sL2", "Linf" and "Linf2".
-   */
-  switch ($type) 
-  {
-    /** 1-norm */
-    case "L1":
-      foreach ($array as $value) { $sum += abs($value); }
-      $result = $sum;
-      break;
-        
-    /** Unscaled 2-norm */  
-    case "uL2":
-    default:
-      foreach ($array as $value) { $sum += $value*$value; }
-      $result = sqrt($sum);
-      break;
-      
-    /** Scaled 2-norm */
-    case "sL2":
-      $rmax = max($array);
-      foreach ($array as $value) {
-        $value /= $rmax; 
-        $sum += $value*$value; 
-      }
-      $result = $rmax * sqrt($sum);
-      break;
-      
-    /** Infinity norm */
-    case "Linf":
-      $result = max($array);
-      break;
-      
-    /** Negative infinity norm */
-    case "Linf2":
-      $result = min($array);
-      break;  
-  }
+  $url = get_server_URL();
   
-  return $result;
+  if (empty($path)) { $path = $url; }
+  // check that server url is on the $path argument
+  if (strpos($path, $url) === false) { $path = $url.$path; }
+  
+	header("Location: ".$path);
+	exit;
 }
 
-/** 
- * Gets the full path to the current PHP file (protocol + domain + paths/to/file).
- * @param   boolean  $fullURI  append the query string, if any (default: false)  
+/**
+ * Gets the URL of current server (protocol + domain).
  * @return  string             Full URL
  */
-function getThisURLAddress($fullURI = false)
+function get_server_URL()
+{
+  //$protocol = "http://";
+  $protocol = "http" . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") ? "s" : null) . "://";
+
+  $host = $_SERVER['HTTP_HOST']; // reliable in virtual hosts
+  if (empty($host)) {
+    $host = $_SERVER['SERVER_NAME'];
+  }
+  
+  return $protocol.$host;
+}
+
+/**
+ * Gets the full path to the current PHP file (protocol + domain + paths/to/file).
+ * @param   boolean  $fullURI  append the query string, if any (default: false)
+ * @return  string             Full URL
+ */
+function get_current_URL($fullURI = false)
 {
   // quick check:
-  $url  = "http".(!empty($_SERVER['HTTPS']) ? "s" : null)."://".$_SERVER['SERVER_NAME'];
-  $url .= ($fullURI) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF'];  
+  $url  = get_server_URL();
+  $url .= $_SERVER['SCRIPT_NAME'];
+  if ($fullURI) { $url .= '?'.$_SERVER['QUERY_STRING']; }
 
   return $url;
 }
@@ -677,109 +679,19 @@ function getThisURLAddress($fullURI = false)
  * @param   string  $url  input URL  
  * @return  string        Base URL
  */
-function getBase($url)
+function get_base($url)
 {
-  // split url in dirs  
+  // split url in dirs
   $paths = explode("/", $url);
-  // remove last element, so we do not have to worry about the query string (?var1=value1&var2=value2#anchor...)
-  array_pop($paths);
-  // and we have the BASE href
-  $base = implode("/", $paths) . "/";  
-
-  return $base;
-}
-
-/** 
- * Creates an external script element.
- * @param   object  $dom  DOMDocument  
- * @param   string  $url  script URL
- * @return  string        HTML element: <script type="text/javascript" src="$url"></script>
- */
-function createExternalScript($dom, $url) 
-{
-  $js = $dom->createElement('script');
-  $js->setAttribute('type', 'text/javascript');
-  $js->setAttribute('src', $url);
-  
-  return $js;
-}
-
-/** 
- * Creates an inline script element.
- * @param   object  $dom      DOMDocument  
- * @param   string  $cdata    javascript code (should be wrapped in a CDATA section)
- * @return  string            HTML element: <script type="text/javascript">$cdata</script>
- */
-function createInlineScript($dom, $cdata) 
-{ 
-  $js = $dom->createElement('script', $cdata);
-  $js->setAttribute('type', 'text/javascript');
-
-  return $js;
-}
-
-/** 
- * Creates an external stylesheet element.
- * @param   object  $dom  DOMDocument  
- * @param   string  $url  stylesheet URL
- * @return  string        HTML element: <link type="text/css" rel="stylesheet" href="$url" />
- */
-function createExternalStyleSheet($dom, $url) 
-{
-  $css = $dom->createElement('link');
-  $css->setAttribute('type', 'text/css');
-  $css->setAttribute('rel', 'stylesheet');
-  $css->setAttribute('href', $url);
-  
-  return $css;
-}
-
-/** 
- * Creates an inline stylesheet element.
- * @param   object  $dom     DOMDocument  
- * @param   string  $styles  CSS styles
- * @return  string           HTML element: <style type="text/css">$styles</style>
- */
-function createInlineStyleSheet($dom, $styles) 
-{
-  $css = $dom->createElement('style', $styles);
-  $css->setAttribute('type', 'text/css');
-  
-  return $css;
-}
-
-/** 
- * Creates a DIV element.
- * @param   object  $dom      DOMDocument  
- * @param   string  $id       DIV id 
- * @param   string  $content  DIV content (plain text) (default: none) 
- * @return  string            HTML element: <div id="$id">$content</div>
- */
-function createDiv($dom, $id, $content = "") 
-{
-  $div = $dom->createElement('div', $content);
-  $div->setAttribute('id', $id);
-  
-  return $div;
-}
-
-/** 
- * Checks if a javascript file exists in the DOM, 
- * by comparing the provided $source with the script's "src" attribute.
- * @param   object  $dom      DOMDocument  
- * @param   string  $source   JavaScript source attribute
- * @return  boolean           TRUE on succes or FALSE on failure
- */
-function scriptExists($dom, $source)
-{
-  $scripts = $dom->getElementsByTagName("script"); 
-  foreach ($scripts as $script) {
-    $src = $script->getAttribute("src");
-    if (strpos($src, $scriptSrc) !== false) {
-      return true; 
-    }
+  // short URLs like http://server.com should be fixed
+  if (count($paths) > 3) {
+    // remove last element, so we do not have to worry about the query string (?var1=value1&var2=value2#anchor...)
+    array_pop($paths);
   }
-  return false;
+  // and we have the BASE href
+  $base = implode("/", $paths) . "/";
+  
+  return $base;
 }
 
 /** 
@@ -827,10 +739,13 @@ function ext_available()
  */
 function ext_format()
 {
+  if (!isset($_SESSION['allowed'])) return false;
+  
   $current = ext_name();
   // check priority
   $prioritized = get_exts_order();
   // loop through available sections
+  $list = "";
   foreach ($prioritized as $dir => $priority) 
   { 
     if (!in_array($dir, $_SESSION['allowed'])) { continue; }
@@ -882,40 +797,49 @@ function filename_to_str($string)
   return $string;
 }
 
-
-/** Additional head tags. Enable inserting custom tags on page head. */
-$HEAD_ADDED = array();
 /** 
  * Adds $element tags to all CMS extensions header.
- * @param   string  $element  HTML code to insert in the HEAD of any CMS section (<style>, <script>, etc.)
- * @global  array   $HEAD_ADDED
+ * @param   mixed   $element  HTML code to insert in the HEAD of any CMS section (<style>, <script>, etc.). Can be a single string or an Array
+ * @global  array   $_headAdded
  */
 function add_head($element) 
 {
-  global $HEAD_ADDED;
-  if (!$element) return;
+  global $_headAdded;
   
-  $HEAD_ADDED[] = $element;
+  if (!$element) return;
+
+  if (is_array($element)) {
+    foreach ($element as $value) {
+      $_headAdded[] = $value;
+    }
+  } else {
+    $_headAdded[] = $element;
+  }
 }
 
 /** 
  * Displays a <noscript> warning message. Useful for those extensions that require JavaScript functionality.
- * @return  string          Message wrapped in a <noscript> tag
- * @param   string  $msg    custom warning message. Default: "Please enable JavaScript in order to work on this section."  
+ * @param   string  $msg    custom warning message. Default: "Please enable JavaScript in order to work on this section."
+ * @return  string          Message wrapped in a <noscript> tag   
  */
-function check_noscript($msg = "Please enable JavaScript in order to work on this section.") 
+function check_noscript($msg = "") 
 {
-  return '<noscript><p class="warning">'.$msg.'</p></noscript>';
+  global $_displayType, $_notifyMsg;
+  
+  if (empty($msg)) $msg = $_notifyMsg["NOSCRIPT"];
+  
+  return '<noscript>'.display_text($_displayType["WARNING"], $msg).'</noscript>';
 }
 
 /** 
  * Count files in a dir. This function skip directories, and it is not recursive.
  * By now it is only used to check the cache logs. 
  * @param   string  $dir    the directory to read files from
- * @return  int             number fo files
+ * @return  int             Number of files
  */
 function count_dir_files($dir) 
 {  
+  $count = 0;
   if ($handle = opendir($dir)) {
     while (false !== ($file = readdir($handle))) {
       if ($file != "." && $file != ".." && is_file($dir.'/'.$file)) {
@@ -935,6 +859,8 @@ function count_dir_files($dir)
  */
 function is_admin() 
 {
+  if (!isset($_SESSION['login'])) return false;
+  
   // get admin role_id
   $user = db_select(TBL_PREFIX.TBL_USERS, "role_id", "login='".$_SESSION['login']."'");
   return ( (int) $user['role_id'] === 1 );
@@ -946,6 +872,8 @@ function is_admin()
  */
 function is_root() 
 {
+  if (!isset($_SESSION['login'])) return false;
+  
   // get root role_id
   $user = db_select(TBL_PREFIX.TBL_USERS, "id", "login='".$_SESSION['login']."'");
   return ( (int) $user['id'] === 1 );
@@ -984,24 +912,24 @@ function is_allowed()
  */
 function generate_password()
 {
-  $ahPasswordGenerator = array(
+  $pwd = array(
   	"C" => array('chars' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 'min' => 4, 'max' => 6),
   	"S" => array('chars' => "!@()-_=+?*^&", 'min' => 1, 'max' => 2),
   	"N" => array('chars' => '1234567890', 'min' => 2, 'max' => 2)
   );
 	// Create the meta-password
-	$sMetaPassword = "";
-	foreach ($ahPasswordGenerator as $cToken => $ahPasswordSeed) {
-    $sMetaPassword .= str_repeat($cToken, rand($ahPasswordSeed['min'], $ahPasswordSeed['max']));
+	$meta = "";
+	foreach ($pwd as $cToken => $seed) {
+    $meta .= str_repeat($cToken, rand($seed['min'], $seed['max']));
   }
-	$sMetaPassword = str_shuffle($sMetaPassword);
+	$meta = str_shuffle($meta);
 	// Create the real password
-	$arBuffer = array();
-	for ($i = 0; $i < strlen($sMetaPassword); ++$i) {
-    $arBuffer[] = $ahPasswordGenerator[(string)$sMetaPassword[$i]]['chars'][rand(0, strlen($ahPasswordGenerator[$sMetaPassword[$i]]['chars']) - 1)];	 
+	$buffer = array();
+	for ($i = 0; $i < strlen($meta); ++$i) {
+    $buffer[] = $pwd[(string)$meta[$i]]['chars'][rand(0, strlen($pwd[$meta[$i]]['chars']) - 1)];
   }
 
-	return implode("", $arBuffer);
+	return implode("", $buffer);
 }
 
 /**
@@ -1029,9 +957,81 @@ function email_exists($email)
   
   list($user, $domain) = split("@", $email);
   if (function_exists('getmxrr') && getmxrr($domain, $MXHost)) {
-      return true;
+    return true;
   } else {
     return (fsockopen($domain, 80, $errno, $errstr, 30));
   }
+}
+
+/**
+ * Stops executing a PHP script, displaying a reason for the error.
+ * @param   string    $text  message
+ */
+function die_msg($text = "")
+{
+  if (!empty($text)) { $text = ": " . $text; }
+  
+  die("<strong>Error</strong>".$text);
+}
+
+/**
+ * Pad with zeros a number.
+ * @param int $num      input number
+ * @param int $numZeros number of zeros
+ */
+function pad_number($num, $numZeros)
+{
+  return sprintf("%0".$numZeros."d", $num);
+}
+
+/** Emulates register_globals off. */
+function unregister_GLOBALS()
+{
+    if (!ini_get('register_globals')) {
+        return;
+    }
+
+    // might want to change this perhaps to a nicer error
+    if (isset($_REQUEST['GLOBALS']) || isset($_FILES['GLOBALS'])) {
+        die('GLOBALS overwrite attempt detected');
+    }
+
+    // variables that shouldn't be unset
+    $noUnset = array('GLOBALS',  '_GET',
+                     '_POST',    '_COOKIE',
+                     '_REQUEST', '_SERVER',
+                     '_ENV',     '_FILES');
+
+    $input = array_merge($_GET,    $_POST,
+                         $_COOKIE, $_SERVER,
+                         $_ENV,    $_FILES,
+                         isset($_SESSION) && is_array($_SESSION) ? $_SESSION : array());
+
+    foreach ($input as $k => $v) {
+        if (!in_array($k, $noUnset) && isset($GLOBALS[$k])) {
+            unset($GLOBALS[$k]);
+        }
+    }
+}
+
+/**
+ * Gets a SQL-alike string with all cache IDs that are related to the same URL.
+ * @param   int     Log cache ID
+ * @return  string  SQL query
+ */
+function get_common_url($pageId)
+{
+  $common = db_select(TBL_PREFIX.TBL_CACHE, "url", "id = '".$pageId."'");
+  $moreId = db_select_all(TBL_PREFIX.TBL_CACHE, "id", "url = '".$common['url']."'");
+  // merge values
+  $moreId = array_flatten($moreId);
+  // set query
+  $merge = "";
+  foreach ($moreId as $k => $value) {
+    if ($value != $pageId)
+      $merge .= " OR cache_id='".$value."' ";
+  }
+
+  return $merge;
 }
 ?>
