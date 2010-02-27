@@ -14,7 +14,7 @@ if (empty($_SESSION['login']))
 {
   // redirect to root dir, where user authentication will prompt
   $_SESSION['error'] = "NOT_LOGGED";
-  header("Location: ".ABS_PATH."?redirect=".urlencode(getThisURLAddress(true)));
+  header("Location: ".ABS_PATH."?redirect=".urlencode(get_current_URL(true)));
   exit;
 }
 else 
