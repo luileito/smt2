@@ -3,6 +3,7 @@ package com.speedzinemedia.smt.display {
     import flash.display.DisplayObject;
     import flash.display.DisplayObjectContainer;
     import flash.display.Shape;
+    import flash.display.StageQuality;
     import flash.display.Sprite;
     import flash.events.Event;
     import flash.events.MouseEvent;
@@ -15,7 +16,6 @@ package com.speedzinemedia.smt.display {
     import flash.text.TextField;
     import flash.text.TextFormat;
     import flash.text.TextFieldAutoSize;
-    import flash.ui.Mouse;
     
     import com.bit101.components.CheckBox;
     import com.bit101.components.ColorChooser;
@@ -154,7 +154,7 @@ package com.speedzinemedia.smt.display {
 
             new Draggable($panel);
             
-            // show panel by default, or load user choice
+            // do not show panel by default, or load user choice
             $panel.visible = ($savedSettings.size > 0) ? $savedSettings.data.showControlPanel : false;
             // toggle control panel when clicking on parent stage (dummy layer)
             parent.addEventListener(MouseEvent.CLICK, togglePanel);
@@ -230,25 +230,20 @@ package com.speedzinemedia.smt.display {
         private function createColorsColumn():void 
         {
             var label3:Label = new Label($panel, XPOS, MARGIN, "COLORS");
-            // set a radio button by default ($defIndex)
-            var defRadio:Object = ($savedSettings.size > 0) ? $savedSettings.data.layers[$defIndex] : Layers.collection[$defIndex];
             for (var k:int = 0; k < Layers.collectionLength; ++k)
             {
-                // color of interacted areas shouldn't be changed
+                // color of interacted areas cannot be changed due to blend mode
                 if (Layers.collection[k].id == Layers.id.MASK) continue;
                 
                 if (Layers.collection[k].color) {
-                    // select the default radio button
-                    var selected:Boolean = (k == $defIndex);
-                    var rb:RadioButton = new RadioButton($panel, label3.x + MARGIN, YPOS, Layers.collection[k].label, selected, selectCurrentColor);
+                    var rb:RadioButton = new RadioButton($panel, label3.x + MARGIN, YPOS, Layers.collection[k].label, false, selectCurrentColor);
                     rb.name = Layers.collection[k].id;
                     setTabIndex(rb);
                     YPOS += 20;
                 }
             }
-            // add the color chooser at the end of this column
-            $color = DrawUtils.parseColor(defRadio.color);
-            $cc = new ColorChooser($panel, label3.x + MARGIN, YPOS + 5, $color, changeLayerColor);
+            $cc = new ColorChooser($panel, label3.x + MARGIN, YPOS + 5, 0x000000, changeLayerColor);
+            $cc.usePopup = true;
             setTabIndex($cc);
             // update ColorChooser here
             updateColorChooser();
@@ -308,11 +303,11 @@ package com.speedzinemedia.smt.display {
                 
                 // fire these functions passing null events as first argument
                 loadCustomSelection(null, ID.SEL.SAVED);
-                toggleQuality();
             }
             else {
                 // by default, if no saved settings, start in real-time mode
                 setCheckBoxState(ID.OUT.REPLAYRT, true);
+                setCheckBoxState(ID.OUT.TOGGLEHQ, true);
             }
             
             // loading next user trail is only available when replaying in real time
@@ -321,6 +316,8 @@ package com.speedzinemedia.smt.display {
                 // don't display interacted areas in real-time replay (it's processor-intensive)
                 toggleVisiblePanelOption(Layers.id.MASK);
             }
+            // finally check stage quality
+            toggleQuality();
         };
         
         // This function is called at runtime
@@ -479,7 +476,7 @@ package com.speedzinemedia.smt.display {
             {
                 for (var k:int = 0; k < Layers.collectionLength; ++k) {
                     var my:CustomSprite = parent.getChildByName($savedSettings.data.layers[k].id) as CustomSprite;
-                    var color:String = $savedSettings.data.layers[k].color;
+                    var color:uint = $savedSettings.data.layers[k].color;
                     changeLayerColor(null, my.name, color);
                 }
                 // color column is optional
@@ -516,9 +513,9 @@ package com.speedzinemedia.smt.display {
         
         /* can be called on init */
         private function toggleQuality(e:MouseEvent = null):void
-        {            
-            var state:Boolean = (e) ? e.currentTarget.selected : $savedSettings.data.toggleHQ;
-            stage.quality = (state) ? "HIGH" : "LOW";
+        {
+            var state:Boolean = ($savedSettings.size > 0) ? $savedSettings.data.toggleHQ : getCheckBoxState(ID.OUT.TOGGLEHQ);
+            stage.quality = (state) ? StageQuality.HIGH : StageQuality.LOW;
             // save settings only if user checked state
             if (e) { rememberSettings(); }
         };
@@ -579,10 +576,13 @@ package com.speedzinemedia.smt.display {
         private function selectCurrentColor(e:MouseEvent):void
         {
             $radioButtonId = e.currentTarget.name;
+            var selectedLayer:CustomSprite = parent.getChildByName($radioButtonId) as CustomSprite;
             // check saved data
-            var i:int = Layers.getIndex($radioButtonId);
-            var layer:Object = ($savedSettings.size > 0) ? $savedSettings.data.layers[i] : Layers.getLayer($radioButtonId);
-            $color = DrawUtils.parseColor(layer.color);
+            if ($savedSettings.size > 0) {
+                var i:int = Layers.getIndex($radioButtonId);
+                selectedLayer = $savedSettings.data.layers[i];
+            }
+            $color = selectedLayer.color;
             
             updateColorChooser();
         };
@@ -590,28 +590,27 @@ package com.speedzinemedia.smt.display {
         /** Updates the ColorChooser instance with the default global $color */
         private function updateColorChooser():void
         {
+            if (!$color) $color = 0x000000;
             $cc.value = $color;
         };
         
         /** Gets the color from ColorChooser (e != null) or SharedObject */
-        private function changeLayerColor(e:Event = null, id:String = "", color:String = ""):void 
+        private function changeLayerColor(e:Event = null, id:String = "", color:uint = 0):void
         {
-            var layerId:String = (e) ? $radioButtonId : id;
-            var layerColor:String = (e) ? e.target.text : color;
+            var layerId:String, layerColor:uint;
+            if (e) {
+                layerId     = $radioButtonId;
+                layerColor  = e.target.value;
+            } else {
+                layerId     = id;
+                layerColor  = color;
+            }
 
-            // check if user types a color for the first time (no radio is selected)
-            if (layerId === null) {
-                layerId = Layers.collection[$defIndex].id;
-            }
-            
             var selectedLayer:CustomSprite = parent.getChildByName(layerId) as CustomSprite;
-            // some Tracking layers do not have color asigned
-            if (selectedLayer.color)
-            {
-                DrawUtils.changeInstanceColor(selectedLayer, DrawUtils.parseColor(layerColor));
-                // update (populated to parent layer)
-                selectedLayer.color = layerColor;
-            }
+            // note that some Tracking layers do not have color asigned
+            DrawUtils.changeInstanceColor(selectedLayer, layerColor);
+            // update (populated to parent layer)
+            selectedLayer.color = layerColor;
 
             if (e) { rememberSettings(); }
         };

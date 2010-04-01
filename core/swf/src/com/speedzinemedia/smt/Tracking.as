@@ -191,7 +191,7 @@ package com.speedzinemedia.smt {
                 layer.color = ($savedSettings.size > 0) ? $savedSettings.data.layers[i].color : Layers.collection[i].color;
                 // the background layer is a special case (common to all mouse views)
                 if (layer.name == Layers.id.BACKGROUND) {
-                    var bgColor:uint = DrawUtils.parseColor(layer.color);
+                    var bgColor:uint = layer.color;
                     layer.graphics.beginFill(bgColor, .8);
                     layer.graphics.drawRect(0,0, $stageWidth,$stageHeight);
                     layer.graphics.endFill();

@@ -42,16 +42,16 @@ package com.speedzinemedia.smt.display {
         
         /** Layers definition. */
         public static const collection:Array = [
-            { id: id.BACKGROUND,    label: "background overlay",    color: "555555", visible: true  },  // must be always at index 0
+            { id: id.BACKGROUND,    label: "background overlay",    color: 0x555555, visible: true  },  // must be always at index 0
             { id: id.MASK,          label: "interacted areas",      color: null,     visible: false },  // cannot change color because of blend mode
-            { id: id.PATH,          label: "mouse path",            color: "00CCCC", visible: true  },
-            { id: id.REGISTRATION,  label: "coordinates",           color: "FFFFFF", visible: false },
-            { id: id.STOP,          label: "hesitations",           color: "FFFF99", visible: false },
-            { id: id.DRAG,          label: "drag&drop/selections",  color: "AABBCC", visible: true  },
-            { id: id.CLICK,         label: "clicks",                color: "FF0000", visible: true  },
+            { id: id.PATH,          label: "mouse path",            color: 0x00CCCC, visible: true  },
+            { id: id.REGISTRATION,  label: "coordinates",           color: 0xFFFFFF, visible: false },
+            { id: id.STOP,          label: "dwell times",           color: 0xFFFF99, visible: false },
+            { id: id.DRAG,          label: "drag&drop/selections",  color: 0xAABBCC, visible: true  },
+            { id: id.CLICK,         label: "clicks",                color: 0xFF0000, visible: true  },
             { id: id.DISTANCE,      label: "direction & distances", color: null,     visible: false },  // no color because of images
-            { id: id.CLUSTER,       label: "active areas",          color: "0000FF", visible: true  },
-            { id: id.CENTROID,      label: "path centroid",         color: "FF99FF", visible: true  },
+            { id: id.CLUSTER,       label: "active areas",          color: 0x0000FF, visible: true  },
+            { id: id.CENTROID,      label: "path centroid",         color: 0xFF99FF, visible: true  },
             { id: id.CURSOR,        label: "mouse pointers",        color: null,     visible: true  }   // same as distances
         ];
         
@@ -80,7 +80,7 @@ package com.speedzinemedia.smt.display {
         /** Gets layer color. */
         public static function getColor(strId:String):uint 
         {
-            var layerColor:String;
+            var layerColor:uint;
             if ($savedSettings.size > 0) {
                 var layer:Object = $savedSettings.data.layers[ getIndex(strId) ];
                 layerColor = layer.color;
@@ -88,7 +88,7 @@ package com.speedzinemedia.smt.display {
                 layerColor = getLayer(strId).color;
             }
             
-            return DrawUtils.parseColor(layerColor);
+            return layerColor;
         };
 
     } // end class
