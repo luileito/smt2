@@ -9,7 +9,7 @@ package com.speedzinemedia.smt.display {
 	public class CustomSprite extends Sprite
     {
         //private var _id:String;
-        private var _color:String;
+        private var _color:uint;
         
         public function CustomSprite()
         {
@@ -17,12 +17,12 @@ package com.speedzinemedia.smt.display {
         };
         
         // getter/setters
-		public function set color(str:String):void
+		public function set color(c:uint):void
 		{
-			_color = str;
+			_color = c;
 		};
 		
-		public function get color():String
+		public function get color():uint
 		{
 			return _color;
 		};
