@@ -1,4 +1,4 @@
-#summary Understanding (smt)2 roles and capabilities
+#summary Understanding smt2 roles and capabilities
 #labels Phase-Design
 
 If you already know the WordPress CMS, then the concepts described on this page will be familiar for you.
@@ -6,7 +6,7 @@ If you already know the WordPress CMS, then the concepts described on this page 
 
 = Roles overview =
 
-Typically, the person that installed (smt)^2.0^ on your server (maybe you?) has the superuser *root* account. Think as the *root* as the WordPress Administrator Role: that user can do anything with the CMS. 
+Typically, the person that installed (smt)^2^ on your server (maybe you?) has the superuser *root* account. Think as the *root* as the WordPress Administrator Role: that user can do anything with the CMS. 
 
 The superuser is part of the predefined _admin_ role. However, in many cases, the *root* user may choose to assign other users the _admin_ role. In that case, those users will have access to _almost all_ CMS features.
 
