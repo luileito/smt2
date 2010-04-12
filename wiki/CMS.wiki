@@ -1,9 +1,9 @@
-#summary (smt)2 Content Management System overview
+#summary smt2 Content Management System overview
 #labels Featured
 
 = Introduction =
 
-You may log in as the superuser (username *root*) in order to have full access to all CMS features. That user is created when installing (smt2) for the first time.
+You may log in as the superuser (username *root*) in order to have full access to all CMS features. That user is created when installing smt2 for the first time.
 
 = Extensions overview =
 
