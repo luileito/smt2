@@ -168,18 +168,3 @@ Please take into account this checklist before reporting a new bug about _empty 
 All recorded user visits can be managed on the _tracking report_ section of the CMS. The system will use the SWF visualization tool, if Flash plugin is available. Otherwise the JavaScript visualization API will be used.
 
 Read more about the CMS on the [http://code.google.com/p/smt2/wiki/CMS wiki page].
-
-== Visualization Layers ==
-
-|| *layer name* || *meaning* ||
-|| background overlay || layer for separating page and tracking ||
-|| interacted areas || zones where the mouse passed ||
-|| mouse path || the path the mouse followed ||
-|| coordinates || tracked registration points ||
-|| hesitations || mouse stop zones (dwell times) ||
-|| drag&drop/selections || clicks without releasing the button ||
-|| clicks || mouse clicks ||
-|| direction & distances || computed mouse distances between registration points ||
-|| active areas || custering of mouse coordinates ||
-|| path centroid || geometric center of mouse coordinates ||
-|| mouse pointers || entry, exit, wait and normal mouse cursors ||
