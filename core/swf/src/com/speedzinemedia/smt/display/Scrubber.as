@@ -77,7 +77,7 @@ package com.speedzinemedia.smt.display {
         /** Restarts scrubber animation. */    
         public function restart():void 
         {
-            $loop.stop();
+            $loop.reset();
             // reset
             $scrub.width = 1;
             $loop.start();

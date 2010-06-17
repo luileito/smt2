@@ -301,7 +301,7 @@
     {
       smtRec.computeAvailableSpace();
       // get this location BEFORE making the AJAX request
-      smtRec.url  = window.location.href;
+      smtRec.url = escape(window.location.href);
       // set main function: the (smt)2 recording interval
       var interval = Math.round(1000/smtOpt.fps);
       smtRec.rec   = setInterval(smtRec.recMouse, interval);
