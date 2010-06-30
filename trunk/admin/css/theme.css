@@ -34,8 +34,8 @@ a#logout { color:#FFF; background-color:#C33; text-decoration:none; padding:.2em
   a#logout:hover { background-color:#F33; }
 
 /* forms */
-.button { color:#36F; border:1px solid #CCC; background:#EEE url('button-default-off') repeat-x left top; }
-.button:hover, .button:focus { color:#000; border:1px solid #36F; background:#F5F5F5 url('button-default-on') repeat-x left bottom; }
+.button { color:#36F; border:1px solid #CCC; background:#EEE url('button-default-off.jpg') repeat-x left top; }
+.button:hover, .button:focus { color:#000; border:1px solid #36F; background:#F5F5F5 url('button-default-on.jpg') repeat-x left bottom; }
 
 .wrapper { border:1px solid #CCC; overflow:hidden; padding-bottom:0.5em; margin-bottom:1em; }
 .wrapper:hover { border:1px solid #036; background-color:#FFC; }
@@ -62,5 +62,5 @@ a#bugreport { background-color:#036; }
 /* other */
 .notfound { font-family:Georgia,serif; font-style:italic; color:#AAA; }
 .del { color:#C00; }
-.delete { color:#FFF; background:#C00 url('button-delete-off') repeat-x left top; }
-.delete:hover, .delete:focus { color:#FFF; border:1px solid red !important; background:#F66 url('button-delete-on') repeat-x left bottom; }
+.delete { color:#FFF; background:#C00 url('button-delete-off.jpg') repeat-x left top; }
+.delete:hover, .delete:focus { color:#FFF; border:1px solid red !important; background:#F66 url('button-delete-on.jpg') repeat-x left bottom; }
