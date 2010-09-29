@@ -1,7 +1,7 @@
 <?php
 function computeDOMelements($arr, $name)
 {
-  $widget = compute_frequency($arr, 5);
+  $widget = array_frequency($arr, 5);
   if (!$widget) {
     $status = 'There were no '.$name.'ed elements';
   } else {

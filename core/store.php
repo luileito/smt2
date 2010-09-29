@@ -1,6 +1,6 @@
 <?php
 // check data first (exclude the root user)
-if (empty($_POST) || $_COOKIE['smt-root']) exit;
+if (empty($_POST) || isset($_COOKIE['smt-root'])) exit;
 require '../config.php';
 
 $URL = $_POST['url'];
@@ -104,7 +104,7 @@ if (!$osname) {
 /* create database entry ---------------------------------------------------- */
 $fields  = "client_id,cache_id,os_id,browser_id,browser_ver,user_agent,";
 $fields .= "ftu,scr_width,scr_height,vp_width,vp_height,";
-$fields .= "sess_date,sess_time,fps,coords_x,coords_y,clicks_x,clicks_y,hovered,clicked"; 
+$fields .= "sess_date,sess_time,fps,coords_x,coords_y,clicks_x,clicks_y,hovered,clicked";
 
 $values  = "'". get_client_id()                     ."',";
 $values .= "'". $logid                              ."',";

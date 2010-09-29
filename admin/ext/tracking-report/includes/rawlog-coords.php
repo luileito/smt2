@@ -41,11 +41,11 @@ foreach ($coordsX as $i => $arr)
   $pathLengthY[] = array_sum($distCoordsY);
 }
 // use ponderation for average values when working on coordinates arrays
-$centroidX = weighted_avg($cleanX, $weights);
-$centroidY = weighted_avg($cleanY, $weights);
-$distAvg = weighted_avg($distCoords, $weights);
-//$pathLengthX = weighted_avg($pathLengthX, $weights);
-//$pathLengthY = weighted_avg($pathLengthY, $weights);
+$centroidX = array_avg_weighted($cleanX, $weights);
+$centroidY = array_avg_weighted($cleanY, $weights);
+$distAvg = array_avg_weighted($distCoords, $weights);
+//$pathLengthX = array_avg_weighted($pathLengthX, $weights);
+//$pathLengthY = array_avg_weighted($pathLengthY, $weights);
 
 // kinematics study
 $stops = array(); $pathLength = array();
@@ -78,12 +78,12 @@ $clicksSD = array_sd($clicksSum);
       <tr>
         <!--<th>statistic</th>-->
         <th>time (s)</th>
-        <th>activity (%)</th>
+        <th>activity</th>
         <th>clicks</th>
         <th>distance (px)</th>
         <th>length (px)</th>
         <th>amplitude (px)</th>
-        <th>scroll reach (%)</th>
+        <th>scroll reach</th>
         <th>entry point</th>
         <th>exit point</th>
         <th>centroid</th>
@@ -176,7 +176,7 @@ $clicksSD = array_sd($clicksSum);
   </p>
   <ol class="ml pl">
     <li>First row is <abbr title="Sample Mean">&mu;</abbr>, while second row is <abbr title="Sample Standard Deviation">&sigma;</abbr>.</li>
-    <li>Values for activity and scroll reach are actually reported as per-unit: 0 < value < 1.</li>
-    <li>Comma-separated values denotes a column vector (X and Y components).</li>
+    <li>Values for <strong>activity</strong> and <strong>scroll reach</strong> are reported as per-unit: 0 < value < 1.</li>
+    <li>Comma-separated values denote a column vector (X and Y components).</li>
   </ol>
 </div>

@@ -4,7 +4,7 @@
  * @date 27/March/2009  
  * @rev 20/December/2009
  */
-error_reporting(E_ALL | E_STRICT);
+//error_reporting(E_ALL | E_STRICT); // uncomment for debugging
 
 unregister_GLOBALS();
 
@@ -66,7 +66,7 @@ function check_systemversion($type, $minReqVer = "5.0.0")
 }
 
 /** 
- * Checks if a new smt2 version is released.
+ * Checks if a new smt2 version is released via (smt) website.
  * @return  int   Server response: 1 (up to date), 2 (new version found), 3 (minor build released), 0 (connection error), -1 (parsing error) 
  */
 function get_smt_releases()
@@ -147,7 +147,7 @@ function notify_request($id, $success, $customErr = "")
                      :
                      display_text($_displayType["ERROR"],   $errorMessage);
   
-  redirect( dirname($_SERVER['SCRIPT_NAME'])."/#".$id );
+  url_redirect( dirname($_SERVER['SCRIPT_NAME'])."/#".$id );
 }
 
 /**
@@ -331,10 +331,10 @@ function error_webpage($bodyText = "")
 /** 
  * Computes the frequency of each $input array member.
  * @param   mixed  $input        input string or array of strings to parse ($_POST vars are sent as strings)
- * @param   int    $threshold    frequencies (in percentage) under this $threshold will not be stored (default: 1)
- * @return  array                A sorted associative array in the form '[mostFrequentMember]=>frequency,...,[lessFrequentMember]=>frequency'
+ * @param   int    $threshold    frequencies (in percentage) under this $threshold will not be stored (default: 1%)
+ * @return  array                A sorted associative array in the form '[mostFrequentItem]=>frequency,...,[lessFrequentItem]=>frequency'
  */
-function compute_frequency($input, $threshold = 1) 
+function array_frequency($input, $threshold = 1) 
 {
   // convert $input in a real PHP array
   $input = (!is_array($input)) ? explode(",", $input) : $input;
@@ -418,7 +418,7 @@ function array_null($input)
  * @return  array             Weighted sum
  * @link    http://www.compapp.dcu.ie/~humphrys/PhD/e.html 
  */
-function weighted_avg($input, $weights) 
+function array_avg_weighted($input, $weights) 
 {
   $sumArray = array();
   
@@ -630,9 +630,9 @@ function count_clicks($xclicks, $yclicks)
  * Absolute URLs are required, though all modern browsers support relative URLs.
  * @param   string    $path  where to go to, starting at server root (default: none)
  */
-function redirect($path = "")
+function url_redirect($path = "")
 {
-  $url = get_server_URL();
+  $url = url_get_server();
   
   if (empty($path)) { $path = $url; }
   // check that server url is on the $path argument
@@ -646,7 +646,7 @@ function redirect($path = "")
  * Gets the URL of current server (protocol + domain).
  * @return  string             Full URL
  */
-function get_server_URL()
+function url_get_server()
 {
   //$protocol = "http://";
   $protocol = "http" . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") ? "s" : null) . "://";
@@ -664,10 +664,10 @@ function get_server_URL()
  * @param   boolean  $fullURI  append the query string, if any (default: false)
  * @return  string             Full URL
  */
-function get_current_URL($fullURI = false)
+function url_get_current($fullURI = false)
 {
   // quick check:
-  $url  = get_server_URL();
+  $url  = url_get_server();
   $url .= $_SERVER['SCRIPT_NAME'];
   if ($fullURI) { $url .= '?'.$_SERVER['QUERY_STRING']; }
 
@@ -679,7 +679,7 @@ function get_current_URL($fullURI = false)
  * @param   string  $url  input URL  
  * @return  string        Base URL
  */
-function get_base($url)
+function url_get_base($url)
 {
   // split url in dirs
   $paths = explode("/", $url);
@@ -1019,7 +1019,7 @@ function unregister_GLOBALS()
  * @param   int     Log cache ID
  * @return  string  SQL query
  */
-function get_common_url($pageId)
+function get_cache_common_url($pageId)
 {
   $common = db_select(TBL_PREFIX.TBL_CACHE, "url", "id = '".$pageId."'");
   $moreId = db_select_all(TBL_PREFIX.TBL_CACHE, "id", "url = '".$common['url']."'");
