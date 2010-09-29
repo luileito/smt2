@@ -1,0 +1,16 @@
+/* table sorter */
+th.headerNormal {
+	background:#69C url(bg.gif) no-repeat left center;
+	cursor:pointer;
+}
+th.headerSortUp {
+	background:#6AF url(asc.gif) no-repeat left center;
+	cursor:pointer;
+}
+th.headerSortDown {
+	background:#6AF url(desc.gif) no-repeat left center;
+	cursor:pointer;
+}
+td.ftu {
+  background:transparent url(star.png) no-repeat left center;
+}

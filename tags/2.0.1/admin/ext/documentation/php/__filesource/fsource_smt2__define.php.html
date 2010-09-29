@@ -1,0 +1,115 @@
+<html>
+<head>
+<title>File Source for define.php</title>
+<link rel="stylesheet" type="text/css" href="../media/style.css">
+</head>
+<body>
+
+<table border="0" cellspacing="0" cellpadding="0" height="48" width="100%">
+  <tr>
+    <td class="header_top">smt2</td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+  <tr>
+    <td class="header_menu">
+        
+                                    
+                                                                      		  [ <a href="../classtrees_smt2.html" class="menu">class tree: smt2</a> ]
+		  [ <a href="../elementindex_smt2.html" class="menu">index: smt2</a> ]
+		  	    [ <a href="../elementindex.html" class="menu">all elements</a> ]
+    </td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+</table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="200" class="menu">
+      <b>Packages:</b><br />
+              <a href="../li_smt2.html">smt2</a><br />
+              <a href="../li_PegasusPHP.html">PegasusPHP</a><br />
+              <a href="../li_PHPMailer.html">PHPMailer</a><br />
+            <br /><br />
+                  
+      
+                </td>
+    <td>
+      <table cellpadding="10" cellspacing="0" width="100%" border="0"><tr><td valign="top">
+
+<h1 align="center">Source for file define.php</h1>
+<p>Documentation is available at <a href="../smt2/_define.php.html">define.php</a></p>
+<div class="src-code">
+<ol><li><div class="src-line"><a name="a1"></a><span class="src-php">&lt;?php</span></div></li>
+<li><div class="src-line"><a name="a2"></a><span class="src-doc">/**&nbsp;Installed&nbsp;(smt)&nbsp;version.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a3"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'SMT_VERSION'</span><span class="src-sym">,&nbsp;&nbsp;</span><span class="src-str">&quot;2.0.0&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a4"></a>&nbsp;</div></li>
+<li><div class="src-line"><a name="a5"></a><span class="src-doc">/**&nbsp;Title&nbsp;for&nbsp;CMS&nbsp;pages.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a6"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'CMS_TITLE'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;</span><span class="src-str">&quot;simple&nbsp;mouse&nbsp;tracking&nbsp;&quot;&nbsp;</span>.&nbsp;<span class="src-id">SMT_VERSION</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a7"></a><span class="src-doc">/**&nbsp;Path&nbsp;to&nbsp;admin&nbsp;dir.&nbsp;This&nbsp;absolute&nbsp;URL&nbsp;is&nbsp;used&nbsp;to&nbsp;resolve&nbsp;links,&nbsp;redirections,&nbsp;an&nbsp;so&nbsp;on.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a8"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'ADMIN_PATH'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">ABS_PATH</span>.<span class="src-str">&quot;admin/&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a9"></a><span class="src-doc">/**&nbsp;Path&nbsp;to&nbsp;CSS&nbsp;styles.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a10"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'CSS_PATH'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">ADMIN_PATH</span>.<span class="src-str">&quot;css/&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a11"></a><span class="src-doc">/**&nbsp;Path&nbsp;to&nbsp;core&nbsp;ActionScript&nbsp;functions.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a12"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'SWF_PATH'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">ABS_PATH</span>.<span class="src-str">&quot;core/swf/&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a13"></a><span class="src-doc">/**&nbsp;Path&nbsp;to&nbsp;core&nbsp;JavaScript&nbsp;functions.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a14"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'JS_PATH'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">ABS_PATH</span>.<span class="src-str">&quot;core/js/src/&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a15"></a><span class="src-doc">/**&nbsp;smt2&nbsp;record&nbsp;script.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a16"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'SMT_RECORD'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">JS_PATH</span>.<span class="src-str">&quot;smt-record.js&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a17"></a><span class="src-doc">/**&nbsp;smt2&nbsp;replay&nbsp;script.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a18"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'SMT_REPLAY'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">JS_PATH</span>.<span class="src-str">&quot;smt-replay.js&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a19"></a><span class="src-doc">/**&nbsp;smt2&nbsp;auxiliar&nbsp;functions.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a20"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'SMT_AUX'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">JS_PATH</span>.<span class="src-str">&quot;smt-aux.js&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a21"></a><span class="src-doc">/**&nbsp;WZ&nbsp;JavaScript&nbsp;graphics&nbsp;libary.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a22"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'WZ_JSGRAPHICS'</span><span class="src-sym">,&nbsp;</span><span class="src-id">JS_PATH</span>.<span class="src-str">&quot;wz_jsgraphics.js&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a23"></a><span class="src-doc">/**&nbsp;JSON&nbsp;parser.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a24"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'JSON_PARSER'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;</span><span class="src-id">JS_PATH</span>.<span class="src-str">&quot;json2.js&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a25"></a><span class="src-doc">/**&nbsp;JavaScript&nbsp;DOM&nbsp;selector&nbsp;library&nbsp;(Sizzle,&nbsp;Peppy,&nbsp;Selector,&nbsp;etc.).&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a26"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'JS_SELECTOR'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">JS_PATH</span>.<span class="src-str">&quot;selector.js&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a27"></a><span class="src-doc">/**&nbsp;SWFObject&nbsp;library.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a28"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'SWFOBJECT'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">ADMIN_PATH</span>.<span class="src-str">&quot;js/swfobject.js&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a29"></a>&nbsp;</div></li>
+<li><div class="src-line"><a name="a30"></a><span class="src-doc">/**&nbsp;HTML&nbsp;logs&nbsp;dir.&nbsp;Do&nbsp;not&nbsp;use&nbsp;absolute&nbsp;URLs&nbsp;because&nbsp;fopen&nbsp;wrappers&nbsp;could&nbsp;be&nbsp;disabled.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a31"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'CACHE_DIR'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">INC_PATH</span>.<span class="src-str">&quot;cache/&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a32"></a><span class="src-doc">/**&nbsp;Path&nbsp;to&nbsp;system&nbsp;dir.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a33"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'SYS_DIR'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">INC_PATH</span>.<span class="src-str">&quot;sys/&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a34"></a><span class="src-doc">/**&nbsp;Path&nbsp;to&nbsp;common&nbsp;includes&nbsp;(header,&nbsp;footer,&nbsp;and&nbsp;so&nbsp;on).&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a35"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'INC_DIR'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-id">INC_PATH</span>.<span class="src-str">&quot;inc/&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a36"></a>&nbsp;</div></li>
+<li><div class="src-line"><a name="a37"></a><span class="src-doc">/**&nbsp;Table&nbsp;for&nbsp;storing&nbsp;smt2&nbsp;records.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a38"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'TBL_RECORDS'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;</span><span class="src-str">&quot;records&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a39"></a><span class="src-doc">/**&nbsp;Table&nbsp;for&nbsp;caching&nbsp;HTML&nbsp;logs.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a40"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'TBL_CACHE'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-str">&quot;cache&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a41"></a><span class="src-doc">/**&nbsp;Table&nbsp;for&nbsp;storing&nbsp;browser&nbsp;names.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a42"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'TBL_BROWSERS'</span><span class="src-sym">,&nbsp;&nbsp;</span><span class="src-str">&quot;browsers&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a43"></a><span class="src-doc">/**&nbsp;Table&nbsp;for&nbsp;storing&nbsp;operating&nbsp;system&nbsp;names.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a44"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'TBL_OS'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-str">&quot;os&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a45"></a><span class="src-doc">/**&nbsp;Table&nbsp;for&nbsp;registered&nbsp;users.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a46"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'TBL_USERS'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-str">&quot;users&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a47"></a><span class="src-doc">/**&nbsp;Table&nbsp;for&nbsp;managing&nbsp;user&nbsp;roles.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a48"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'TBL_ROLES'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-str">&quot;roles&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a49"></a><span class="src-doc">/**&nbsp;Table&nbsp;for&nbsp;registering&nbsp;extension&nbsp;modules.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a50"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'TBL_EXTS'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-str">&quot;exts&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a51"></a><span class="src-doc">/**&nbsp;Table&nbsp;for&nbsp;customizing&nbsp;CMS&nbsp;options.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a52"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'TBL_CMS'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-str">&quot;cms&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a53"></a><span class="src-doc">/**&nbsp;Table&nbsp;for&nbsp;customizing&nbsp;JS&nbsp;replay&nbsp;options.&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a54"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'TBL_JSOPT'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-str">&quot;jsopt&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a55"></a><span class="src-doc">/**&nbsp;Form&nbsp;input&nbsp;type:&nbsp;User&nbsp;must&nbsp;enter&nbsp;some&nbsp;value&nbsp;(input&nbsp;text)&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a56"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'CMS_TYPE'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-num">0</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a57"></a><span class="src-doc">/**&nbsp;Form&nbsp;input&nbsp;type:&nbsp;User&nbsp;must&nbsp;choose&nbsp;between&nbsp;2&nbsp;options&nbsp;(checkbox)&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a58"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'CMS_CHOICE'</span><span class="src-sym">,&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="src-num">1</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a59"></a><span class="src-doc">/**&nbsp;Form&nbsp;input&nbsp;type:&nbsp;User&nbsp;must&nbsp;choose&nbsp;between&nbsp;3&nbsp;or&nbsp;more&nbsp;options&nbsp;(radio&nbsp;button)&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a60"></a><a href="http://www.php.net/define">define</a>&nbsp;<span class="src-sym">(</span><span class="src-str">'CMS_MULTIPLE'</span><span class="src-sym">,&nbsp;&nbsp;</span><span class="src-num">2</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a61"></a><span class="src-php">?&gt;</span></div></li>
+</ol>
+</div>
+        <div class="credit">
+		    <hr />
+		    Documentation generated on Sun, 21 Feb 2010 16:08:02 +0100 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
+	      </div>
+      </td></tr></table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

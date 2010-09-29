@@ -1,0 +1,10 @@
+/* custom CSS for 'analyze' section */
+#map { width:100%; height:150px; margin:0 auto; border-bottom:1px solid #555; }
+
+
+#graphs { width:90%; margin:0 auto; }
+
+#trail-wrap { border:1px solid #CCC; padding:1em; }
+  .user-trail { margin-bottom:1em; list-style-type:square } 
+  	.user-trail li { display:inline; }
+  	 .current { border-bottom:3px solid #E00; }
