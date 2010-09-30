@@ -20,7 +20,7 @@ You can also download all the project (production, sources, documentation, etc.)
 
 The installation process is very similar to the well-known WordPress Content Management System (CMS), so the learning curve is supposed to be very soft.
 
-It is recommended to put the system in a directory named `/smt2` on your localhost or production server.
+It is recommended to put the system in a directory named `/smt2` on your localhost or production server, although any other directory name is ok.
 
 == Steps ==
 
@@ -29,12 +29,12 @@ First of all, you must configure the basic stuff by editing the file `config.php
 Assuming that you've uploaded the files to a server called `mysite.com`:
 
  # Open your Web browser and navigate to the URL `http://mysite.com/smt2/admin/sys/install.php`.
- # Enter your email and click the `Install` button. That email will be used to send you a new root password if you lose/forget it.
+ # Enter your email and click the `Install` button. That email will be used to send you the root password.
  # Once the installation process finishes, copy the generated password and log in (your username is *root*) to the CMS. You can change that password on the _users_ section.
 
 === Upgrading ===
 
-If you already have version 2.0.0 installed, you can overwrite such installation with the new files and then update your database info by navigating to the URL `http://mysite.com/smt2/admin/sys/upgrade.php`.
+If you already have a previous 2.x version installed, you can overwrite such installation with the new files and then update your database info by navigating to the URL `http://mysite.com/smt2/admin/sys/upgrade.php`.
 
 
 = Uninstalling =
@@ -78,19 +78,19 @@ cookieDays: 365,
 disabled: 0 //Math.round(Math.random()) // <-- random sampling is recommended!
 }}}
 
-To override these defaults you do not need to edit manually the record script. 
+To override these defaults you do not need to edit manually the record script, just keep reading these instructions. 
 
 === Important new feature: cross-domain POSTs ===
 In version 2.0.2 two variables were introduced to customize the recording script: `trackingServer` and `storageServer`. 
 In this way you can record mouse activity in domain A, and post data to a domain B. 
 Just type in `storageServer` the URL of the server where the CMS is installed (say, A), and add the `core` dir to the domain that you wish to track (say, B).
 
-Please notice that in 2.x previous versions neither `trackingServer` nor `storageServer` options exist. 
-In versions prior to 2.0.2 you only could set the recording option `dirPath`, to specify the path where you put smt2 (although the system will try to detect it automatically).
+Please notice that in previous 2.x versions neither `trackingServer` nor `storageServer` options are available. 
+More specifically, in versions prior to 2.0.2 you only could set the recording option `dirPath`, to specify the path where you put smt2 (although the system will try to detect it automatically).
 
 
 == invoking recording script in version 2.0.0 ==
-Create an object named `smtRecordingOptions` with the properties that you want to customize BEFORE the above mentioned 2 JavaScript lines. Take this example page:
+Create an object named `smtRecordingOptions` with the properties that you want to customize BEFORE the above mentioned [http://code.google.com/p/smt2/wiki/readme#Including_the_record_script_on_your_page(s) 2 JavaScript lines]. Take this example page:
 {{{
 <html>
 
