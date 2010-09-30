@@ -31,8 +31,8 @@ Note that on the JavaScript-only version there is no Control Panel.
 
 || *layer name* || *meaning* ||
 || background overlay || layer for separating page and tracking ||
-|| interacted areas || zones where the mouse passed ||
-|| mouse path || the path the mouse followed ||
+|| interacted areas || areas where the mouse passed ||
+|| mouse path || the path followed by the mouse ||
 || coordinates || tracked registration points ||
 || hesitations || mouse stop zones (dwell times) ||
 || drag&drop/selections || clicks without releasing the button ||
