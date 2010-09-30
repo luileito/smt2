@@ -1,10 +1,11 @@
 <?php
 // check data first
 if (empty($_POST)) exit;
-
-require '../config.php';
+require_once '../config.php';
 
 $values  = "sess_time = '".                         (float) $_POST['time']    ."',";
+$values .= "vp_width  = '".                         (int)   $_POST['pagew']   ."',";
+$values .= "vp_height = '".                         (int)   $_POST['pageh']   ."',";
 $values .= "coords_x  = CONCAT(COALESCE(coords_x, ''), ',". $_POST['xcoords'] ."'),";
 $values .= "coords_y  = CONCAT(COALESCE(coords_y, ''), ',". $_POST['ycoords'] ."'),";
 $values .= "clicks_x  = CONCAT(COALESCE(clicks_x, ''), ',". $_POST['xclicks'] ."'),";

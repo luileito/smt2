@@ -32,6 +32,7 @@ $sql .= '`browser_id`   TINYINT       unsigned  NOT NULL, ';                    
 $sql .= '`browser_ver`  FLOAT(2,1)    unsigned  NOT NULL, ';                    // client browser version
 $sql .= '`user_agent`   VARCHAR(255)            NOT NULL, ';                    // full user agent string
 $sql .= '`ftu`          TINYINT(1)              NOT NULL, ';                    // first time visitor
+$sql .= '`ip`           VARCHAR(15)             NOT NULL, ';                    // user IP
 $sql .= '`scr_width`    SMALLINT      unsigned  NOT NULL, ';                    // client screen resolution
 $sql .= '`scr_height`   SMALLINT      unsigned  NOT NULL, ';     
 $sql .= '`vp_width`     SMALLINT      unsigned  NOT NULL, ';                    // client viewport size

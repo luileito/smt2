@@ -1,67 +1,65 @@
-/**
+/** 
  * (smt)2 simple mouse tracking - replay mode (smt-replay.js)
- * Copyleft (cc) 2006-2009 Luis Leiva
- * Release date: February 21th 2010
- * http://smt.speedzinemedia.com
+ * Copyleft (cc) 2006-2010 Luis Leiva
+ * Release date: September 30th 2010
+ * http://smt.speedzinemedia.com  
  * @class smt2-replay
- * @requires smt2-aux Auxiliary (smt)2 functions
- * @version 2.0.1
- * @author Luis Leiva
- * @license Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+ * @requires smt2-aux Auxiliary (smt)2 functions  
+ * @version 2.0.2
+ * @author Luis Leiva 
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses. 
  * @see smt2fn
- * @deprecated in favor of the new SWF visualization API
+ * @deprecated in favor of the new SWF visualization API 
  */
-
-//var smtReplay = {}; // used for documenting code only, as this script is self-encapsulated
 (function(){
-  /**
+  /** 
    * (smt)2 default replaying options.
    * This Object should be overriden from the 'customize' section at the (smt)2 CMS.
-   */
+   */ 
   var smtOpt = {
-    /**
+    /** 
      * Entry point color
-     * @type string
-     */
-    entryPt:  "#9F6",
-    /**
+     * @type string 
+     */  
+    entryPt:  "#9F6",   
+    /** 
      * Exit point color
-     * @type string
+     * @type string     
      */
-    exitPt:   "#F66",
-    /**
+    exitPt:   "#F66",   
+    /** 
      * Registration points color
-     * @type string
+     * @type string      
      */
-    regPt:    "#F0F",
-    /**
+    regPt:    "#F0F",   
+    /** 
      * Lines color
-     * @type string
-     */
-    regLn:    "#0CC",
-    /**
+     * @type string      
+     */ 
+    regLn:    "#0CC",   
+    /** 
      * Clicks color
-     * @type string
+     * @type string      
      */
-    click:    "#F00",
-    /**
+    click:    "#F00",   
+    /** 
      * Drag and drop color
-     * @type string
+     * @type string      
      */
-    dDrop:    "#ABC",
-    /**
+    dDrop:    "#ABC",   
+    /** 
      * User stops: time-depending circles color
-     * @type string
+     * @type string      
      */
-    varCir:   "#F99",
-    /**
+    varCir:   "#F99",   
+    /** 
      * Centroid color
-     * @type string
+     * @type string      
      */
-    cenPt:    "#DDD",
-    /**
+    cenPt:    "#DDD",   
+    /** 
      * Clusters color
-     * @type string
+     * @type string      
      */
     clust:    "#00F",
     /**
@@ -69,9 +67,9 @@
      * @type string
      */
     bgColor: "#555",
-    /**
+    /** 
      * Draw background layer (true) or not (false)
-     * @type boolean
+     * @type boolean      
      */
     bgLayer:  true,
     /**
@@ -79,26 +77,26 @@
      * @type boolean
      */
     realTime: true,
-    /**
+    /** 
      * Show direction vector (useful if realTime: false)
-     * @type boolean
+     * @type boolean      
      */
     dirVect:  false
   };
-
-
+  
+  
   /* do not edit below this line -------------------------------------------- */
-
+  
   // get libraries/globals
   var smtData     = window.smt2data;
   var jsGraphics  = window.jsGraphics;
   var aux         = window.smt2fn;
   // check
   if (typeof smtData === 'undefined')     { throw("user data is malformed or not set");   }
-  if (typeof jsGraphics === 'undefined')  { throw("jsGraphics library not found");        }
+  if (typeof jsGraphics === 'undefined')  { throw("jsGraphics library not found");        } 
   if (typeof aux === 'undefined')         { throw("auxiliar (smt) functions not found");  }
   if (typeof JSON.parse !== 'function')   { throw("JSON parser not found");               }
-
+  
   // when using the JS api, draw only the average path
   var user, users = JSON.parse(unescape(smtData.users));
   var numUsers = users.length;
@@ -112,12 +110,12 @@
   } else {
     user = users[0];
   }
-
+  
   // remove null distances to compute the mouse path centroid
   var xclean = [];
   var yclean = [];
-
-  /**
+  
+  /** 
    * (smt)2 replaying object.
    * This Object is private. Methods are cited but not documented.
    */
@@ -133,10 +131,10 @@
     viewport:     { width:0, height:0 },    // center scrolling
     discrepance:  { x:1, y:1 },             // discrepance ratios
     paused:       false,                    // pause the visualization
-    /**
+    /** 
      * Create drawing canvas layer.
      */
-    createCanvas: function(layerName)
+    createCanvas: function(layerName) 
     {
       // canvas layer for mouse trackig
       var jg = document.createElement("div");
@@ -147,12 +145,12 @@
           jg.style.width    = 100 + '%';
           jg.style.height   = 100 + '%';
           jg.style.zIndex   = aux.getNextHighestDepth() + 1;
-
+      
       // helper layer for text
       var jgHelp = document.createElement("div");
           jgHelp.id              = layerName + "Help";
           jgHelp.style.zIndex    = jg.style.zIndex + 1;
-
+          
       // layer for clustering
       var opacity = 40;
       var jgClust = document.createElement("div");
@@ -165,21 +163,21 @@
           jgClust.style.opacity   = opacity/100; // for W3C browsers
           jgClust.style.filter    = "alpha(opacity="+opacity+")"; // only for IE
           jgClust.style.zIndex    = jg.style.zIndex + 2;
-
+          
       var body  = document.getElementsByTagName("body")[0];
           body.appendChild(jg);
           body.appendChild(jgHelp);
           body.appendChild(jgClust);
-
+          
       // set the canvas areas for drawing both mouse tracking and clustering
       smtRep.jg = new jsGraphics(jg.id);
       smtRep.jgHelper = new jsGraphics(jgHelp.id);
       smtRep.jgClust = new jsGraphics(jgClust.id);
     },
-    /**
+    /** 
      * Create background layer.
      */
-    setBgCanvas: function(layerName)
+    setBgCanvas: function(layerName) 
     {
       var opacity = 80, // background layer opacity (%)
           // set layer above the mouse tracking one
@@ -197,23 +195,23 @@
           bg.style.opacity          = opacity/100; // for W3C browsers
           bg.style.filter           = "alpha(opacity="+opacity+")"; // only for IE
           bg.style.zIndex           = jg.style.zIndex - 1;
-
+          
       var body  = document.getElementsByTagName("body")[0];
           body.appendChild(bg);
     },
-    /**
+    /** 
      * Draw line.
      */
-    drawLine: function(ini,end)
+    drawLine: function(ini,end) 
     {
         smtRep.jg.setColor(smtOpt.regLn);
         smtRep.jg.drawLine(ini.x,ini.y, end.x,end.y);
         smtRep.jg.paint();
     },
-    /**
+    /** 
      * Draw mouse click.
      */
-    drawClick: function(x,y, isDragAndDrop)
+    drawClick: function(x,y, isDragAndDrop) 
     {
       var size;
       if (!isDragAndDrop) {
@@ -239,7 +237,7 @@
       }
       smtRep.jg.paint();
     },
-    /**
+    /** 
      * Draw direction arrow in a line.
      */
     drawDirectionArrow: function(ini,end)
@@ -258,32 +256,32 @@
       }
       smtRep.jg.paint();
     },
-    /**
+    /** 
      * Draw mouse cursor.
      */
-    drawCursor: function(x,y, color)
+    drawCursor: function(x,y, color) 
     {
       smtRep.jg.setColor(color);
-      smtRep.jg.fillPolygon([x,x,   x+4, x+6, x+9, x+7, x+15],
+      smtRep.jg.fillPolygon([x,x,   x+4, x+6, x+9, x+7, x+15], 
                             [y,y+15,y+15,y+23,y+23,y+15,y+15]);
       smtRep.jg.paint();
     },
-    /**
+    /** 
      * Draw registration point.
      */
-    drawRegistrationPoint: function(x,y)
+    drawRegistrationPoint: function(x,y) 
     {
       smtRep.jg.setColor(smtOpt.regPt);
       smtRep.jg.fillRect(x-1, y-1, 3, 3);
       smtRep.jg.paint();
     },
-    /**
+    /** 
      * Draw time-depending circle.
      */
-    drawVariableCircle: function(x,y, size)
+    drawVariableCircle: function(x,y, size) 
     {
       // use multiplier to normalize all circles: 0 < norm < 1
-      var norm = aux.roundTo(size/smtRep.jMax);
+      var norm = aux.roundTo(size/smtRep.jMax); 
       if (size * norm === 0 ) { return; }
       // limit size to 1/2 of current window width (px)
       if (size > smtData.wcurr/2) { size = Math.round(smtData.wcurr/2 * norm); }
@@ -292,24 +290,24 @@
       smtRep.jg.drawEllipse(x - size/2, y - size/2, size, size);
       smtRep.jg.paint();
     },
-    /**
+    /** 
      * Gives a visual clue when the user is not using the mouse.
      */
-    drawMouseStop: function(x,y)
+    drawMouseStop: function(x,y) 
     {
       if (!smtOpt.realTime) { return; }
-
+      
       var fontSize   = 16,
           circleSize = 50;
       smtRep.jgHelper.setColor(smtOpt.varCir);
       smtRep.jgHelper.fillEllipse(x - circleSize/2, y - circleSize/2, circleSize, circleSize);
       smtRep.jgHelper.setColor("black");
       smtRep.jgHelper.setFont("sans-serif", fontSize+'px', Font.BOLD);
-      // center the text in vertical
+      // center the text in vertical 
       smtRep.jgHelper.drawString("stopped...", x, y - fontSize/2);
       smtRep.jgHelper.paint();
-    },
-    /**
+    },   
+    /** 
      * Draw centroid as a star.
      */
     drawCentroid: function()
@@ -327,10 +325,10 @@
     	smtRep.jg.setStroke(0); // reset strokes
     	smtRep.jg.paint();
     },
-    /**
+    /** 
      * Draw cluster as a circle.
      */
-    drawClusters: function(response)
+    drawClusters: function(response) 
     {
       var K = JSON.parse(response);
       // again (same as in Flash) typeof K is string, so re-parse
@@ -344,54 +342,54 @@
       }
       smtRep.jgClust.paint();
     },
-    /**
+    /** 
      * Get euclidean distance from point a to point b.
      */
-    distance: function(a,b)
+    distance: function(a,b) 
     {
       return Math.sqrt( Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2) );
     },
-    /**
+    /** 
      * Auto scrolls the browser window.
      */
-    checkAutoScrolling: function(x,y)
+    checkAutoScrolling: function(x,y) 
     {
       if (!smtOpt.realTime) { return; }
       // center current mouse coords on the viewport
       aux.doScroll({xpos:x, ypos:y, width:smtRep.viewport.width, height:smtRep.viewport.height});
     },
-    /**
+    /** 
      * (smt)2 realtime drawing algorithm.
      */
-    playMouse: function()
+    playMouse: function() 
     {
       if (smtRep.paused) { return; }
 
       // mouse coords normalization
-      var iniMouse = {
+      var iniMouse = { 
                         x: user.xcoords[smtRep.i] * smtRep.discrepance.x,
-                        y: user.ycoords[smtRep.i] * smtRep.discrepance.y
+                        y: user.ycoords[smtRep.i] * smtRep.discrepance.y 
                      };
-      var endMouse = {
+      var endMouse = { 
                         x: user.xcoords[smtRep.i+1] * smtRep.discrepance.x,
-                        y: user.ycoords[smtRep.i+1] * smtRep.discrepance.y
+                        y: user.ycoords[smtRep.i+1] * smtRep.discrepance.y 
                      };
       var iniClick = {
-                        x: user.xclicks[smtRep.i] * smtRep.discrepance.x,
+                        x: user.xclicks[smtRep.i] * smtRep.discrepance.x, 
                         y: user.yclicks[smtRep.i] * smtRep.discrepance.y
                      };
       var endClick = {
-                        x: user.xclicks[smtRep.i+1] * smtRep.discrepance.x,
+                        x: user.xclicks[smtRep.i+1] * smtRep.discrepance.x, 
                         y: user.yclicks[smtRep.i+1] * smtRep.discrepance.y
                      };
-
+      
       // draw entry point
       if (smtRep.i === 0) {
         smtRep.drawCursor(iniMouse.x,iniMouse.y, smtOpt.entryPt);
       }
-
+      
       // main loop to draw mouse trail
-      if (smtRep.i < user.xcoords.length)
+      if (smtRep.i < user.xcoords.length) 
       {
         var mouseDistance = smtRep.distance(iniMouse,endMouse);
         // draw registration points
@@ -434,7 +432,7 @@
         // check auto scrolling
         smtRep.checkAutoScrolling(endMouse.x, endMouse.y);
     	}
-
+      
       // draw exit point
       else {
     	  // rewind count 1 step to access the last mouse coordinate
@@ -444,19 +442,19 @@
         // draw exit point
     	  smtRep.drawCursor(iniMouse.x,iniMouse.y, smtOpt.exitPt);
     	  // draw clusters
-    	  var data  = "xhr=1";
+    	  var data  = "xhr=1"; 
             data += "&xdata=" + JSON.stringify(user.xcoords);
             data += "&ydata=" + JSON.stringify(user.ycoords);
-
+        
         var basepath = aux.getBase();
         // send request
         aux.sendAjaxRequest({
-          url:       basepath + "includes/kmeans.php",
+          url:       basepath + "includes/kmeans.php", 
           postdata:  data,
           callback:  smtRep.drawClusters
         });
-
-        // draw centroid (average mouse position)
+        
+        // draw centroid (average mouse position) 
         smtRep.drawCentroid();
         // clear mouse tracking
         clearInterval(smtRep.play);
@@ -468,45 +466,45 @@
         }
     	}
     },
-    /**
+    /** 
      * Replay method: static or dynamic.
      */
-    replay: function(realtime)
+    replay: function(realtime) 
     {
       if (realtime) {
         // fps are stored in smtData object, so we can use that value here
         var interval = Math.round(1000/smtData.fps);
         smtRep.play = setInterval(smtRep.playMouse, interval);
       } else {
-        // static mouse tracking visualization
+        // static mouse tracking visualization 
         for (var k = 0, total = user.xcoords.length; k <= total; ++k) {
           smtRep.playMouse();
         }
       }
     },
-    /**
+    /** 
      * Reload method: mouse tracking layers are redrawn.
      */
-    reset: function()
+    reset: function() 
     {
       clearInterval(smtRep.play);
       smtRep.paused = false;
       // reset counters
       smtRep.i = 0;
-      smtRep.j = 1;
-      // clear canvas
+      smtRep.j = 1;    
+      // clear canvas  
       smtRep.jg.clear();
       smtRep.jgClust.clear();
     },
-    /**
-     * User can pause the mouse replay by pressing the SPACE key,
+    /** 
+     * User can pause the mouse replay by pressing the SPACE key, 
      * or toggle replay mode by pressing the ESC key.
      */
-    helpKeys: function(e)
+    helpKeys: function(e) 
     {
       // use helpKeys only in realtime replaying
       if (!smtOpt.realTime) { return; }
-
+      
       if (!e) { e = window.event; }
       var code = e.keyCode || e.which;
       // on press ESC key finish drawing
@@ -525,10 +523,10 @@
         smtRep.paused = !smtRep.paused;
       }
     },
-    /**
+    /** 
      * System initialization.
      */
-    init: function()
+    init: function() 
     {
       // use vieport size to auto-scroll window
       var vp = aux.getWindowSize();
@@ -543,9 +541,9 @@
         smtRep.discrepance.x = aux.roundTo(doc.width / user.wprev);
         smtRep.discrepance.y = aux.roundTo(doc.height / user.hprev);
       }
-
+          
       // precalculate the user stops: useful for time-depending circles and path centroid
-      var stops = [];
+      var stops = [];      
       var size = 1;
       for (var k = 0, len = user.xcoords.length; k < len; ++k) {
         if (user.xcoords[k] == user.xcoords[k+1] && user.ycoords[k] == user.ycoords[k+1]) {
@@ -560,7 +558,7 @@
         }
       }
       // set max size for variable circles
-      smtRep.jMax = aux.array.max(stops);
+      smtRep.jMax = aux.array.max(stops);       
       // common suffix for tracking canvas and background layers
       var smtName = "smtCanvas";
       // set the canvas layer
@@ -572,9 +570,9 @@
       // init
       smtRep.replay(smtOpt.realTime);
     }
-
+    
   };
-
+  
   // do not overwrite the smt2 namespace
   if (typeof window.smt2 !== 'undefined') { throw("smt2 namespace conflict"); }
   // else expose replay method
@@ -589,5 +587,5 @@
       aux.onDOMload(smtRep.init);
     }
   }
-
+  
 })();

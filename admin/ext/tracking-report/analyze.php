@@ -52,29 +52,40 @@ include INC_DIR.'header.php';
     include './includes/rawlog-client.php';
     
     if (db_option(TBL_PREFIX.TBL_CMS, "displayGoogleMap")) {
+      $IP = $log['ip'];
       include './includes/rawlog-location.php';
     }
   }
   else if (isset($_GET['pid'])) 
   {
     $page = (int) $_GET['pid'];
-    // merge logs?
+    // merge logs
     $add = (db_option(TBL_PREFIX.TBL_CMS, "mergeCacheUrl")) ? get_common_url($page) : null;
     $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "cache_id = '".$page."'".$add);
-    
-    if (!$logs) { die("Error retrieving logs."); }
   }
   else if (isset($_GET['cid'])) 
   {
     $clientId = $_GET['cid'];
     // skip visualization items from log data
     $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "client_id = '".$clientId."'");
+    // the same user could come from different locations, so don't include the raw-location file
+  }
+  else if (isset($_GET['ip']))
+  {
+    // skip visualization items from log data
+    $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "ip = '".$_GET['ip']."'");
+    if (db_option(TBL_PREFIX.TBL_CMS, "displayGoogleMap")) {
+      $IP = $_GET['ip'];
+      include './includes/rawlog-location.php';
+    }
   }
   
   
   // now compute grouped metrics
-  if (isset($_GET['cid']) || isset($_GET['pid'])) 
+  if (isset($_GET['cid']) || isset($_GET['pid']) || isset($_GET['ip']))
   {
+    if (!$logs) { die("Error retrieving logs."); }
+    
     $sampleSize = db_option(TBL_PREFIX.TBL_CMS, "maxSampleSize");
     if ($sampleSize > 0)
       $keys = array_rand($logs, $sampleSize);

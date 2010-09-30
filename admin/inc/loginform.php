@@ -1,3 +1,10 @@
+<?php
+// supress MySQL error if there are no database tables yet
+$isInstalled = @db_query("DESCRIBE ".TBL_PREFIX.TBL_RECORDS);
+if (!$isInstalled) {
+  echo '<p class="center error">Database not found or misconfigured!</p>';
+}
+?>
 <div class="loginwrap">
 
   <h1 class="title center">(smt)<sup>2</sup></h1>

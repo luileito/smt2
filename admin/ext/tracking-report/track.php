@@ -19,7 +19,7 @@ $file = CACHE_DIR.$htmlFile;
 $doc = new DOMUtil();
 // check
 if (!is_file($file)) { 
-  $file = error_webpage('<h1>Page not found on cache!</h1><p>Either it was deleted from cache or the request could not be processed.</p>');
+  $file = error_webpage('<h1>Page not found on cache!</h1><p>That\'s because either it was deleted from cache or the request could not be processed.</p>');
   // hide warnings when parsing non valid (X)HTML pages
   @$doc->loadHTML($file);
 } else {
@@ -27,7 +27,7 @@ if (!is_file($file)) {
   @$doc->loadHTMLFile( utf8_decode($file) );
 }
 // use this constant to load more user trails, if available
-define ('TRACKER', get_current_URL());
+define ('TRACKER', url_get_current());
 // include user data
 include './includes/user.php';
 

@@ -44,9 +44,13 @@
 		</a><br>
 			<a href="smt2/_define.php.html">		define.php
 		</a><br>
+			<a href="smt2/_functions.array.php.html">		functions.array.php
+		</a><br>
 			<a href="smt2/_functions.db.php.html">		functions.db.php
 		</a><br>
 			<a href="smt2/_functions.php.html">		functions.php
+		</a><br>
+			<a href="smt2/_functions.url.php.html">		functions.url.php
 		</a><br>
 			<a href="smt2/_messages.php.html">		messages.php
 		</a><br>
@@ -123,19 +127,23 @@
 							<dt><b>ADMIN_PATH</b></dt>
 				<dd>in file define.php, constant <a href="smt2/_define.php.html#defineADMIN_PATH">ADMIN_PATH</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Path to admin dir. This absolute URL is used to resolve links, redirections, an so on.</dd>
 							<dt><b>array_argmax</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionarray_argmax">array_argmax()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the array index that has the maximum value.</dd>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionarray_argmax">array_argmax()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the array index that has the maximum value.</dd>
 							<dt><b>array_argmin</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionarray_argmin">array_argmin()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the array index that has the minimum value.</dd>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionarray_argmin">array_argmin()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the array index that has the minimum value.</dd>
 							<dt><b>array_avg</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionarray_avg">array_avg()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the average sum of a numeric array.</dd>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionarray_avg">array_avg()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the average sum of a numeric array.</dd>
+							<dt><b>array_avg_weighted</b></dt>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionarray_avg_weighted">array_avg_weighted()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Does a weighted sum for a given multidimensional numeric array and computed weights.</dd>
 							<dt><b>array_flatten</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionarray_flatten">array_flatten()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Denests nested arrays within the given array.</dd>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionarray_flatten">array_flatten()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;De-nests nested arrays within the given array.</dd>
+							<dt><b>array_frequency</b></dt>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionarray_frequency">array_frequency()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the frequency of each $input array member.</dd>
 							<dt><b>array_null</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionarray_null">array_null()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Convert null values to empty strings. Used to generate valid JSON arrays.</dd>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionarray_null">array_null()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Convert null values to empty strings. Used to generate valid JSON arrays.</dd>
 							<dt><b>array_sanitize</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionarray_sanitize">array_sanitize()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Removes empty items (both key and value) from an associative numeric array.</dd>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionarray_sanitize">array_sanitize()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Removes empty items (both key and value) from an associative numeric array.</dd>
 							<dt><b>array_sd</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionarray_sd">array_sd()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the variance of a numeric array.</dd>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionarray_sd">array_sd()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the variance of a numeric array.</dd>
 					</dl>
 	</div>
 	<a href="elementindex_smt2.html#top">top</a><br>
@@ -182,8 +190,6 @@
 				<dd>in file define.php, constant <a href="smt2/_define.php.html#defineCMS_TITLE">CMS_TITLE</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Title for CMS pages.</dd>
 							<dt><b>CMS_TYPE</b></dt>
 				<dd>in file define.php, constant <a href="smt2/_define.php.html#defineCMS_TYPE">CMS_TYPE</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Form input type: User must enter some value (input text)</dd>
-							<dt><b>compute_frequency</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functioncompute_frequency">compute_frequency()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the frequency of each $input array member.</dd>
 							<dt><b>convert_points</b></dt>
 				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionconvert_points">convert_points()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Merges vertical and horizontal coordinates in a bidimensional point array.</dd>
 							<dt><b>count_clicks</b></dt>
@@ -219,7 +225,7 @@
 							<dt><b>db_insert</b></dt>
 				<dd>in file functions.db.php, function <a href="smt2/_functions.db.php.html#functiondb_insert">db_insert()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Inserts a new row on table.</dd>
 							<dt><b>db_option</b></dt>
-				<dd>in file functions.db.php, function <a href="smt2/_functions.db.php.html#functiondb_option">db_option()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Selects one and only row from an &quot;options&quot; table (CMS or JSOPT).</dd>
+				<dd>in file functions.db.php, function <a href="smt2/_functions.db.php.html#functiondb_option">db_option()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Selects one (and only one) row from an &quot;options&quot; table (CMS or JSOPT).</dd>
 							<dt><b>db_query</b></dt>
 				<dd>in file functions.db.php, function <a href="smt2/_functions.db.php.html#functiondb_query">db_query()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Performs a generic query to database.</dd>
 							<dt><b>db_records</b></dt>
@@ -268,10 +274,14 @@
 		<dl>
 							<dt><b>filename_to_str</b></dt>
 				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionfilename_to_str">filename_to_str()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Reverse function for str_to_filename. Dashes are converted to spaces.</dd>
+							<dt><b>functions.array.php</b></dt>
+				<dd>procedural page <a href="smt2/_functions.array.php.html">functions.array.php</a></dd>
 							<dt><b>functions.db.php</b></dt>
 				<dd>procedural page <a href="smt2/_functions.db.php.html">functions.db.php</a></dd>
 							<dt><b>functions.php</b></dt>
 				<dd>procedural page <a href="smt2/_functions.php.html">functions.php</a></dd>
+							<dt><b>functions.url.php</b></dt>
+				<dd>procedural page <a href="smt2/_functions.url.php.html">functions.url.php</a></dd>
 					</dl>
 	</div>
 	<a href="elementindex_smt2.html#top">top</a><br>
@@ -288,22 +298,14 @@
 				<dd>in file class.prettydate.php, method <a href="smt2/prettyDate.html#methodgetString">prettyDate::getString()</a></dd>
 							<dt><b>getStringResolved</b></dt>
 				<dd>in file class.prettydate.php, method <a href="smt2/prettyDate.html#methodgetStringResolved">prettyDate::getStringResolved()</a></dd>
-							<dt><b>get_base</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_base">get_base()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the base path of a URL.</dd>
-							<dt><b>get_client_id</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_client_id">get_client_id()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Assigns an unique identifier for each client machine.</dd>
-							<dt><b>get_common_url</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_common_url">get_common_url()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets a SQL-alike string with all cache IDs that are related to the same URL.</dd>
-							<dt><b>get_current_URL</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_current_URL">get_current_URL()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the full path to the current PHP file (protocol + domain + paths/to/file).</dd>
+							<dt><b>get_cache_common_url</b></dt>
+				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_cache_common_url">get_cache_common_url()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets a SQL-like string with all cache IDs that are related to the same URL.</dd>
 							<dt><b>get_exts_order</b></dt>
 				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_exts_order">get_exts_order()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets installed extensions priorities.</dd>
-							<dt><b>get_remote_webpage</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_remote_webpage">get_remote_webpage()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets URL contents within the HTTP server response header fields.</dd>
-							<dt><b>get_server_URL</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_server_URL">get_server_URL()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the URL of current server (protocol + domain).</dd>
+							<dt><b>get_ip</b></dt>
+				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_ip">get_ip()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the client IP.</dd>
 							<dt><b>get_smt_releases</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_smt_releases">get_smt_releases()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Checks if a new smt2 version is released.</dd>
+				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionget_smt_releases">get_smt_releases()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Checks if a new smt2 version is released via (smt) website.</dd>
 					</dl>
 	</div>
 	<a href="elementindex_smt2.html#top">top</a><br>
@@ -365,13 +367,13 @@
 							<dt><b>$maxPoint</b></dt>
 				<dd>in file class.cluster.php, variable <a href="smt2/Cluster.html#var$maxPoint">Cluster::$maxPoint</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Maximum point value from sample</dd>
 							<dt><b>$medPoint</b></dt>
-				<dd>in file class.cluster.php, variable <a href="smt2/Cluster.html#var$medPoint">Cluster::$medPoint</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Cluster meadian</dd>
+				<dd>in file class.cluster.php, variable <a href="smt2/Cluster.html#var$medPoint">Cluster::$medPoint</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Cluster median</dd>
 							<dt><b>mask_client</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionmask_client">mask_client()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Masks a given client ID string.</dd>
+				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionmask_client">mask_client()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Masks a given client ID string, just for pretty reading.</dd>
 							<dt><b>matrix_avg</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionmatrix_avg">matrix_avg()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the average sum of a matrix, assuming that each row is a numeric array.</dd>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionmatrix_avg">matrix_avg()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the average sum of a matrix, assuming that each row is a numeric array.</dd>
 							<dt><b>matrix_sd</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionmatrix_sd">matrix_sd()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the standard deviation of a matrix, assuming that each row is a numeric array.</dd>
+				<dd>in file functions.array.php, function <a href="smt2/_functions.array.php.html#functionmatrix_sd">matrix_sd()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Computes the standard deviation of a matrix, assuming that each row is a numeric array.</dd>
 							<dt><b>messages.php</b></dt>
 				<dd>procedural page <a href="smt2/_messages.php.html">messages.php</a></dd>
 					</dl>
@@ -383,7 +385,7 @@
 		<h2>n</h2>
 		<dl>
 							<dt><b>notify_request</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionnotify_request">notify_request()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Redirects the browser to a specified anchor on the page that sent a form.</dd>
+				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionnotify_request">notify_request()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Redirects the browser to a specified anchor on the index.php page that sent a form from a CMS section.</dd>
 					</dl>
 	</div>
 	<a href="elementindex_smt2.html#top">top</a><br>
@@ -410,8 +412,6 @@
 	<div>
 		<h2>r</h2>
 		<dl>
-							<dt><b>redirect</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionredirect">redirect()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Makes an HTTP 1.1 compliant redirect.</dd>
 							<dt><b>REQUIRED</b></dt>
 				<dd>in file functions.php, constant <a href="smt2/_functions.php.html#defineREQUIRED">REQUIRED</a><br>&nbsp;&nbsp;&nbsp;&nbsp;smt2 CMS core functions.</dd>
 					</dl>
@@ -480,6 +480,14 @@
 		<dl>
 							<dt><b>unregister_GLOBALS</b></dt>
 				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionunregister_GLOBALS">unregister_GLOBALS()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Emulates register_globals off.</dd>
+							<dt><b>url_get_base</b></dt>
+				<dd>in file functions.url.php, function <a href="smt2/_functions.url.php.html#functionurl_get_base">url_get_base()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the base path of a URL.</dd>
+							<dt><b>url_get_current</b></dt>
+				<dd>in file functions.url.php, function <a href="smt2/_functions.url.php.html#functionurl_get_current">url_get_current()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the full path to the current PHP file (protocol + domain + paths/to/file).</dd>
+							<dt><b>url_get_server</b></dt>
+				<dd>in file functions.url.php, function <a href="smt2/_functions.url.php.html#functionurl_get_server">url_get_server()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Gets the URL of current server (protocol + domain).</dd>
+							<dt><b>url_redirect</b></dt>
+				<dd>in file functions.url.php, function <a href="smt2/_functions.url.php.html#functionurl_redirect">url_redirect()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Makes an HTTP 1.1 compliant redirect.</dd>
 					</dl>
 	</div>
 	<a href="elementindex_smt2.html#top">top</a><br>
@@ -500,8 +508,6 @@
 	<div>
 		<h2>w</h2>
 		<dl>
-							<dt><b>weighted_avg</b></dt>
-				<dd>in file functions.php, function <a href="smt2/_functions.php.html#functionweighted_avg">weighted_avg()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;Does a weighted sum for a given multidimensional numeric array and computed weights.</dd>
 							<dt><b>WZ_JSGRAPHICS</b></dt>
 				<dd>in file define.php, constant <a href="smt2/_define.php.html#defineWZ_JSGRAPHICS">WZ_JSGRAPHICS</a><br>&nbsp;&nbsp;&nbsp;&nbsp;WZ JavaScript graphics libary.</dd>
 					</dl>
@@ -529,7 +535,7 @@
 	<a href="elementindex_smt2.html#top">top</a><br>
         <div class="credit">
 		    <hr />
-		    Documentation generated on Sun, 21 Feb 2010 16:07:52 +0100 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
+		    Documentation generated on Thu, 30 Sep 2010 18:26:38 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
 	      </div>
       </td></tr></table>
     </td>

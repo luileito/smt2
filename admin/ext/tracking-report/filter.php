@@ -10,7 +10,8 @@ $defaults = array(
                     "client_id"   => "all",
                     "os_id"       => "all",
                     "browser_id"  => "all",
-                    "newusers"    => "all",
+                    "ftu"         => "all",
+                    "ip"          => "all",
                     //"from"        => date("Y/m/d H:i", strtotime("last year")),
                     "fromyear"    => date("Y") - 1,
                     "frommonth"   => 1,
@@ -23,8 +24,8 @@ $defaults = array(
                     "today"       => date("d"),
                     "tohour"      => date("H"),
                     "tominute"    => date("i"),
-                    "min"         => "(SELECT MIN(sess_time))",
-                    "max"         => "(SELECT MAX(sess_time))",
+                    "mintime"     => "(SELECT MIN(sess_time))",
+                    "maxtime"     => "(SELECT MAX(sess_time))",
                     "limit"       => (int)$_POST['limit'],
                     "groupby"     => null
                  );
@@ -36,8 +37,8 @@ foreach ($defaults as $key => $value)
 {
   if ($value === "all") 
   {
-    // exception
-    if ($key == "newusers" && isset($_POST['newusers'])) {
+    // exception (it's a checkbox)
+    if ($key == "ftu" && isset($_POST['ftu'])) {
       $sql .= " AND ftu = '1'";
     } else if (!empty($_POST[$key])) { 
       $sql .= " AND ".$key." = '".$_POST[$key]."'";
@@ -56,7 +57,7 @@ foreach ($defaults as $key => $value)
       if ( isset($_SESSION[$key]) && isset($_POST[$key]) ) {
         ${$key} = $_SESSION[$key];
         // sanitize zero values. Skip empty values on time range, but not break the loop because it should be unset if "save" is not checked
-        if ($key != "min" && $key != "max" && (int)$_POST[$key] === 0 && $_POST[$key] <= $_SESSION[$key]) { ${$key} = 0; }
+        if ($key != "mintime" && $key != "maxtime" && (int)$_POST[$key] === 0 && $_POST[$key] <= $_SESSION[$key]) { ${$key} = 0; }
       } else {
         ${$key} = $value;
       }      
@@ -83,14 +84,14 @@ $todate   = date("Y-m-d H:i:s", $sto);
 $sql .= " AND (sess_date BETWEEN '$fromdate' AND '$todate')";
 
 // time range
-$sql .= " AND (sess_time BETWEEN ".$min." AND ".$max.")";
+$sql .= " AND (sess_time BETWEEN ".$mintime." AND ".$maxtime.")";
 
 // grouping
 if (!empty($groupby)) {
   $sql .= " GROUP BY ".$groupby;
 }
 
-// save or delete previous querie
+// save or delete previous queries
 if (isset($_POST['reset'])) {
   unset($_SESSION['filterquery'], $_SESSION['groupby'], $_SESSION['from'], $_SESSION['to']);
 } else {

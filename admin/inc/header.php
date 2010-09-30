@@ -13,7 +13,7 @@ include INC_DIR.'doctype.php';
     <h1><strong>(smt)<sup>2</sup></strong> &middot; simple mouse tracking</h1>
     
     <p id="logged"><a href="<?=ABS_PATH?>">Logged in</a> as <strong><?=$_SESSION['login']?></strong> &mdash;
-    <a id="logout" href="<?=ADMIN_PATH?>sys/logout.php">disconnect</a></p>
+    <a id="logout" class="smallround" href="<?=ADMIN_PATH?>sys/logout.php">disconnect</a></p>
     
   </div><!-- end header -->
     

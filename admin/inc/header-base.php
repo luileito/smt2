@@ -1,4 +1,6 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="Robots" content="noindex, nofollow" />
+
   <title><?=CMS_TITLE?> | admin interface</title>
   
   <link href="<?=ADMIN_PATH?>favicon.ico" rel="icon" type="image/x-icon" />
@@ -12,7 +14,7 @@
   <script type="text/javascript" src="<?=ADMIN_PATH?>js/flashdetect.min.js"></script>
   <script type="text/javascript" src="<?=ADMIN_PATH?>js/setupcms.js"></script>
   <script type="text/javascript" src="<?=SMT_AUX?>"></script>
-  
+
   <?php
   // check custom headers
   if (count($_headAdded) > 0)

@@ -18,7 +18,7 @@ if (empty($_SESSION['login']))
   exit;
 }
 else 
-{  
+{
   // check current session login
   $user = db_select(TBL_PREFIX.TBL_USERS, "role_id", "login='".$_SESSION['login']."'");
   $role = db_select(TBL_PREFIX.TBL_ROLES, "ext_allowed", "id='".$user['role_id']."'");

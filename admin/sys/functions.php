@@ -5,7 +5,6 @@
  * @rev 20/December/2009
  */
 //error_reporting(E_ALL | E_STRICT); // uncomment for debugging
-
 unregister_GLOBALS();
 
 // ignore PHP strict notice if time zone has not been set in php.ini
@@ -33,6 +32,10 @@ require REQUIRED.'/class.browser.php';
 require REQUIRED.'/class.point.php';
 // ------------------------------------------------------------ database API ---
 require REQUIRED.'/functions.db.php';
+// ------------------------------------------------------------------ others ---
+require REQUIRED.'/functions.array.php';
+require REQUIRED.'/functions.url.php';
+require_once realpath(REQUIRED.'../../../').'/core/functions.php';
 
 /** 
  * Additional head tags. Enable inserting custom tags on page head.
@@ -128,7 +131,7 @@ function display_text($type, $msg, $elem = 'p')
 }
 
 /**
- * Redirects the browser to a specified anchor on the page that sent a form.
+ * Redirects the browser to a specified anchor on the index.php page that sent a form from a CMS section.
  * @param   string    $id         HTML element id
  * @param   boolean   $success    no errors to display
  * @param   string    $customErr  if $success is false, type here your own custom message  
@@ -146,7 +149,7 @@ function notify_request($id, $success, $customErr = "")
                      display_text($_displayType["SUCCESS"], $_notifyMsg["SAVED"])
                      :
                      display_text($_displayType["ERROR"],   $errorMessage);
-  
+
   url_redirect( dirname($_SERVER['SCRIPT_NAME'])."/#".$id );
 }
 
@@ -190,14 +193,14 @@ function trim_text($text, $words = 5)
   return $show;
 }
 
-/** 
- * Assigns an unique identifier for each client machine. 
- * @return  string    Encoded client identifier   
+/**
+ * Gets the client IP.
+ * @return  string
  */
-function get_client_id()
+function get_ip()
 {
    if( !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ) {
-      $client_id =
+      $final_ip =
          ( !empty($_SERVER['REMOTE_ADDR']) ) ?
             $_SERVER['REMOTE_ADDR'] :
             ( ( !empty($_ENV['REMOTE_ADDR']) ) ?
@@ -207,112 +210,46 @@ function get_client_id()
       reset($entries);
       while (list(, $entry) = each($entries)) {
          $entry = trim($entry);
-         if ( preg_match("/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/", $entry, $id_list) ) {
+         if ( preg_match("/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/", $entry, $ip_list) ) {
             // see http://www.faqs.org/rfcs/rfc1918.html
-            $private_id = array(
+            $private_ip = array(
                                 '/^0\./',
                                 '/^127\.0\.0\.1/',
                                 '/^192\.168\..*/',
                                 '/^172\.((1[6-9])|(2[0-9])|(3[0-1]))\..*/',
                                 '/^10\..*/'
                                );
-   
-            $found_id = preg_replace($private_id, $client_id, $id_list[1]);
-   
-            if ($client_id != $found_id) {
-               $client_id = $found_id;
+
+            $found_ip = preg_replace($private_ip, $final_ip, $ip_list[1]);
+
+            if ($final_ip != $found_ip) {
+               $final_ip = $found_ip;
                break;
             }
          }
       }
    } else {
-      $client_id =
+      $final_ip =
          ( !empty($_SERVER['REMOTE_ADDR']) ) ?
             $_SERVER['REMOTE_ADDR'] :
             ( ( !empty($_ENV['REMOTE_ADDR']) ) ?
                $_ENV['REMOTE_ADDR'] :
                "unknown" );
    }
-   
-   return base64_encode($client_id);
+
+   return $final_ip;
 }
 
 /** 
- * Masks a given client ID string.
- * @param  string   $id   client ID 
- * @return string         Pretty-formatted client ID 
+ * Masks a given client ID string, just for pretty reading.
+ * @param  string   $hash   client ID
+ * @return string           Pretty-formatted client ID
  */
-function mask_client($id)
+function mask_client($hash)
 {
-  $hash = md5($id);
   $half = strlen($hash) / 2;
   
   return substr($hash, -$half, $half);
-}
-
-
-/** 
- * Gets URL contents within the HTTP server response header fields.
- * This function uses cURL to fetch remote pages. 
- * @param  string   $URL   web page URL
- * @param  array    $opts  custom cURL options  
- * @return array           Transfer information (the web page content is in the "content" array key)
- * @link  http://es2.php.net/manual/en/curl.constants.php
- * @link  http://es2.php.net/manual/en/function.curl-setopt.php
- */
-function get_remote_webpage($URL, $opts = array())
-{
-  // basic options (regular GET requests)
-  $options = array(
-                    CURLOPT_URL            => $URL,
-                    CURLOPT_USERAGENT      => $_SERVER['HTTP_USER_AGENT'],
-                    CURLOPT_RETURNTRANSFER => true,   // return transfer as a string
-                    CURLOPT_HEADER         => false,  // don't return headers
-                    CURLOPT_ENCODING       => "",     // handle all encodings
-                    CURLOPT_CONNECTTIMEOUT => 10,     // timeout on connect
-                    CURLOPT_TIMEOUT        => 60,     // timeout on response
-                    CURLOPT_SSL_VERIFYPEER => false,  // try to fetch SSL pages too
-                    CURLOPT_SSL_VERIFYHOST => false
-                  );
-
-  /* cURL should follow redirections! 
-   * But safe mode (deprecated) and open_basedir (useless) are incompatible
-   * with CURLOPT_FOLLOWLOCATION.
-   * Also see this solution: http://www.php.net/manual/en/function.curl-setopt.php#71313      
-   */
-  if (!ini_get('safe_mode') && !ini_get('open_basedir')) {
-    $options[ CURLOPT_FOLLOWLOCATION ] = true;  // follow redirects
-    $options[ CURLOPT_AUTOREFERER ]    = true;  // automatically set the Referer: field
-    $options[ CURLOPT_MAXREDIRS ]      = 5;     // limit redirect loops
-    
-  }
-  
-  // add custom cURL options (e.g. POST requests, cookies, etc.)
-  if (count($opts) > 0)
-  {
-    foreach ($opts as $key => $value) {
-      $options[$key] = $value;
-    }
-  }
-  
-  $ch = curl_init();
-
-  curl_setopt_array($ch, $options);
-
-  $content  = curl_exec($ch);     // the Web page
-  $transfer = curl_getinfo($ch);  // transfer information (http://www.php.net/manual/en/function.curl-getinfo.php)
-  $errnum   = curl_errno($ch);    // codes: http://curl.haxx.se/libcurl/c/libcurl-errors.html
-  $errmsg   = curl_error($ch);    // empty string on success
-
-  curl_close($ch);
-
-  // extend transfer info
-  $transfer['errnum']  = $errnum;
-  $transfer['errmsg']  = $errmsg;
-  $transfer['content'] = $content;
-  // $transfer['url'] is the final URL after redirections, if CURLOPT_FOLLOWLOCATION is set to true
-  
-  return $transfer;
 }
 
 /** 
@@ -327,236 +264,6 @@ function error_webpage($bodyText = "")
   
   return $webpage; 
 } 
-
-/** 
- * Computes the frequency of each $input array member.
- * @param   mixed  $input        input string or array of strings to parse ($_POST vars are sent as strings)
- * @param   int    $threshold    frequencies (in percentage) under this $threshold will not be stored (default: 1%)
- * @return  array                A sorted associative array in the form '[mostFrequentItem]=>frequency,...,[lessFrequentItem]=>frequency'
- */
-function array_frequency($input, $threshold = 1) 
-{
-  // convert $input in a real PHP array
-  $input = (!is_array($input)) ? explode(",", $input) : $input;
-  // count occurrences (array keys must be strings or integers)
-  $unique = array_count_values($input); // Returns an associative array of values from $input as keys and their count as value. 
-  // $hovered is an associative array(string => int)
-  $unique = array_sanitize($unique);
-  
-  // exit if there are no data
-  if (!$unique) return false;
-  
-  // compute sum
-  $sum  = array_sum($unique);
-  $data = array();
-  // now calculate the frequency of each hovered element (in percentage)
-  foreach ($unique as $k => $value) {
-    $frequency = round(100*$value/$sum, 2);
-    // store frecuencies above given threshold
-    if ($frequency > $threshold) {
-      $data[$k] = $frequency;
-    } 
-  }
-  // order by frecuency
-  arsort($data);
-
-  return $data;
-}
-
-/** 
- * Removes empty items (both key and value) from an associative numeric array.
- * @param   mixed  $input   array or string to sanitize
- * @return  mixed           Sanitized array or string (used for widget tracking)
- */
-function array_sanitize($input)
-{
-  $isString = false;
-  
-  if (!is_array($input)) { 
-    $input = explode(",", $input);
-    $isString = true; 
-  }
-  
-  $temp = array();  
-  foreach ($input as $key => $value) {
-    // avoid buggy values
-    $key = trim($key);
-    $value = trim($value);
-    // store valid data
-    if (!empty($key) && !empty($value)) {
-      $temp[$key] = $value;
-    }
-  }
-  
-  return ($isString) ? implode(",", $temp) : $temp;
-}
-
-/** 
- * Convert null values to empty strings. Used to generate valid JSON arrays.
- * @param   array  $input   array
- * @return  array           Parsed array
- */
-function array_null($input)
-{
-  if (!is_array($input)) {
-    $input = explode(",", $input);
-  }
-  
-  $temp = array(); 
-  foreach ($input as $key => $value) {
-    // store valid data
-    $temp[$key] = (!empty($value)) ? $value : 0;
-  }
-  
-  return $temp;
-}
-
-/** 
- * Does a weighted sum for a given multidimensional numeric array and computed weights.
- * @param   array  $input     multidimensional array (matrix)
- * @param   array  $weights   weights 
- * @return  array             Weighted sum
- * @link    http://www.compapp.dcu.ie/~humphrys/PhD/e.html 
- */
-function array_avg_weighted($input, $weights) 
-{
-  $sumArray = array();
-  
-  foreach ($input as $arrItem) {
-    $sumArray[] = array_avg($arrItem) * count($arrItem) / max($weights);
-  }
-  
-  return $sumArray;
-}
-
-/** 
- * Computes the average sum of a numeric array.
- * @param   array  $input   array or set of arrays (matrix)
- * @return  float           Array average
- */
-function array_avg($input)
-{
-  return round( array_sum($input) / count($input), 2);
-}
-
-/**
- * Computes the average sum of a matrix, assuming that each row is a numeric array.
- * @param   array $matrix a set of arrays (matrix)
- * @return  float         matrix average value
- */
-function matrix_avg($matrix)
-{
-  $sum = 0;
-  $count = 0;
-
-  foreach ($matrix as $arrItem)
-  {
-    if (!is_array($arrItem)) { $arrItem = explode(",", $arrItem); }
-
-    $sum += array_avg($arrItem);
-    // note that this is an accumulative sum
-    ++$count;
-  }
-
-  return round( $sum/$count, 2 );
-}
-
-/**
- * Computes the variance of a numeric array.
- * @param   array  $input   array
- * @return  int             Array index
- */
-function array_sd($input)
-{
-  $variance = 0;
-  $mean = array_avg($input);
-  foreach ($input as $elem) {
-    $variance += ($elem - $mean) * ($elem - $mean);
-  }
-
-  return round( sqrt($variance/count($input)), 2 );
-}
-
-/**
- * Computes the standard deviation of a matrix, assuming that each row is a numeric array.
- * @param   array $matrix a set of arrays (matrix)
- * @return  float         matrix average value
- */
-function matrix_sd($matrix)
-{
-  $sd = 0;
-  $count = 0;
-
-  foreach ($matrix as $arrItem)
-  {
-    if (!is_array($arrItem)) { $arrItem = explode(",", $arrItem); }
-
-    $sd += array_sd($arrItem);
-
-    // note that we can have more than one input array
-    ++$count;
-  }
-  
-  return round( $sd/$count, 2 );
-}
-
-/** 
- * Gets the array index that has the maximum value.
- * @param   array  $input   array
- * @return  int             Array index
- */
-function array_argmax($input)
-{
-  $max = max($input);
-  foreach ($input as $key => $value)
-  {
-    if ($value == $max) {
-      $maxIndex = $key;
-      break;
-    }
-  }
-  
-  return $maxIndex;
-}
-
-/** 
- * Gets the array index that has the minimum value.
- * @param   array  $input   array
- * @return  int             Array index
- */
-function array_argmin($input)
-{
-  $min = min($input);
-  foreach ($input as $key => $value)
-  {
-    if ($value == $min) {
-      $minIndex = $key;
-      break;
-    }
-  }
-  
-  return $minIndex;
-}
-
-/**
- * Denests nested arrays within the given array.
- * @autor DZone Snippets
- * @link  http://snippets.dzone.com/posts/show/4660
- */
-function array_flatten($input)
-{
-  $i = 0;
-  while ($i < count($input))
-  {
-    if (is_array($input[$i])) {
-      array_splice($input, $i, 1, $input[$i]);
-    } else {
-      ++$i;
-    }
-  }
-
-  return $input;
-}
 
 /** 
  * Merges vertical and horizontal coordinates in a bidimensional point array.
@@ -625,75 +332,6 @@ function count_clicks($xclicks, $yclicks)
   return $numClicks;
 }
       
-/**
- * Makes an HTTP 1.1 compliant redirect.
- * Absolute URLs are required, though all modern browsers support relative URLs.
- * @param   string    $path  where to go to, starting at server root (default: none)
- */
-function url_redirect($path = "")
-{
-  $url = url_get_server();
-  
-  if (empty($path)) { $path = $url; }
-  // check that server url is on the $path argument
-  if (strpos($path, $url) === false) { $path = $url.$path; }
-  
-	header("Location: ".$path);
-	exit;
-}
-
-/**
- * Gets the URL of current server (protocol + domain).
- * @return  string             Full URL
- */
-function url_get_server()
-{
-  //$protocol = "http://";
-  $protocol = "http" . ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") ? "s" : null) . "://";
-
-  $host = $_SERVER['HTTP_HOST']; // reliable in virtual hosts
-  if (empty($host)) {
-    $host = $_SERVER['SERVER_NAME'];
-  }
-  
-  return $protocol.$host;
-}
-
-/**
- * Gets the full path to the current PHP file (protocol + domain + paths/to/file).
- * @param   boolean  $fullURI  append the query string, if any (default: false)
- * @return  string             Full URL
- */
-function url_get_current($fullURI = false)
-{
-  // quick check:
-  $url  = url_get_server();
-  $url .= $_SERVER['SCRIPT_NAME'];
-  if ($fullURI) { $url .= '?'.$_SERVER['QUERY_STRING']; }
-
-  return $url;
-}
-
-/** 
- * Gets the base path of a URL.
- * @param   string  $url  input URL  
- * @return  string        Base URL
- */
-function url_get_base($url)
-{
-  // split url in dirs
-  $paths = explode("/", $url);
-  // short URLs like http://server.com should be fixed
-  if (count($paths) > 3) {
-    // remove last element, so we do not have to worry about the query string (?var1=value1&var2=value2#anchor...)
-    array_pop($paths);
-  }
-  // and we have the BASE href
-  $base = implode("/", $paths) . "/";
-  
-  return $base;
-}
-
 /** 
  * Gets installed extensions priorities.
  * @return  array   Array with keys: dir name (string) => order priority (int)
@@ -862,7 +500,7 @@ function is_admin()
   if (!isset($_SESSION['login'])) return false;
   
   // get admin role_id
-  $user = db_select(TBL_PREFIX.TBL_USERS, "role_id", "login='".$_SESSION['login']."'");
+  $user = db_select(TBL_PREFIX.TBL_USERS, "role_id", "login = '".$_SESSION['login']."'");
   return ( (int) $user['role_id'] === 1 );
 }
 
@@ -875,7 +513,7 @@ function is_root()
   if (!isset($_SESSION['login'])) return false;
   
   // get root role_id
-  $user = db_select(TBL_PREFIX.TBL_USERS, "id", "login='".$_SESSION['login']."'");
+  $user = db_select(TBL_PREFIX.TBL_USERS, "id", "login = '".$_SESSION['login']."'");
   return ( (int) $user['id'] === 1 );
 }
 
@@ -888,7 +526,7 @@ function is_allowed()
   // check current user's role
   if ($_SESSION['role_id'] > 0)
   {
-    $user = db_select(TBL_PREFIX.TBL_USERS, "role_id", "login='".$_SESSION['login']."'");
+    $user = db_select(TBL_PREFIX.TBL_USERS, "role_id", "login = '".$_SESSION['login']."'");
     if ( (int) $user['role_id'] !== 1 ) 
     {
       $current = ext_name();
@@ -969,7 +607,7 @@ function email_exists($email)
  */
 function die_msg($text = "")
 {
-  if (!empty($text)) { $text = ": " . $text; }
+  if (!empty($text)) { $text = ": ".$text; }
   
   die("<strong>Error</strong>".$text);
 }
@@ -1015,7 +653,7 @@ function unregister_GLOBALS()
 }
 
 /**
- * Gets a SQL-alike string with all cache IDs that are related to the same URL.
+ * Gets a SQL-like string with all cache IDs that are related to the same URL.
  * @param   int     Log cache ID
  * @return  string  SQL query
  */
@@ -1029,7 +667,7 @@ function get_cache_common_url($pageId)
   $merge = "";
   foreach ($moreId as $k => $value) {
     if ($value != $pageId)
-      $merge .= " OR cache_id='".$value."' ";
+      $merge .= " OR cache_id = '".$value."' ";
   }
 
   return $merge;
