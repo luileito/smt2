@@ -37,6 +37,7 @@ if (!$show) { $show = $defaultNumRecords; }
         <thead>
         <tr>
           <th>client ID</th>
+          <th>location</th>
           <th>page ID</th>
           <th>date</th>
           <th>time</th>
@@ -82,7 +83,7 @@ if (!$show) { $show = $defaultNumRecords; }
         function select_date($id)
         { 
           $d  = '<label for="'.$id.'" class="ml">'.ucfirst($id).'</label> ';
-          $val = (!empty($_SESSION['filterquery']) && isset($_SESSION[$id])) ? $_SESSION[$id] : "";
+          $val = (!empty($_SESSION['filterquery']) && isset($_SESSION[$id])) ? $_SESSION[$id] : null;
           $d .= '<input type="text" id="'.$id.'" name="'.$id.'" class="text datetime" value="'.$val.'" />';
           return $d;
         }
@@ -121,10 +122,11 @@ if (!$show) { $show = $defaultNumRecords; }
           $s .= '<option value="">---</option>';
           $opt = array(
                         "client_id"  => "Client ID",
-                        "cache_id"   => "Page ID"
+                        "cache_id"   => "Page ID",
+                        "ip"         => "Location"
                       );
           foreach ($opt as $key => $entry) {
-            $select = (isset($_SESSION['groupby']) && $key == $_SESSION['groupby']) ? 'selected="selected"' : null;
+            $select = (!empty($_SESSION['groupby']) && $key == $_SESSION['groupby']) ? 'selected="selected"' : null;
             $s .= '<option '.$select.' value="'.$key.'">'.$entry.'</option>'; 
           }
           $s .= '</select>';
@@ -145,7 +147,7 @@ if (!$show) { $show = $defaultNumRecords; }
         }
         function input($id) 
         {
-          $value = (!empty($_SESSION[$id]) && strlen($_SESSION[$id]) < 5) ? $_SESSION[$id] : "";
+          $value = (!empty($_SESSION[$id]) && strlen($_SESSION[$id]) < 5) ? $_SESSION[$id] : null;
           $c  = '<label for="'.$id.'" class="ml">'.$id.'</label> ';
           $c .= '<input type="text" class="text" size="2" id="'.$id.'" name="'.$id.'" value="'.$value.'" />';
           return $c;
@@ -169,7 +171,7 @@ if (!$show) { $show = $defaultNumRecords; }
             echo select_client();
             echo select_tbl(TBL_PREFIX.TBL_OS, "os_id", "Operating System");
             echo select_tbl(TBL_PREFIX.TBL_BROWSERS, "browser_id", "Browser");
-            echo checkbox("newusers", "Show only first visits");
+            echo checkbox("ftu", "Only first-time users");
           ?>
         </fieldset>
         <fieldset class="clear smallround">
@@ -186,8 +188,8 @@ if (!$show) { $show = $defaultNumRecords; }
           <legend>Time range (seconds)</legend>
           <div id="slider-wrap">
             <div id="slider-range">
-              <?=input("min")?>
-              <?=input("max")?>
+              <?=input("mintime")?>
+              <?=input("maxtime")?>
             </div>
             <p class="center" id="slider-amount"></p>
           </div><!-- end slider-wrap -->
@@ -205,7 +207,6 @@ if (!$show) { $show = $defaultNumRecords; }
 			 */
 			 ?>
         </fieldset>
-
       </form>
       
 	 <?php } ?>
@@ -258,7 +259,6 @@ if (!$show) { $show = $defaultNumRecords; }
       // display nice table
       $(records).stripy().tablesorter({
           headers: {
-            5: { sorter: false },
             6: { sorter: false }
           },
           cssHeader: "headerNormal"
@@ -276,8 +276,8 @@ if (!$show) { $show = $defaultNumRecords; }
       
       // slider UI widget
       var sliderElem = $('#slider-range');
-      var minInput = $('input#min');
-      var maxInput = $('input#max');
+      var minInput = $('input#mintime');
+      var maxInput = $('input#maxtime');
       
       function formatSlider(arrValues)
       {

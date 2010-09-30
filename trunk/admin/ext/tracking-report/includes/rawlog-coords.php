@@ -176,7 +176,7 @@ $clicksSD = array_sd($clicksSum);
   </p>
   <ol class="ml pl">
     <li>First row is <abbr title="Sample Mean">&mu;</abbr>, while second row is <abbr title="Sample Standard Deviation">&sigma;</abbr>.</li>
-    <li>Values for <strong>activity</strong> and <strong>scroll reach</strong> are reported as per-unit: 0 < value < 1.</li>
+    <li>Values for <strong>activity</strong> and <strong>scroll reach</strong> are reported as per-unit: 0 &lt; value &lt; 1.</li>
     <li>Comma-separated values denote a column vector (X and Y components).</li>
   </ol>
 </div>

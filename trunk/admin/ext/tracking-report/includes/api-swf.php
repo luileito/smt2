@@ -13,7 +13,8 @@ $cdata_swf = '
         aux = window.smt2fn,                                    // (smt) aux functions
         dat = window.smt2data;                                  // (smt) user data
 
-    aux.onDOMload(function(){
+    aux.addEvent(window, "load", function(){
+    //aux.onDOMload(function(){
       // replay mouse track over Flash objects 
       aux.allowTrackingOnFlashObjects();
       // compute the page size

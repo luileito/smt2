@@ -32,9 +32,9 @@ else if (isset($_GET['pid']))
 }
 
 // now delete selected logs
-db_delete(TBL_PREFIX.TBL_RECORDS, $logQuery);
+$result = db_delete(TBL_PREFIX.TBL_RECORDS, $logQuery);
 // display message
 $response = ($result) ? "Deleted!" : "Error!";
 // return JSON data
-echo '{"success":'.(int)$result.',"response":"'.$response.'"}';
+echo '{"success":'.(bool)$result.',"response":"'.$response.'"}';
 ?>

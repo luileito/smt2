@@ -1,7 +1,7 @@
 <?php 
 // a BASE element is needed to link correctly CSS, scripts, etc.
 $base = $doc->createElement('base');
-$base->setAttribute('href', get_base($url));
+$base->setAttribute('href', url_get_base($url));
 
 $ini_comm = $doc->createComment(" begin (smt)2 tracking code ");
 $end_comm = $doc->createComment(" end (smt)2 tracking code ");
@@ -23,16 +23,24 @@ foreach ($head as $h) {
   $h->appendChild($js_selector);
   if (isset($js_widget)) $h->appendChild($js_widget);
   $h->appendChild($api_comm);
+  
   if ($api == "js") {
     $h->appendChild($js_graphics);
     $h->appendChild($js_json);
-    $h->appendChild($js_replay);
-    $h->appendChild($js_options);
   } else if ($api == "swf") {
     $h->appendChild($swfobject);
-    $h->appendChild($js_swf);
     $h->appendChild($css_swf);
   }
   $h->appendChild($end_comm);
+}
+// append tracking script at the end of the page body
+$body = $doc->getElementsByTagName('body');
+foreach ($body as $b) {
+  if ($api == "js") {
+    $b->appendChild($js_replay);
+    $b->appendChild($js_options);
+  } else if ($api == "swf") {
+    $b->appendChild($js_swf);
+  }
 }
 ?>

@@ -1,10 +1,7 @@
 <?php
 /**
- * This is the directory where you put smt2.
- * This path will be used to look for the core files, 
- * and may be detected automatically unless you decide to use a strange dir path
- * (i.e. /aqwa/mmkia/jd65sa/ -- silly example).
- * You can use also full URLs like http://myserver.name/smt2/
+ * This is the directory where you put the smt2 CMS.
+ * You can use relative as well as full URLs like /smt2/ or http://myserver.name/smt2/
  */
 define ('ABS_PATH', "http://localhost/smt2/"); // always place here an ending slash (/)
 
@@ -40,9 +37,9 @@ define ('TBL_PREFIX',  "smt2_");
 // ----------------------------------------------------------------- Add-ons ---
 
 /** 
- * Your Google maps key for Log localization. This one is for localhost.
- * If you put smt2 on your own production server, you should register (for free) at
- * http://code.google.com/apis/maps/signup.html 
+ * Your Google maps key for client localization. This one is for localhost.
+ * If you put smt2 on your own production server, you should register (for free)
+ * at http://code.google.com/apis/maps/signup.html
  */
 define ('GG_KEY', "ABQIAAAAElGM1_G8Y0SLRJtsUmEeART2yXp_ZAY8_ufC3CFXhHIE1NvwkxTjJAIz5IfhLGJPdYN9-8jws6kgmQ");
 

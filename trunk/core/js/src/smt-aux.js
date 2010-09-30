@@ -1,10 +1,10 @@
 /**
  * (smt)2 simple mouse tracking - auxiliary functions (smt-aux.js)
- * Copyleft (cc) 2006-2009 Luis Leiva
- * Release date: February 21th 2010
+ * Copyleft (cc) 2006-2010 Luis Leiva
+ * Release date: September 30th 2010
  * http://smt.speedzinemedia.com
  * @class smt2-aux
- * @version 2.0.1
+ * @version 2.0.2
  * @author Luis Leiva
  * @license Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
  */
@@ -26,7 +26,7 @@ var smt2fn = {
       }
     }
   },
-
+  
   /**
    * Allows recording/replaying the mouse path over Flash objects.
    * A Flash movie may display above all the layers on the HTML apge,
@@ -62,7 +62,7 @@ var smt2fn = {
       }
     }
   },
-
+  
   /**
    * Traces any kind of objects in the debug console (if available).
    * @return void
@@ -74,7 +74,7 @@ var smt2fn = {
     // display messages in the console
     console.log(arguments);
   },
-
+  
   /**
    * Checks the DOM-ready initialization in modern browsers.
    * This method was introduced by Dean Edwards/Matthias Miller/John Resig (dean.edwards.name/outofhanwell.com/jquery.com)
@@ -107,7 +107,7 @@ var smt2fn = {
       this.addEvent(window, 'load', callback);
     }
   },
-
+  
   /**
    * Reloads the current page.
    * This method is needed for the drawing APIs,
@@ -120,7 +120,7 @@ var smt2fn = {
     // do not not alter the the browser's history
     window.location.replace(window.location.href);
   },
-
+  
   /**
    * Loads more mouse trails for the current user, if available.
    * @return void
@@ -142,7 +142,7 @@ var smt2fn = {
       alert("There are no more browsed pages for this user.");
     }
   },
-
+  
   /**
    * Gets the position of element on page.
    * @autor Peter-Paul Koch (quirksMode.org)
@@ -157,10 +157,10 @@ var smt2fn = {
   			curtop  += obj.offsetTop;
       } while (obj = obj.offsetParent);
     }
-
+    
     return { x:curleft, y:curtop };
   },
-
+  
   /**
    * Gets the CSS styles of a DOM element.
    * @return {string} window dimmensions - object with 2 properties: width {integer}, and height {integer}
@@ -178,7 +178,7 @@ var smt2fn = {
   		});
   		strValue = oElm.currentStyle[strCssRule];
   	}
-
+  	
   	return strValue;
   },
 
@@ -199,7 +199,7 @@ var smt2fn = {
             : 0;
     return { width: w, height: h };
   },
-
+  
   /**
    * Gets the browser window's offsets.
    * @return {object} window offsets - object with 2 properties: x {integer}, and y {integer}
@@ -218,7 +218,7 @@ var smt2fn = {
 
     return { x: xpos, y: ypos };
   },
-
+  
   /**
    * Gets the document's size.
    * @return {object} document dimensions - object with 2 properties: width {integer}, and height {integer}
@@ -237,7 +237,7 @@ var smt2fn = {
 
     return { width: w, height: h };
   },
-
+  
   /**
    * Gets the max value from both window (viewport's size) and document's size.
    * @return {object} viewport dimensions - object with 2 properties: width {integer}, and height {integer}
@@ -253,7 +253,7 @@ var smt2fn = {
 
     return { width: w, height: h };
   },
-
+  
   /**
    * Failsafe (and experimental) function.
    * If your pages' HTML code have a lot of images and you do not allocate the image's dimensions (width/height attributes),
@@ -297,7 +297,7 @@ var smt2fn = {
 
     return { width: maxWidth, height: maxHeight };
   },
-
+  
   /**
    * Gets the max z-index level available on the page.
    * @return {integer}    z-index level
@@ -327,7 +327,7 @@ var smt2fn = {
 
     return highestIndex + 1;
   },
-
+  
   /**
    * Gets the base path of the current window location.
    * @return {string}    path
@@ -340,7 +340,7 @@ var smt2fn = {
 
     return dirs.join("/");
   },
-
+  
   /**
    * Adds event listeners unobtrusively.
    * @return void
@@ -359,7 +359,7 @@ var smt2fn = {
       obj.attachEvent("on"+type, obj[type+fn]);
     }
   },
-
+  
   /**
    * Rounds a number to a given digits accuracy.
    * @return {float}
@@ -377,7 +377,7 @@ var smt2fn = {
      */
     return Math.round(exp*number)/exp;
   },
-
+  
   /**
    * Scrolls the browser window.
    * This function is quite useful for replaying the user trails comfortably ;)
@@ -396,7 +396,7 @@ var smt2fn = {
     var yto = Math.round(obj.ypos - obj.height) + obj.height/2;
     window.scrollBy(xto - off.x, yto - off.y);
   },
-
+  
   /**
    * Creates an XML/HTTP request to provide async communication with the server.
    * @return {object} XHR object
@@ -422,7 +422,7 @@ var smt2fn = {
 
     return xmlhttp;
   },
-
+  
   /**
    * Makes an asynchronous XMLHTTP request (XHR) via GET or POST.
    * Inspired on Peter-Paul Koch's XMLHttpRequest function.
@@ -456,7 +456,7 @@ var smt2fn = {
     // send request
     request.send(setup.postdata);
   },
-
+  
   /**
    * Cookies management object.
    * This cookies object allows you to store and retrieve cookies easily.
@@ -526,7 +526,7 @@ var smt2fn = {
       }
     }
   },
-
+  
   /**
    * Core for tracking widgets.
    * The word "widget" stands for *any* DOM element on the page.
@@ -613,7 +613,7 @@ var smt2fn = {
       return list.join(" ");
     }
   },
-
+  
   /**
    * Array methods -- without extending the Array prototype (best practice).
    * Note: These Array methods would only work for a completely 'dense' array.

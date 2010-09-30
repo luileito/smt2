@@ -7,7 +7,7 @@ $defaultNumRecords = 20;
 // use this flag to reset DB query
 $resetFlag = "prevall";
 // the 'more' link text
-$showMoreText = "More records";
+$showMoreText = "More results";
 // use this text to stop requesting more records from DB
 $noMoreText = '<h2 class="heading notfound">No more records found!</h2>';
 ?>

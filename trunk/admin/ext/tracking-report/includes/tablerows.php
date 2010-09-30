@@ -29,9 +29,11 @@ if (isset($_GET[$resetFlag])) { $limit = $page*$show; }
 // query priority: filtered or default
 $where = (!empty($_SESSION['filterquery'])) ? $_SESSION['filterquery'] : "1"; // will group by log id
 
-$records = db_select_all(TBL_PREFIX.TBL_RECORDS, 
-                         "id,client_id,cache_id,os_id,browser_id,ftu,sess_date,sess_time,coords_x,clicks_x,clicks_y", // ask for these columns always
-                         $where." ORDER BY sess_date DESC, client_id LIMIT $limit");
+$records = db_select_all(
+                          TBL_PREFIX.TBL_RECORDS,
+                          "id,client_id,cache_id,os_id,browser_id,ftu,ip,sess_date,sess_time,coords_x,clicks_x,clicks_y",
+                          $where." ORDER BY sess_date DESC, client_id LIMIT $limit"
+                        );
 // if there are no more records, display message
 if ($records) 
 { 
@@ -50,7 +52,7 @@ if ($records)
     // wait for very recent visits
     $timeDiff = time() - strtotime($r['sess_date']);
     
-    $receivingData = ($timeDiff > 0 && $timeDiff < 5); 
+    $receivingData = ($timeDiff > 0 && $timeDiff < 30);
     $safeToDelete = ($timeDiff > 3600);
     // delete logs with no mouse data
     if ( $safeToDelete && !count(array_sanitize(explode(",", $r['coords_x']))) ) {
@@ -63,21 +65,42 @@ if ($records)
     if (!empty($_SESSION['groupby'])) 
     {
       $ftu = null;
-      
-      if ($_SESSION['groupby'] === "cache_id") 
+      switch ($_SESSION['groupby'])
       {
-        $displayId = 'pid='.$r['cache_id'];
-        $pageId = $r['cache_id'];
-        $clientId = $GROUPED;
-        // check if cached page exists
-        $cache = db_select(TBL_PREFIX.TBL_CACHE, "file", "id='".$pageId."'");
-        if (!is_file(CACHE_DIR.$cache['file'])) { continue; }
-      }
-      else if ($_SESSION['groupby'] === "client_id") 
-      {
-        $displayId = 'cid='.$r['client_id'];
-        $pageId = $GROUPED;
-        $clientId = mask_client($r['client_id']);
+        case 'cache_id':
+        
+          $IP = $GROUPED;
+          $displayId = 'pid='.$r['cache_id'];
+          $pageId = $r['cache_id'];
+          $clientId = $GROUPED;
+          // check if cached page exists
+          $cache = db_select(TBL_PREFIX.TBL_CACHE, "file", "id='".$pageId."'");
+          if (!is_file(CACHE_DIR.$cache['file'])) { continue; }
+          
+          break;
+          
+        case 'client_id':
+        
+          $IP = $GROUPED;
+          $displayId = 'cid='.$r['client_id'];
+          $pageId = $GROUPED;
+          $clientId = mask_client($r['client_id']);
+          
+          break;
+          
+        case 'ip':
+        
+          $IP = mask_client(md5($r['ip']));
+          $displayId = 'ip='.$r['ip'];
+          $pageId = $GROUPED;
+          $clientId = $GROUPED;
+          // check if IP exists
+          if (empty($r['ip'])) { continue; }
+          
+          break;
+          
+        default:
+          break;
       }
       
       $displayDate  = $GROUPED;
@@ -92,6 +115,7 @@ if ($records)
         '<abbr title="'.prettyDate::getStringResolved($r['sess_date']).'">'.$r['sess_date'].'</abbr>' : $r['sess_date'];
       
       $time = $r['sess_time'];
+      $IP = mask_client(md5($r['ip']));
       $displayId = 'id='.$r['id'];
       $pageId = $r['cache_id'];
       $clientId = mask_client($r['client_id']);
@@ -103,6 +127,7 @@ if ($records)
     // create list item
     $tablerow .= '<tr class="'.$cssClass.'">'.PHP_EOL;
     $tablerow .= ' <td'.$ftu.'>'.$clientId.'</td>'.PHP_EOL;
+    $tablerow .= ' <td>'.$IP.'</td>'.PHP_EOL;
     $tablerow .= ' <td>'.$pageId.'</td>'.PHP_EOL;
     $tablerow .= ' <td>'.$displayDate.'</td>'.PHP_EOL;
     $tablerow .= ' <td>'.$time.'</td>'.PHP_EOL;
@@ -111,7 +136,7 @@ if ($records)
     
     if (!$receivingData)
     {
-      if (isset($_SESSION['groupby']) && $_SESSION['groupby'] === "client_id") {
+      if (isset($_SESSION['groupby']) && ($_SESSION['groupby'] == "client_id" || $_SESSION['groupby'] == "ip")) {
         $tablerow .= $GROUPED;
       } else {
         // apend dynamically the API to the query string, based on browser capabilities

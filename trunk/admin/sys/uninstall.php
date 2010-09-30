@@ -55,12 +55,12 @@ if ($isInstalled) {
       $logs = db_select_all(TBL_PREFIX.TBL_CACHE, "file", 1);
       foreach ($logs as $log) {
         if (is_file(CACHE_DIR.$log)) {
-          unlink(CACHE_DIR.$log);
+          //unlink(CACHE_DIR.$log);
         }
       }
       // then delete (smt) tables
       foreach ($_lookupTables as $table) {
-        db_query("DROP TABLE ".TBL_PREFIX.$table);
+        //db_query("DROP TABLE ".TBL_PREFIX.$table);
       }
       // notify
       $msgs[] = 'Tables were dropped.';
@@ -96,7 +96,7 @@ if ($isInstalled) {
         {
           var cookie = cookies[i];
           if ( /smt-/i.test(cookie) ) {
-            aux.cookies.deleteCookie(cookie);
+            //aux.cookies.deleteCookie(cookie);
           }
         }
         // notify
@@ -135,7 +135,7 @@ if ($isInstalled) {
   <form action="<?=$_SERVER['PHP_SELF']?>" method="post">
   <fieldset>
     <input type="checkbox" id="droptables" name="droptables" checked="checked" class="ml" />
-      <label for="droptables">Drop tables</label>
+      <label for="droptables">Drop tables (will delete also cache logs)</label>
     <input type="checkbox" id="dropdb" name="dropdb" class="ml" />
       <label for="dropdb">Drop database</label>
     <input type="checkbox" id="removejs" name="removejs" checked="checked" class="ml" />

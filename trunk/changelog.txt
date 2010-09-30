@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
-(smt)2 ChangeLog - 21th February 2010
+(smt)2 ChangeLog - 30th September 2010
 --------------------------------------------------------------------------------
-This is the change log for the 2.0.1 version.
+This is the change log for the 2.0.2 version.
 
 You may find the latest source code on the SVN:
 svn checkout http://smt2.googlecode.com/svn/trunk/
@@ -16,8 +16,17 @@ http://smt.speedzinemedia.com/smt/downloads.php
 [To-Do List] For next releases
 
 * Enable downloading logs for data mining.
-* Maintenance section: Backup database, check 'orphan' cache logs, etc.
 * Document the SWF API.
+* 3D visualization. 
+* Realtime in-person tracking (aka Web Activity Sharing).
+
+
+[2.0.2] September 30th 2010
++ Added new extension: Maintenance (backup database, check 'orphan' cache logs, etc.)
++ Enabled cross-site POST requests.
++ Improved user identification (e.g., different users from the same LAN are now distinguished).
++ Improved tracks replaying (now using window load event instead of DOM load, placing JS/SWF scripts at the bottom of the cached page)
+- Changed some function names for better consistency.
 
 
 [2.0.1] February 21th 2010
