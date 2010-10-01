@@ -41,9 +41,11 @@ var SetupCMS = {
         var viewAnchor = $('a.view');
         $.each(viewAnchor, function(){
           var trackLink = $(this).attr("href");
-          // append API
-          trackLink += "&api=" + api;
-          $(this).attr("href", trackLink);
+          if (trackLink.indexOf("&api=") == -1) {
+            // append API
+            trackLink += "&api=" + api;
+            $(this).attr("href", trackLink);
+          }
         });
     },
     
