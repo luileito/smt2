@@ -28,9 +28,9 @@ tr.odd { background-color:#EEE; }
   #filter input { vertical-align:middle; }
 /* defeat IE bug (http://www.mattheerema.com/web-design/2006/04/getting-fieldset-backgrounds-and-legends-to-behave-in-ie/) */
 /* see also http://paulirish.com/2009/browser-specific-css-hacks/ */
-#filter fieldset { position:relative; }
-#filter legend { position:absolute; top:-0.5em; left:.5em; }
-#filter fieldset { position:relative; margin-top:1em; padding-top:.75em; }
+#filter fieldset { *position:relative; }
+#filter legend { *position:absolute; *top:-0.5em; *left:.5em; }
+#filter fieldset { *position:relative; *margin-top:1em; *padding-top:.75em; }
 
 /* logout button */
 a#logout { color:#FFF; background-color:#C33; text-decoration:none; padding:.2em .4em; font:bold 100% sans-serif; }
