@@ -1,7 +1,7 @@
 <?php
 // get interacted elements
-$hovered = compute_frequency($hovered);
-$clicked = compute_frequency($clicked);
+$hovered = array_frequency($hovered);
+$clicked = array_frequency($clicked);
 
 $cdata_widget = '
 //<![CDATA[
