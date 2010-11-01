@@ -64,9 +64,9 @@ fps: 24,
 recTime: 120, 
 // Interval to send data, in seconds
 postInterval: 2,
-// URL to local smt2 website, i.e., the site URL to track (with the smt*.js files). The record script will try to find it automatically.
+// URL to local website, i.e., the site URL to track (with the smt*.js files). The record script will try to find it automatically.
 trackingServer: "/smt2/", 
-// URL to remote smt2 server, i.e., the site URL where the logs will be stored, and (of course) the CMS is installed.
+// URL to remote server, i.e., the site URL where the logs will be stored, and (of course) the smt2 CMS is installed.
 storageServer: "",
 // You may choose to advice users (or not) that their mouse activity is going to be logged. 
 warn: false, 
