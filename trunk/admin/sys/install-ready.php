@@ -231,14 +231,18 @@ foreach ($opts as $arrValue)
     db_query($sql);
   }
 }
-                     
+
 /* set permissions ---------------------------------------------------------- */
-echo 'Settings permissions to <em>'.CACHE_DIR.'</em> dir: ';
-if (chmod(CACHE_DIR, 0777)) {
-  echo '<strong class="ok">Ok.</strong><br />'; 
-} else {
-  echo '<strong class="ko">Failed.</strong> The directory '.CACHE.' must be writeable.
-        <strong>You must set cache dir permissions manually!</strong><br />';
+if (!is_writeable(CACHE_DIR)) {
+  echo 'Settings permissions to <em>'.CACHE_DIR.'</em> dir: ';
+  $perms = substr(decoct( fileperms(CACHE_DIR) ), 2);
+  if ($perms != "775" && !chmod(CACHE_DIR, 0775)) 
+  {
+    echo '<strong class="ko">Failed.</strong> The directory '.CACHE_DIR.' must be writeable. Please verify it!
+          <strong>You might have to set cache dir permissions manually.</strong><br />';
+  } else {
+    echo '<strong class="ok">Ok.</strong><br />'; 
+  }
 }
 
 /* end ---------------------------------------------------------------------- */
