@@ -35,7 +35,7 @@ require REQUIRED.'/functions.db.php';
 // ------------------------------------------------------------------ others ---
 require REQUIRED.'/functions.array.php';
 require REQUIRED.'/functions.url.php';
-require_once realpath(REQUIRED.'/../../../').'/core/functions.php';
+require_once realpath(REQUIRED.'/../../').'/core/functions.php';
 
 /** 
  * Additional head tags. Enable inserting custom tags on page head.
