@@ -107,6 +107,8 @@ function array_avg_weighted($input, $weights)
  */
 function array_avg($input)
 {
+  if (!count($input)) return 0;
+
   return round( array_sum($input) / count($input), 2);
 }
 
@@ -139,6 +141,8 @@ function matrix_avg($matrix)
  */
 function array_sd($input)
 {
+  if (!count($input)) return 0;
+
   $variance = 0;
   $mean = array_avg($input);
   foreach ($input as $elem) {

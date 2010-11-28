@@ -60,7 +60,7 @@ include INC_DIR.'header.php';
   {
     $page = (int) $_GET['pid'];
     // merge logs
-    $add = (db_option(TBL_PREFIX.TBL_CMS, "mergeCacheUrl")) ? get_common_url($page) : null;
+    $add = (db_option(TBL_PREFIX.TBL_CMS, "mergeCacheUrl")) ? get_cache_common_url($page) : null;
     $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "cache_id = '".$page."'".$add);
   }
   else if (isset($_GET['cid'])) 

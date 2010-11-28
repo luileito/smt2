@@ -71,6 +71,7 @@ input,select { vertical-align:middle; }
 /* round corners */
 .round { border-radius:10px; -moz-border-radius:10px; -webkit-border-radius:10px; }
 .smallround { border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; }
+.glow { box-shadow:2px 2px 20px #DDD; -moz-box-shadow:2px 2px 20px #DDD; -webkit-box-shadow:10px 10px 20px #DDD; }
 
 /* other elements */
 abbr { cursor:help !important; border-bottom:1px dotted #000; }
