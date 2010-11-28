@@ -47,7 +47,7 @@ a#logout { color:#FFF; background-color:#C33; text-decoration:none; padding:.2em
 .loginwrap { margin-top:10%; }
   .title { font-size:300%; color:#FFF; font-weight:normal; margin-bottom:0; }
   .loginwrap h2 { color:#CCC; margin-top:0; }
-    #loginform { border:1px solid #000; background-color:#FFF; font:90% sans-serif; }
+    #loginform { border:1px solid #777; background-color:#FFF; font:90% sans-serif; }
       #loginform label { color:#888; font:90% Georgia,serif; }
       #loginform input.text { border:1px solid #CCC; background-color:#FBFBFB; }
 

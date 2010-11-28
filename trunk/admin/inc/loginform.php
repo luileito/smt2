@@ -16,7 +16,7 @@ if (!$isInstalled) {
   ?>
   
   
-  <form action="<?=ADMIN_PATH?>sys/login.php" method="post" id="loginform" class="round">
+  <form action="<?=ADMIN_PATH?>sys/login.php" method="post" id="loginform" class="round glow">
     <?php
     if ( isset($_GET['lostpassword']) ) 
     {
