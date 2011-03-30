@@ -2,7 +2,7 @@
 /**
  * smt2 CMS core functions.
  * @date 27/March/2009  
- * @rev 20/December/2009
+ * @rev 30/March/2011
  */
 //error_reporting(E_ALL | E_STRICT); // uncomment for debugging
 unregister_GLOBALS();
@@ -38,7 +38,7 @@ require REQUIRED.'/functions.url.php';
 require_once realpath(REQUIRED.'/../../').'/core/functions.php';
 
 /** 
- * Additional head tags. Enable inserting custom tags on page head.
+ * Additional head tags. Allows inserting custom tags on page head.
  * @global array $_headAdded
  */
 $_headAdded = array();
@@ -361,7 +361,7 @@ function ext_available()
   {
     while (false !== ($file = readdir($handle))) {
       // look for available module extensions
-      if ($file != "." && $file != ".." && is_dir($dir.'/'.$file)) {
+      if (is_dir($dir.'/'.$file) && !str_startswith($file,'.')) {
         $ext[] = $file;
       }
     }
@@ -480,7 +480,7 @@ function count_dir_files($dir)
   $count = 0;
   if ($handle = opendir($dir)) {
     while (false !== ($file = readdir($handle))) {
-      if ($file != "." && $file != ".." && is_file($dir.'/'.$file)) {
+      if (is_file($dir.'/'.$file) && !str_startswith($file,'.')) {
         $count++;
       }
     }
@@ -671,5 +671,16 @@ function get_cache_common_url($pageId)
   }
 
   return $merge;
+}
+
+/**
+ * Checks if a string starts with a certain prefix.
+ * @param   source  string  source string
+ * @param   prefix  string  prefix to find
+ * @return          boolean TRUE on success or FALSE on failure
+ */
+function str_startswith($source, $prefix)
+{
+   return strncmp($source, $prefix, strlen($prefix)) == 0;
 }
 ?>
