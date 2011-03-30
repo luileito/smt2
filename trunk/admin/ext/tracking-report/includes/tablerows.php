@@ -31,7 +31,7 @@ $where = (!empty($_SESSION['filterquery'])) ? $_SESSION['filterquery'] : "1"; //
 
 $records = db_select_all(
                           TBL_PREFIX.TBL_RECORDS,
-                          "id,client_id,cache_id,os_id,browser_id,ftu,ip,sess_date,sess_time,coords_x,clicks_x,clicks_y",
+                          "*",
                           $where." ORDER BY sess_date DESC, client_id LIMIT $limit"
                         );
 // if there are no more records, display message
