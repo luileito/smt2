@@ -1,0 +1,168 @@
+<html>
+<head>
+<title>File Source for class.cluster.php</title>
+<link rel="stylesheet" type="text/css" href="../media/style.css">
+</head>
+<body>
+
+<table border="0" cellspacing="0" cellpadding="0" height="48" width="100%">
+  <tr>
+    <td class="header_top">smt2</td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+  <tr>
+    <td class="header_menu">
+        
+                                    
+                                                                      		  [ <a href="../classtrees_smt2.html" class="menu">class tree: smt2</a> ]
+		  [ <a href="../elementindex_smt2.html" class="menu">index: smt2</a> ]
+		  	    [ <a href="../elementindex.html" class="menu">all elements</a> ]
+    </td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+</table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="200" class="menu">
+      <b>Packages:</b><br />
+              <a href="../li_smt2.html">smt2</a><br />
+              <a href="../li_PegasusPHP.html">PegasusPHP</a><br />
+              <a href="../li_PHPMailer.html">PHPMailer</a><br />
+            <br /><br />
+                  
+      
+                </td>
+    <td>
+      <table cellpadding="10" cellspacing="0" width="100%" border="0"><tr><td valign="top">
+
+<h1 align="center">Source for file class.cluster.php</h1>
+<p>Documentation is available at <a href="../smt2/_class.cluster.php.html">class.cluster.php</a></p>
+<div class="src-code">
+<ol><li><div class="src-line"><a name="a1"></a><span class="src-php">&lt;?php</span></div></li>
+<li><div class="src-line"><a name="a2"></a><span class="src-doc">/**</span></div></li>
+<li><div class="src-line"><a name="a3"></a><span class="src-doc">&nbsp;*&nbsp;Defines&nbsp;a&nbsp;Cluster.</span></div></li>
+<li><div class="src-line"><a name="a4"></a><span class="src-doc">&nbsp;*&nbsp;Each&nbsp;cluster&nbsp;is&nbsp;a&nbsp;set&nbsp;of&nbsp;$points&nbsp;(x,y),&nbsp;with&nbsp;a&nbsp;center&nbsp;(x,y)&nbsp;and&nbsp;variance&nbsp;on&nbsp;(x,y)&nbsp;directions</span></div></li>
+<li><div class="src-line"><a name="a5"></a><span class="src-doc">&nbsp;*&nbsp;</span><span class="src-doc-tag">@date</span><span class="src-doc">&nbsp;27/March/2009</span></div></li>
+<li><div class="src-line"><a name="a6"></a><span class="src-doc">&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a7"></a>&nbsp;</div></li>
+<li><div class="src-line"><a name="a8"></a><span class="src-key">class&nbsp;</span><a href="../smt2/Cluster.html">Cluster</a></div></li>
+<li><div class="src-line"><a name="a9"></a><span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a10"></a>&nbsp;&nbsp;<span class="src-doc">/**&nbsp;Cluster&nbsp;points&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a11"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><a href="../smt2/Cluster.html#var$points">$points</a><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a12"></a>&nbsp;&nbsp;<span class="src-doc">/**&nbsp;Maximum&nbsp;point&nbsp;value&nbsp;from&nbsp;sample&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a13"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><a href="../smt2/Cluster.html#var$maxPoint">$maxPoint</a><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a14"></a>&nbsp;&nbsp;<span class="src-doc">/**&nbsp;Cluster&nbsp;center&nbsp;(mean)&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a15"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><a href="../smt2/Cluster.html#var$avgPoint">$avgPoint</a><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a16"></a>&nbsp;&nbsp;<span class="src-doc">/**&nbsp;Cluster&nbsp;median&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a17"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><a href="../smt2/Cluster.html#var$medPoint">$medPoint</a><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a18"></a>&nbsp;&nbsp;<span class="src-doc">/**&nbsp;Cluster&nbsp;variance&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a19"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><a href="../smt2/Cluster.html#var$variance">$variance</a><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a20"></a>&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a21"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><span class="src-key">function&nbsp;</span><a href="../smt2/Cluster.html#method__construct">__construct</a><span class="src-sym">(</span><span class="src-var">$center</span><span class="src-sym">)&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a22"></a>&nbsp;&nbsp;<span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a23"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$avgPoint">avgPoint</a>&nbsp;=&nbsp;<span class="src-var">$center</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a24"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;to&nbsp;begin,&nbsp;variance&nbsp;is&nbsp;set&nbsp;to&nbsp;0</span></div></li>
+<li><div class="src-line"><a name="a25"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$variance">variance</a>&nbsp;=&nbsp;<span class="src-key">new&nbsp;</span><span class="src-id"><a href="../smt2/Point.html">Point</a></span><span class="src-sym">(</span><span class="src-num">0</span><span class="src-sym">,&nbsp;</span><span class="src-num">0</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a26"></a>&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a27"></a>&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a28"></a>&nbsp;&nbsp;<span class="src-doc">/**&nbsp;Sets&nbsp;the&nbsp;maximum&nbsp;point&nbsp;value&nbsp;from&nbsp;vectors&nbsp;sample&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a29"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><span class="src-key">function&nbsp;</span><a href="../smt2/Cluster.html#methodsetMaxPoint">setMaxPoint</a><span class="src-sym">(</span><span class="src-var">$point</span><span class="src-sym">)</span></div></li>
+<li><div class="src-line"><a name="a30"></a>&nbsp;&nbsp;<span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a31"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$maxPoint">maxPoint</a>&nbsp;=&nbsp;<span class="src-var">$point</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a32"></a>&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a33"></a>&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a34"></a>&nbsp;&nbsp;<span class="src-doc">/**&nbsp;Computes&nbsp;the&nbsp;cluster&nbsp;center&nbsp;(mean)&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a35"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><span class="src-key">function&nbsp;</span><a href="../smt2/Cluster.html#methodcalculateAverage">calculateAverage</a><span class="src-sym">(</span><span class="src-sym">)</span></div></li>
+<li><div class="src-line"><a name="a36"></a>&nbsp;&nbsp;<span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a37"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$count&nbsp;</span>=&nbsp;<a href="http://www.php.net/count">count</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$points">points</a><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a38"></a>&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a39"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;with&nbsp;random&nbsp;initialization,&nbsp;this&nbsp;check&nbsp;is&nbsp;required&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a40"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">if&nbsp;</span><span class="src-sym">(</span><span class="src-var">$count&nbsp;</span>==&nbsp;<span class="src-num">0</span><span class="src-sym">)&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a41"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a42"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;no&nbsp;clues...</span></div></li>
+<li><div class="src-line"><a name="a43"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$avgPoint">avgPoint</a><span class="src-sym">-&gt;</span><span class="src-id">x&nbsp;</span>=&nbsp;<span class="src-num">0</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a44"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$avgPoint">avgPoint</a><span class="src-sym">-&gt;</span><span class="src-id">y&nbsp;</span>=&nbsp;<span class="src-num">0</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a45"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a46"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">return</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a47"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a48"></a>&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a49"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$xsum&nbsp;</span>=&nbsp;<span class="src-num">0</span><span class="src-sym">;&nbsp;</span><span class="src-var">$ysum&nbsp;</span>=&nbsp;<span class="src-num">0</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a50"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">foreach&nbsp;</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$points">points</a>&nbsp;<span class="src-key">as&nbsp;</span><span class="src-var">$p</span><span class="src-sym">)&nbsp;</span><span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a51"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$xsum&nbsp;</span>+=&nbsp;<span class="src-var">$p</span><span class="src-sym">-&gt;</span><span class="src-id">x</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a52"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$ysum&nbsp;</span>+=&nbsp;<span class="src-var">$p</span><span class="src-sym">-&gt;</span><span class="src-id">y</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a53"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a54"></a>&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a55"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$avgPoint">avgPoint</a><span class="src-sym">-&gt;</span><span class="src-id">x&nbsp;</span>=&nbsp;<span class="src-var">$xsum&nbsp;</span>/&nbsp;<span class="src-var">$count</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a56"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$avgPoint">avgPoint</a><span class="src-sym">-&gt;</span><span class="src-id">y&nbsp;</span>=&nbsp;<span class="src-var">$ysum&nbsp;</span>/&nbsp;<span class="src-var">$count</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a57"></a>&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a58"></a>&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a59"></a>&nbsp;&nbsp;<span class="src-doc">/**&nbsp;Computes&nbsp;the&nbsp;cluster&nbsp;median&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a60"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><span class="src-key">function&nbsp;</span><a href="../smt2/Cluster.html#methodcalculateMedian">calculateMedian</a><span class="src-sym">(</span><span class="src-sym">)</span></div></li>
+<li><div class="src-line"><a name="a61"></a>&nbsp;&nbsp;<span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a62"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$count&nbsp;</span>=&nbsp;<a href="http://www.php.net/count">count</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$points">points</a><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a63"></a>&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a64"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;with&nbsp;random&nbsp;initialization,&nbsp;this&nbsp;check&nbsp;is&nbsp;required&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a65"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">if&nbsp;</span><span class="src-sym">(</span><span class="src-var">$count&nbsp;</span>==&nbsp;<span class="src-num">0</span><span class="src-sym">)&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a66"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a67"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;no&nbsp;clues,&nbsp;get&nbsp;max&nbsp;values&nbsp;and&nbsp;just&nbsp;randomize</span></div></li>
+<li><div class="src-line"><a name="a68"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$medPoint">medPoint</a><span class="src-sym">-&gt;</span><span class="src-id">x&nbsp;</span>=&nbsp;<a href="http://www.php.net/rand">rand</a><span class="src-sym">(</span><span class="src-num">0</span><span class="src-sym">,&nbsp;</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$maxPoint">maxPoint</a><span class="src-sym">-&gt;</span><span class="src-id">x</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a69"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$medPoint">medPoint</a><span class="src-sym">-&gt;</span><span class="src-id">y&nbsp;</span>=&nbsp;<a href="http://www.php.net/rand">rand</a><span class="src-sym">(</span><span class="src-num">0</span><span class="src-sym">,&nbsp;</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$maxPoint">maxPoint</a><span class="src-sym">-&gt;</span><span class="src-id">y</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a70"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a71"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">return</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a72"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a73"></a>&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a74"></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.php.net/sort">sort</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$points">points</a><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a75"></a>&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a76"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;compute&nbsp;50th&nbsp;percentile&nbsp;(in&nbsp;general:&nbsp;q&nbsp;=&nbsp;N&nbsp;*&nbsp;p/100&nbsp;+&nbsp;0.5)</span></div></li>
+<li><div class="src-line"><a name="a77"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$q&nbsp;</span>=&nbsp;<a href="http://www.php.net/round">round</a><span class="src-sym">(</span><span class="src-var">$count</span>/<span class="src-num">2&nbsp;</span>+&nbsp;<span class="src-num">0.5</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a78"></a>&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a79"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$medPoint">medPoint</a><span class="src-sym">-&gt;</span><span class="src-id">x&nbsp;</span>=&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$points">points</a><span class="src-sym">[</span><span class="src-var">$q</span><span class="src-sym">]</span><span class="src-sym">-&gt;</span><span class="src-id">x</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a80"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$medPoint">medPoint</a><span class="src-sym">-&gt;</span><span class="src-id">y&nbsp;</span>=&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$points">points</a><span class="src-sym">[</span><span class="src-var">$q</span><span class="src-sym">]</span><span class="src-sym">-&gt;</span><span class="src-id">y</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a81"></a>&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a82"></a>&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a83"></a>&nbsp;&nbsp;<span class="src-doc">/**&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a84"></a><span class="src-doc">&nbsp;&nbsp;&nbsp;*&nbsp;Computes&nbsp;the&nbsp;cluster&nbsp;variance,&nbsp;defined&nbsp;as&nbsp;the&nbsp;second&nbsp;sample&nbsp;central&nbsp;moment.</span></div></li>
+<li><div class="src-line"><a name="a85"></a><span class="src-doc">&nbsp;&nbsp;&nbsp;*&nbsp;</span><span class="src-doc-coretag">@link</span><span class="src-doc">&nbsp;http://mathworld.wolfram.com/SampleVariance.html</span></div></li>
+<li><div class="src-line"><a name="a86"></a><span class="src-doc">&nbsp;&nbsp;&nbsp;*/</span></div></li>
+<li><div class="src-line"><a name="a87"></a>&nbsp;&nbsp;<span class="src-key">public&nbsp;</span><span class="src-key">function&nbsp;</span><a href="../smt2/Cluster.html#methodcalculateVariance">calculateVariance</a><span class="src-sym">(</span><span class="src-sym">)</span></div></li>
+<li><div class="src-line"><a name="a88"></a>&nbsp;&nbsp;<span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a89"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$count&nbsp;</span>=&nbsp;<a href="http://www.php.net/count">count</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$points">points</a><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a90"></a>&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a91"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">if&nbsp;</span><span class="src-sym">(</span><span class="src-var">$count&nbsp;</span>==&nbsp;<span class="src-num">0</span><span class="src-sym">)&nbsp;</span><span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a92"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$variance">variance</a><span class="src-sym">-&gt;</span><span class="src-id">x&nbsp;</span>=&nbsp;<span class="src-num">0</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a93"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$variance">variance</a><span class="src-sym">-&gt;</span><span class="src-id">y&nbsp;</span>=&nbsp;<span class="src-num">0</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a94"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a95"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">return</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a96"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a97"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;Var(X)&nbsp;=&nbsp;E[(X&nbsp;-&nbsp;m)^2]</span></div></li>
+<li><div class="src-line"><a name="a98"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$xsum2&nbsp;</span>=&nbsp;<span class="src-num">0</span><span class="src-sym">;&nbsp;</span><span class="src-var">$ysum2&nbsp;</span>=&nbsp;<span class="src-num">0</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a99"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">foreach</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$points">points</a>&nbsp;<span class="src-key">as&nbsp;</span><span class="src-var">$p</span><span class="src-sym">)&nbsp;</span><span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a100"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$xdiff&nbsp;</span>=&nbsp;<span class="src-var">$p</span><span class="src-sym">-&gt;</span><span class="src-id">x&nbsp;</span>-&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$avgPoint">avgPoint</a><span class="src-sym">-&gt;</span><span class="src-id">x</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a101"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$ydiff&nbsp;</span>=&nbsp;<span class="src-var">$p</span><span class="src-sym">-&gt;</span><span class="src-id">y&nbsp;</span>-&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$avgPoint">avgPoint</a><span class="src-sym">-&gt;</span><span class="src-id">y</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a102"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$xsum2&nbsp;</span>+=&nbsp;<span class="src-var">$xdiff&nbsp;</span>*&nbsp;<span class="src-var">$xdiff</span><span class="src-sym">;&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a103"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$ysum2&nbsp;</span>+=&nbsp;<span class="src-var">$ydiff&nbsp;</span>*&nbsp;<span class="src-var">$ydiff</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a104"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">}&nbsp;&nbsp;&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a105"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">/*&nbsp;Note&nbsp;that&nbsp;the&nbsp;underlying&nbsp;distribution&nbsp;is&nbsp;not&nbsp;known.&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a106"></a><span class="src-comm">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Thus,&nbsp;in&nbsp;order&nbsp;to&nbsp;obtain&nbsp;an&nbsp;unbiased&nbsp;estimator&nbsp;for&nbsp;sigma^2,&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a107"></a><span class="src-comm">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;it&nbsp;is&nbsp;necessary&nbsp;to&nbsp;instead&nbsp;define&nbsp;a&nbsp;&quot;bias-corrected&nbsp;sample&nbsp;variance&quot;.</span></div></li>
+<li><div class="src-line"><a name="a108"></a><span class="src-comm">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/&nbsp;</span></div></li>
+<li><div class="src-line"><a name="a109"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$bias&nbsp;</span>=&nbsp;<span class="src-sym">(</span><span class="src-var">$count&nbsp;</span>-&nbsp;<span class="src-num">1&nbsp;</span>&gt;&nbsp;<span class="src-num">0</span><span class="src-sym">)&nbsp;</span>?&nbsp;<span class="src-var">$count&nbsp;</span>-&nbsp;<span class="src-num">1&nbsp;</span>:&nbsp;<span class="src-var">$count</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a110"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$variance">variance</a><span class="src-sym">-&gt;</span><span class="src-id">x&nbsp;</span>=&nbsp;<span class="src-var">$xsum2&nbsp;</span>/&nbsp;<span class="src-var">$bias</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a111"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../smt2/Cluster.html#var$variance">variance</a><span class="src-sym">-&gt;</span><span class="src-id">y&nbsp;</span>=&nbsp;<span class="src-var">$ysum2&nbsp;</span>/&nbsp;<span class="src-var">$bias</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a112"></a>&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a113"></a><span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a114"></a><span class="src-php">?&gt;</span></div></li>
+</ol>
+</div>
+        <div class="credit">
+		    <hr />
+		    Documentation generated on Thu, 30 Sep 2010 18:26:42 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
+	      </div>
+      </td></tr></table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

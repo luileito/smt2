@@ -1,0 +1,85 @@
+--------------------------------------------------------------------------------
+(smt)2 ChangeLog - 30th September 2010
+--------------------------------------------------------------------------------
+This is the change log for the 2.0.2 version.
+
+You may find the latest source code on the SVN:
+svn checkout http://smt2.googlecode.com/svn/trunk/
+
+You can browse and see the changes in code here:
+http://code.google.com/p/smt2/source/browse/
+
+Aditionally, there is a zipped version ready for downloading on (smt) website:
+http://smt.speedzinemedia.com/smt/downloads.php
+--------------------------------------------------------------------------------
+
+[To-Do List] For next releases
+
+* Enable downloading logs for data mining.
+* Document the SWF API.
+* 3D visualization. 
+* Realtime in-person tracking (aka Web Activity Sharing).
+
+
+[2.0.2] September 30th 2010
++ Added new extension: Maintenance (backup database, check 'orphan' cache logs, etc.)
++ Enabled cross-site POST requests.
++ Improved user identification (e.g., different users from the same LAN are now distinguished).
++ Improved tracks replaying (now using window load event instead of DOM load, placing JS/SWF scripts at the bottom of the cached page)
+- Changed some function names for better consistency.
+
+
+[2.0.1] February 21th 2010
+
++ Encoded cache pages in UTF-8 (LOG_ENCODING setting is not needed anymore).
++ Added refreshOnResize on replaying (but not enabled by default).
+- Removed browser detection script on client side (now it's done on server side).
++ Improved collaborative real-time dynamic mouse maps.
++ Added standard deviations on user/page models.
++ Added automatic trail loading on JavaScript drawing API.
++ Improved deleting logs from cache table.
++ Improved date handling.
++ PHP code tested in strict mode, AS3 code compiled in strict mode, JS code passed JSlint tests.
++ Refactorized PHP and AS3 classes.
+- Removed non-smt-related AS3 classes (e.g. Caurina, bit101).
+- Removed version numbers from JS file names.
++ Fixed cURL cookies <Mohammed Chaudhry> and PHP session's gateway timeouts <Andrey>.
++ Fixed IE6 issue <Mohammed Chaudhry>.
++ Fixed redirection issues on IIS servers.
++ Added heatmaps visualization.
++ Added merging logs with the same URL, even when cache is disabled.
++ Added uninstall script.
+
+
+[2.0.0] September 12th 2009
+
++ Remember agree statement if warning is enabled. <benjamin>
++ Enabled log filtering and user/page grouping. That makes delete tasks easier. <steven, griser>
++ Exclude the root user from being recorded. <steven>
++ Logs with no mouse movements are deleted automatically.
++ Enabled window auto-scrolling when replaying logs.
++ Added a visual clue JS drawing API when the user is not moving the mouse (a circle with "Stop..." text).
++ Added PHP and JS documentation as CMS extension.
++ Minor updates:
+   + Fixed getting the most recent version saved in cache.
+   + Fixed tracking report when there are no logs on DB.
+   + Enhanced clickpath info.
+   + Updated core files.
+
+
+[beta3] July 21th 2009
+
++ Added the (empty) cache dir. <leo>
+- Removed Flash redirection alert message. <leo>
+
+
+[beta2] July 20th 2009
+
++ Fixed root permissions when updating password. <leo>
+- Removed the window resize callback function (on IE seemed to happen the same as described on wiki issue #1): http://code.google.com/p/smt2/issues/detail?id=1
+- Added the option to change the color background layer on JS replay file.
+
+
+[beta1] July 19th 2009
+
+- First Beta release.

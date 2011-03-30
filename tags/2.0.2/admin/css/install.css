@@ -1,0 +1,6 @@
+body { font:100% Georgia,Times,serif; background-color:#888; }
+#global { width:80%; margin:0 auto; margin-top:5%; padding:1em; background-color:#FFF; border:2px solid #000; }
+fieldset { border:none; }
+h1 { margin-top:.3em; }
+.ok { color:green; }
+.ko { color:red; }
