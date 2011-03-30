@@ -3,24 +3,31 @@
 
 = Requirements =
 
-Your Web server needs a *MySQL 5* database and *PHP 5* installed with the libraries *cURL* and *json*. These settings are very common on most Web servers. If you don't know if your server has these requirements, you will be adviced when installing the system.
+Your Web server needs a *MySQL 5* database and *PHP 5* installed with the libraries *cURL* and *json*. These settings are very common on most Web servers. If you don't know if your server has these requirements, you will be advised when installing the system.
 
 
 = Download =
 
-Downloads are available in a ZIP file either from the [http://smt.speedzinemedia.com/smt/downloads.php (smt) website] or the [http://code.google.com/p/smt2/downloads/list Project Downloads page].
+You can download all the project files (production, sources, documentation, etc.) from  [http://code.google.com/p/smt2/downloads/list GoogleCode SVN].
 
-You may grab two zipped files:
- # The production version, ready for using on your webserver (~300 Kb).
- # The sources and API documentation (~400 Kb).
+Downloads are also available in ZIP files. However they may be out of date. It is highly recommended to use an SVN client to grab the code.
 
-You can also download all the project (production, sources, documentation, etc.) from the [http://code.google.com/p/smt2/downloads/list Google code SVN] (RECOMMENDED OPTION).
+The project contains the following items:
+ * The production version, ready for using on your webserver.
+ * The sources and API documentation. They are located in: 
+  # `core/js/src`
+  # `core/swf/src`
+  # `admin/ext/documentation`
+
+You may want to avoid uploading the sources to your server, as they are not needed in production and therefore you will save disk space.
+
 
 = Installing =
 
 The installation process is very similar to the well-known WordPress Content Management System (CMS), so the learning curve is supposed to be very soft.
 
-It is recommended to put the system in a directory named `/smt2` on your localhost or production server, although any other directory name is ok.
+It is recommended to put the system in a directory named `/smt2` on your localhost or production server, although any other directory name is ok as long as you configure properly both `config.php` and the argument of `smt.record()` function. NOTE: If you put in `config.php` a directory name that contains the string "smt2", then it will be recognized automatically by the recording script.
+
 
 == Steps ==
 
@@ -42,7 +49,7 @@ If you already have a previous 2.x version installed, you can overwrite such ins
 Just go to the URL `http://mysite.com/smt2/admin/sys/uninstall.php` and follow the instructions.
 
 
-= Including the record script on your page(s) =
+= Including the recording script on your page(s) =
 
 You must add the following 2 lines either to the HEAD or the BODY sections of each document that you wish to track:
 {{{
@@ -126,7 +133,7 @@ Note that the last property have no ending comma.
 
 == invoking recording script in version 2.0.1 and above ==
 
-Now you must call the `record` method explicitly.
+Now you must call the `smt2.record()` method explicitly.
 This is how to invoke it, based on the previous example:
 {{{
 <html>
@@ -157,7 +164,7 @@ Your page content goes here...
 </html>
 }}}
 
-In this way, now there is more flexibility in customizing your own recording intitializations.
+In this way, now there is more flexibility in customizing your own recording initializations.
 
 
 = A note about privacy =
