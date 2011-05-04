@@ -9,7 +9,7 @@ if ( check_systemversion("mysql") )
 } 
 else 
 {
-  die('<strong class="ko">Error:</strong> Your server has MySQL '.mysql_get_server_info().' installed, but at least version 5 is required to handle this system.');
+  die('<strong class="ko">Error:</strong> Your server has MySQL '.mysql_get_server_info(db_connect()).' installed, but at least version 5 is required to handle this system.');
 }
 
 /* check PHP version -------------------------------------------------------- */
