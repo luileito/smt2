@@ -20,6 +20,9 @@ if ($defaultTimeZone) {
 // set date
 date_default_timezone_set($location);
 
+// enable PHP short open tag
+ini_set("short_open_tag", "1");
+
 // load base files
 define('REQUIRED', dirname(__FILE__));
 
