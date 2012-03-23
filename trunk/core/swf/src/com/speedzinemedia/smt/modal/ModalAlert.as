@@ -9,8 +9,8 @@ package com.speedzinemedia.smt.modal {
     import flash.events.MouseEvent;
     
     import com.bit101.components.PushButton;
-    import com.speedzinemedia.smt.modal.ModalDialog;
     import com.speedzinemedia.smt.events.ModalEvent;
+    import com.speedzinemedia.smt.modal.ModalDialog;
 
     public class ModalAlert extends ModalDialog
     {

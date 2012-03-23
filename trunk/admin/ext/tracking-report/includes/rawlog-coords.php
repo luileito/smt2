@@ -62,8 +62,8 @@ foreach ($distCoords as $i => $arr) {
 
 // clicks study
 $clicksSum = array();
-foreach ($clicksX as $i => $arr) {
-  $clicksSum[] = count_clicks($clicksX[$i], $clicksY[$i]);
+foreach ($clicks as $i => $arr) {
+  $clicksSum[] = count_clicks($arr);
 }
 $clicksAvg = array_avg($clicksSum);
 $clicksSD = array_sd($clicksSum);
@@ -176,7 +176,7 @@ $clicksSD = array_sd($clicksSum);
   </p>
   <ol class="ml pl">
     <li>First row is <abbr title="Sample Mean">&mu;</abbr>, while second row is <abbr title="Sample Standard Deviation">&sigma;</abbr>.</li>
-    <li>Values for <strong>activity</strong> and <strong>scroll reach</strong> are reported as per-unit: 0 &lt; value &lt; 1.</li>
+    <li>Values for activity and scroll reach are reported as per-unit: 0 &lt; value &lt; 1.</li>
     <li>Comma-separated values denote a column vector (X and Y components).</li>
   </ol>
 </div>

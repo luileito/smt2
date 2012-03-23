@@ -6,56 +6,47 @@ package com.speedzinemedia.smt.charts {
 
     import flash.display.Shape;
     import flash.display.Sprite;
-    import flash.display.StageDisplayState;
-    import flash.external.ExternalInterface;
-    import flash.events.Event;
-    import flash.events.MouseEvent;
-    import flash.events.KeyboardEvent;
     import flash.geom.Point;
-    import flash.ui.Keyboard;
-    
+import flash.external.ExternalInterface;
     import caurina.transitions.Tweener;
-    import com.bit101.components.VSlider;
-    import com.bit101.components.HSlider;
     
     import com.speedzinemedia.smt.display.Layers;
     import com.speedzinemedia.smt.draw.Arrow;
     import com.speedzinemedia.smt.text.DebugText;
-    import com.speedzinemedia.smt.text.Tooltip;
     import com.speedzinemedia.smt.utils.Maths;
     
     public class TimeChart extends Sprite 
-    {            
-        private var $data:Array;                     // path to draw
+    {
+        public static const TYPE_HORIZONTAL:String = "horizontal";
+        public static const TYPE_VERTICAL:String = "vertical";
+        
+        private var $data:Array;                        // path(s) to draw
         private var $type:String;                       // chart type
         private var $label:String;                      // chart title
-        
-        private var $ini:Point, $end:Point;             // path points
-        private var $fps:int;                           // compute velocity and time
-        private var $num:int;                           // number of points
-        private var $count:int;                         // global counter
-        private var $step:Number;                       // scale between points
-        
-        private var $width:Number, $height:Number;      // chart size
+        private var $width:Number,$height:Number;       // chart size
         private var $canvas:Sprite;                     // container canvas
         private var $chart:Sprite;                      // chart canvas
 
-        private var $normalize:Number;                  // points scale factor
-        
-        
         public function TimeChart(settings:Object) 
         {
-/*        
-var mySettings:Object = {
-    data: $info, // { activity: activity, screen: screen, color: m.color, avg: u[i].avg }
-    type: chartType,
-    label:  chartType.toUpperCase() + " mouse coordinates vs. Time",
-    size: {
-        width: $info.screen.viewport.width,
-        height: $info.screen.viewport.height/2
-    }
-};
-*/ 
+            /*
+            // settings example
+            var mySettings:Object = {
+                data:  {
+                    activity: activity,
+                    screen:   screen,
+                    color:    m.color,
+                    avg:      u[i].avg
+                },
+                type:  chartType,
+                label: chartType.toUpperCase() + " mouse coordinates vs. Time",
+                size: {
+                    width: $info.screen.viewport.width,
+                    height: $info.screen.viewport.height/2
+                }
+            };
+            */
+            
             // set values from constructor
             $data  = settings.data;
             $type  = settings.type;
@@ -69,21 +60,11 @@ var mySettings:Object = {
             // set graph size
             $width  = $data[0].screen.viewport.width - 100;
             $height = $data[0].screen.viewport.height/2;
-            /*
-            var vs1:VSlider = new VSlider(this);
-            vs1.height = $height;
-            var vs2:VSlider = new VSlider(this);
-            vs2.x = $width;
-            vs2.height = $height;
-            var hs:HSlider = new HSlider(this);
-            hs.width = $width;
-            */
             
             const OFFSET:int = 10;
-            
             // set background layer
             var bg:Shape = new Shape();
-            bg.graphics.beginFill(0x777777);
+            bg.graphics.beginFill(0xFFFFFF);
             bg.graphics.drawRect(-OFFSET,-OFFSET, $width + OFFSET*2,$height + OFFSET*2);
             bg.graphics.endFill();
             // draw bounding box
@@ -125,58 +106,30 @@ var mySettings:Object = {
             title.y = $canvas.height - title.height/2;
             
             //resetScale();
-            
-            /*
-            var vs1:VSlider = new VSlider(this);
-            vs1.x = -OFFSET * 2;
-            vs1.y = -OFFSET;
-            vs1.height = $height + OFFSET * 2;
-
-            var vs2:VSlider = new VSlider(this);
-            vs2.x = $width;
-            vs2.x = $width + OFFSET;
-            vs2.y = -OFFSET;
-            vs2.height = $height + OFFSET * 2;
-
-            var hs:HSlider = new HSlider(this);
-            hs.x = -OFFSET;
-            hs.y = -OFFSET * 2;
-            hs.width = $width + OFFSET * 2;
-            */
-            
-            /*
-            var vs1:VSlider = new VSlider(this);
-            vs1.height = $height;
-            var vs2:VSlider = new VSlider(this);
-            vs2.x = $width - vs2.width;
-            vs2.height = $height;
-            var hs:HSlider = new HSlider(this);
-            hs.width = $width;
-            */
         };
             
         private function drawChart(info:Object):void
         {            
-            var $points:Array = ($type == "vertical") ? info.activity.coords.y : info.activity.coords.x;
+            var points:Array = ($type == TYPE_VERTICAL) ? info.activity.coords.y : info.activity.coords.x;
             
-            $num  = info.activity.coords.y.length - 1;
-            $step = $width / $num;
-            // fit points in bounding box to compare mouse trails
-            $normalize = $height / Maths.arrayMax($points);
-            $count = 0;                
+            var num:int = points.length - 1;
+            var step:Number = $width / num;
+            // fit points in bounding box to easily compare mouse trails
+            var normalize:Number = $height / Maths.arrayMax(points);
+            var count:int = 0;
             
-            var lineThick:int = (info.avg) ? 4 : 0;
+            var lineThick:int = (info.avg) ? 3 : 0;
             var lineColor:int = (info.color) ? info.color : Layers.getColor(Layers.id.PATH);
-            
-            while ($count < $num) {
-                $ini = new Point($count,   $points[$count]);
-                $end = new Point($count+1, $points[$count+1]);
+            var ini:Point,end:Point;
+            while (count < num) {
+                ini = new Point(count,   points[count]);
+                end = new Point(count+1, points[count+1]);
                 // draw mouse path
                 $chart.graphics.lineStyle(lineThick, lineColor);
-                $chart.graphics.moveTo($ini.x * $step, $ini.y * $normalize);
-                $chart.graphics.lineTo($end.x * $step, $end.y * $normalize);
+                $chart.graphics.moveTo(ini.x * step, ini.y * normalize);
+                $chart.graphics.lineTo(end.x * step, end.y * normalize);
                 // go to next point
-                ++$count;
+                ++count;
             }
         };
         

@@ -24,7 +24,7 @@ package com.speedzinemedia.smt.display {
     import com.bit101.components.PushButton;
     import com.bit101.components.RadioButton;
     import com.speedzinemedia.smt.events.*;
-    import com.speedzinemedia.smt.charts.DrawChart;
+    import com.speedzinemedia.smt.charts.*;
     import com.speedzinemedia.smt.display.CustomSprite;
     import com.speedzinemedia.smt.display.Draggable;
     import com.speedzinemedia.smt.display.Layers;
@@ -128,8 +128,8 @@ package com.speedzinemedia.smt.display {
         private function setPanelDimensions():void 
         {
             // compute panel height, assuming 23px of average height for each checkbox/radio button
-            for (var c:int = 0, sum:int = 0; c < Layers.collectionLength; ++c, sum += 23);                             
-            PANEL_HEIGHT = sum + MARGIN * 2;                    
+            for (var c:int = 0, sum:int = 0; c < Layers.collectionLength; ++c, sum += 23) {}
+            PANEL_HEIGHT = sum + MARGIN * 2;
             PANEL_WIDTH  = COLUMN_WIDTH * COLUMNS + MARGIN * 2;  // panel width: column width * number of columns + margins
         };
         
@@ -140,16 +140,16 @@ package com.speedzinemedia.smt.display {
             createPanelBoundary();
             createLayersColumn();
             createSelectionsColumn();
-            if ($info.length == 1) {
+            //if ($info.length == 1) {
                 createColorsColumn(); // changing colors is available for single user replays
-            }
+            //}
             createVisualizationColumn();
         };
         
         private function createBasePanel():void 
         {
             // create panel @ center,top
-            $panel = new Panel(this, (stage.stageWidth - PANEL_WIDTH)/2, MARGIN);
+            $panel = new Panel(this, (stage.stageWidth + PANEL_WIDTH)/2, MARGIN);
             $panel.setSize(PANEL_WIDTH, PANEL_HEIGHT);
 
             new Draggable($panel);
@@ -178,9 +178,9 @@ package com.speedzinemedia.smt.display {
         
         private function createLayersColumn():void 
         {
-            var label1:Label = new Label($panel, XPOS, MARGIN, "LAYERS");            
+            var label1:Label = new Label($panel.content, XPOS, MARGIN, "LAYERS");
             for (var i:int = 0; i < Layers.collectionLength; ++i) {
-                var cb:CheckBox = new CheckBox($panel, label1.x + MARGIN, YPOS, Layers.collection[i].label, toggleVisualizationLayer);
+                var cb:CheckBox = new CheckBox($panel.content, label1.x + MARGIN, YPOS, Layers.collection[i].label, toggleVisualizationLayer);
                 cb.name = Layers.collection[i].id;
                 cb.selected = ($savedSettings.size > 0) ? $savedSettings.data.layers[i].visible : Layers.collection[i].visible;
                 setTabIndex(cb);
@@ -191,7 +191,7 @@ package com.speedzinemedia.smt.display {
 
         private function createSelectionsColumn():void 
         {
-            var label2:Label = new Label($panel, XPOS, MARGIN, "CUSTOM SELECTIONS");
+            var label2:Label = new Label($panel.content, XPOS, MARGIN, "CUSTOM SELECTIONS");
             var custObj:Array = [
                 { id: ID.SEL.INVERT,  label: "invert layers"     },
                 { id: ID.SEL.TOGGLE,  label: "toggle all/none"   },
@@ -203,46 +203,47 @@ package com.speedzinemedia.smt.display {
 			}
 				
             for (var i:int = 0; i < custObj.length; ++i) {
-                var pb1:PushButton = new PushButton($panel, label2.x + MARGIN, YPOS, custObj[i].label, loadCustomSelection);
+                var pb1:PushButton = new PushButton($panel.content, label2.x + MARGIN, YPOS, custObj[i].label, loadCustomSelection);
                 pb1.name = custObj[i].id;
                 setTabIndex(pb1);
                 YPOS += 25;
             }   
             
-            var label3:Label = new Label($panel, XPOS, YPOS, "TIME CHARTS");
+            var label3:Label = new Label($panel.content, XPOS, YPOS, "TIME CHARTS");
             
             var timeObj:Array = [
-                { id: ID.TIME.X, label: "X coords vs time" },
-                { id: ID.TIME.Y, label: "Y coords vs time" }
+                { id: ID.TIME.X, label: "X coords vs. time" },
+                { id: ID.TIME.Y, label: "Y coords vs. time" }
             ];
 			
 			YPOS = 25;
             for (var j:int = 0; j < timeObj.length; ++j) {
-                var pb2:PushButton = new PushButton($panel, label3.x + MARGIN, label3.y + YPOS, timeObj[j].label, showTimeChart);
+                var pb2:PushButton = new PushButton($panel.content, label3.x + MARGIN, label3.y + YPOS, timeObj[j].label, showTimeChart);
                 pb2.name = timeObj[j].id;
                 setTabIndex(pb2);
                 YPOS += 25;
             }
+            var pb3:PushButton = new PushButton($panel.content, label3.x + MARGIN, label3.y + YPOS, "3D (experimental)", show3D);
             
             updateColumnHelpers();    
         };
         
         private function createColorsColumn():void 
         {
-            var label3:Label = new Label($panel, XPOS, MARGIN, "COLORS");
+            var label3:Label = new Label($panel.content, XPOS, MARGIN, "COLORS");
             for (var k:int = 0; k < Layers.collectionLength; ++k)
             {
                 // color of interacted areas cannot be changed due to blend mode
                 if (Layers.collection[k].id == Layers.id.MASK) continue;
                 
                 if (Layers.collection[k].color) {
-                    var rb:RadioButton = new RadioButton($panel, label3.x + MARGIN, YPOS, Layers.collection[k].label, false, selectCurrentColor);
+                    var rb:RadioButton = new RadioButton($panel.content, label3.x + MARGIN, YPOS, Layers.collection[k].label, false, selectCurrentColor);
                     rb.name = Layers.collection[k].id;
                     setTabIndex(rb);
                     YPOS += 20;
                 }
             }
-            $cc = new ColorChooser($panel, label3.x + MARGIN, YPOS + 5, 0x000000, changeLayerColor);
+            $cc = new ColorChooser($panel.content, label3.x + MARGIN, YPOS + 5, 0x000000, changeLayerColor);
             $cc.usePopup = true;
             setTabIndex($cc);
             // update ColorChooser here
@@ -253,35 +254,41 @@ package com.speedzinemedia.smt.display {
                 
         private function showTimeChart(e:MouseEvent):void 
         {
-            var chartType:String = (e.currentTarget.name == ID.TIME.X) ? "horizontal" : "vertical";
+            var chartType:String = (e.currentTarget.name == ID.TIME.X) ? TimeChart.TYPE_HORIZONTAL : TimeChart.TYPE_VERTICAL;
 
             var chartSettings:Object = {
                 data:       $info,
                 type:       chartType,
-                label:      chartType + " mouse coordinates vs. time"
+                label:      chartType + " mouse coordinates vs. time (normalized scales)"
             };
             
-            var a:DrawChart = new DrawChart(parent, chartSettings);
+            new ChartContainer(parent, chartSettings, TimeChart);
+        };
+
+        private function show3D(e:MouseEvent):void
+        {
+            new ChartContainer(parent, {data: $info}, Plot3D);
         };
         
         private function createVisualizationColumn():void 
         {
-            var label4:Label = new Label($panel, XPOS, MARGIN, "VISUALIZATION");
+            var label4:Label = new Label($panel.content, XPOS, MARGIN, "VISUALIZATION");
             var outObj:Array = [
                 { id: ID.OUT.REPLAYRT,  label: "Replay in real time",  callback: toggleReplayMode  },
-                { id: ID.OUT.TOGGLEHQ,  label: "Toggle High Quality",  callback: toggleQuality     },
                 { id: ID.OUT.HEATMAP,   label: "Use heatmaps",         callback: toggleHeatMap     },
+                { id: ID.OUT.TOGGLEHQ,  label: "Toggle High Quality",  callback: toggleQuality     },
                 { id: ID.OUT.REMEMBER,  label: "Remember settings",    callback: rememberSettings  }
+                //{ id: ID.OUT.LOADTRAIL, label: "Autoplay next trail",  callback: loadTrails        }
             ];
 
             // add CheckBoxes
             for (var u:int = 0; u < outObj.length; ++u) {
-                var out:CheckBox = new CheckBox($panel, XPOS + MARGIN, YPOS, outObj[u].label, outObj[u].callback);
+                var out:CheckBox = new CheckBox($panel.content, XPOS + MARGIN, YPOS, outObj[u].label, outObj[u].callback);
                 out.name = outObj[u].id;
                 setTabIndex(out);
                 YPOS += 20;
             }
-            // note that later we'll add "Autoplay trails" (if needed)
+            
 			updateColumnHelpers();
         };
         
@@ -299,10 +306,8 @@ package com.speedzinemedia.smt.display {
                 setCheckBoxState(ID.OUT.REPLAYRT,  $savedSettings.data.replayRT);
                 setCheckBoxState(ID.OUT.TOGGLEHQ,  $savedSettings.data.toggleHQ);
                 setCheckBoxState(ID.OUT.HEATMAP,   $savedSettings.data.heatMap);
+                //setCheckBoxState(ID.OUT.LOADTRAIL, $savedSettings.data.loadTrail); // create it later
                 setCheckBoxState(ID.OUT.REMEMBER,  true); // obviously ;)
-                
-                // fire these functions passing null events as first argument
-                loadCustomSelection(null, ID.SEL.SAVED);
             }
             else {
                 // by default, if no saved settings, start in real-time mode
@@ -312,45 +317,48 @@ package com.speedzinemedia.smt.display {
             
             // loading next user trail is only available when replaying in real time
             if (getCheckBoxState(ID.OUT.REPLAYRT)) {
-                createNextTrailOption();
                 // don't display interacted areas in real-time replay (it's processor-intensive)
                 toggleVisiblePanelOption(Layers.id.MASK);
+                createNextTrailOption();
+            } else {
+                toggleVisiblePanelOption(ID.OUT.LOADTRAIL);
             }
+
             // finally check stage quality
             toggleQuality();
         };
         
-        // This function is called at runtime
         private function createNextTrailOption():void 
         {
             if ($info.length > 1) return;
             
-			// set this item under "remember my settings"
-			var cb:CheckBox = $panel.getChildByName(ID.OUT.REMEMBER) as CheckBox;
-            createPanelOption(CheckBox, { x: cb.x, y: cb.y + 20, id: ID.OUT.LOADTRAIL, label: "Autoplay trails", callback: loadTrails });
+			// set this item under "remember settings"
+			var cbRef:CheckBox = $panel.content.getChildByName(ID.OUT.REMEMBER) as CheckBox;
+			
+            createPanelOption(CheckBox, { x: cbRef.x, y: cbRef.y + 20, id: ID.OUT.LOADTRAIL, label: "Autoplay trails", callback: loadTrails });
             // check state (reset when toggling realtime mode)
-            if ($savedSettings.size > 0 && $savedSettings.data.loadTrail) {
-                setCheckBoxState(ID.OUT.LOADTRAIL, true);
+            if ($savedSettings.size > 0) {
+                setCheckBoxState(ID.OUT.LOADTRAIL, $savedSettings.data.loadTrail);
             }
         };
         
         /* Create any type of available content in $panel: PushButton, CheckBox, etc. */
         private function createPanelOption(baseClass:Object, prop:Object):void 
         {
-            var newOpt:DisplayObject = new baseClass($panel, prop.x, prop.y, prop.label, prop.callback);
+            var newOpt:DisplayObject = new baseClass($panel.content, prop.x, prop.y, prop.label, prop.callback);
             newOpt.name = prop.id;
             setTabIndex(newOpt);
         };
         
         private function destroyPanelOption(oid:String):void 
         {   
-            var instance:DisplayObject = $panel.getChildByName(oid);
-            $panel.removeChild(instance);
+            var instance:DisplayObject = $panel.content.getChildByName(oid);
+            $panel.content.removeChild(instance);
         };
         
         private function toggleVisiblePanelOption(oid:String):void
         {
-            var instance:DisplayObject = $panel.getChildByName(oid);
+            var instance:DisplayObject = $panel.content.getChildByName(oid);
             // ensure that layer exists
             if (instance) {
                 instance.visible = !instance.visible;
@@ -448,7 +456,7 @@ package com.speedzinemedia.smt.display {
             // now update CheckBoxes for selected layers
             var checkBoxState:Boolean;
             for (var j:int = 0; j < Layers.collectionLength; ++j) {
-                var cb:CheckBox = $panel.getChildByName(Layers.collection[j].id) as CheckBox;
+                var cb:CheckBox = $panel.content.getChildByName(Layers.collection[j].id) as CheckBox;
                 switch (choice) {
                     case ID.SEL.INVERT:
                         checkBoxState = !cb.selected;
@@ -490,15 +498,14 @@ package com.speedzinemedia.smt.display {
         {
             var rt:Boolean = e.currentTarget.selected;
             // check also heatMap state
-            var hm:Boolean = ($savedSettings.size > 0) ? $savedSettings.data.heatMap : getCheckBoxState(ID.OUT.HEATMAP);
-
+            var hm:Boolean = getCheckBoxState(ID.OUT.HEATMAP);
             // notify parent container
             parent.dispatchEvent( new ControlPanelEvent(ControlPanelEvent.TOGGLE_REPLAY_MODE, {realTime: rt, heatMap: hm}) );
 
             toggleVisiblePanelOption(Layers.id.MASK);
-            toggleVisiblePanelOption(ID.OUT.LOADTRAIL);
-            /*
-            if (rt) {
+            //toggleVisiblePanelOption(ID.OUT.LOADTRAIL);
+            if (rt)
+            {
                 createNextTrailOption(); 
             }
             else
@@ -507,14 +514,13 @@ package com.speedzinemedia.smt.display {
                     destroyPanelOption(ID.OUT.LOADTRAIL);
                 } catch(e:Error) {} // ... this checkbox wasn't created
             }
-            */
             rememberSettings();
         };
         
         /* can be called on init */
         private function toggleQuality(e:MouseEvent = null):void
         {
-            var state:Boolean = ($savedSettings.size > 0) ? $savedSettings.data.toggleHQ : getCheckBoxState(ID.OUT.TOGGLEHQ);
+            var state:Boolean = getCheckBoxState(ID.OUT.TOGGLEHQ);
             stage.quality = (state) ? StageQuality.HIGH : StageQuality.LOW;
             // save settings only if user checked state
             if (e) { rememberSettings(); }
@@ -524,8 +530,7 @@ package com.speedzinemedia.smt.display {
         {
             var hm:Boolean = e.currentTarget.selected;
             // check also realTime state
-            var rt:Boolean = ($savedSettings.size > 0) ? $savedSettings.data.replayRT : getCheckBoxState(ID.OUT.REPLAYRT);
-            
+            var rt:Boolean = getCheckBoxState(ID.OUT.REPLAYRT);
             // notify parent container
             parent.dispatchEvent(new ControlPanelEvent(ControlPanelEvent.TOGGLE_REPLAY_MODE, {realTime: rt, heatMap: hm}));
             
@@ -534,17 +539,18 @@ package com.speedzinemedia.smt.display {
         
         private function loadTrails(e:MouseEvent):void
         {
+            rememberSettings();
+            
             if (getCheckBoxState(ID.OUT.LOADTRAIL) && $isReplayFinished) {
                 loadNextUserTrail();
             }
-            
-            rememberSettings();
         };
         
         /* Called from Modal Alert and Push Button */
         private function loadNextUserTrail(e:ModalEvent = null):void
         {   
             if (!getCheckBoxState(ID.OUT.REPLAYRT)) { return; }
+            
             var settings:Object = {
                 api:        "swf", 
                 trailurl:   $trailUrl, 
@@ -576,13 +582,14 @@ package com.speedzinemedia.smt.display {
         private function selectCurrentColor(e:MouseEvent):void
         {
             $radioButtonId = e.currentTarget.name;
-            var selectedLayer:CustomSprite = parent.getChildByName($radioButtonId) as CustomSprite;
             // check saved data
             if ($savedSettings.size > 0) {
                 var i:int = Layers.getIndex($radioButtonId);
-                selectedLayer = $savedSettings.data.layers[i];
+                $color = $savedSettings.data.layers[i].color;
+            } else {
+                var selectedLayer:CustomSprite = parent.getChildByName($radioButtonId) as CustomSprite;
+                $color = selectedLayer.color;
             }
-            $color = selectedLayer.color;
             
             updateColorChooser();
         };
@@ -608,17 +615,18 @@ package com.speedzinemedia.smt.display {
 
             var selectedLayer:CustomSprite = parent.getChildByName(layerId) as CustomSprite;
             // note that some Tracking layers do not have color asigned
-            DrawUtils.changeInstanceColor(selectedLayer, layerColor);
-            // update (populated to parent layer)
-            selectedLayer.color = layerColor;
-
+            if (Layers.getColor(layerId)) {
+                DrawUtils.changeInstanceColor(selectedLayer, layerColor);
+                // update (populated to parent layer)
+                selectedLayer.color = layerColor;
+            }
             if (e) { rememberSettings(); }
         };
         
         // will listen to MouseEvent only when checking the CheckBox instance
         private function rememberSettings(e:MouseEvent = null):void 
         {
-            var remember:CheckBox = $panel.getChildByName(ID.OUT.REMEMBER) as CheckBox;
+            var remember:CheckBox = $panel.content.getChildByName(ID.OUT.REMEMBER) as CheckBox;
             if (remember.selected) {
                 // save layers state
                 var layers:Array = []; 
@@ -645,7 +653,7 @@ package com.speedzinemedia.smt.display {
         // make this function available outside the scope of this package
         private function getCheckBoxState(cid:String):Boolean
         {
-            var cb:CheckBox = $panel.getChildByName(cid) as CheckBox;
+            var cb:CheckBox = $panel.content.getChildByName(cid) as CheckBox;
             if (cb === null) { return false; }
             
             return cb.selected;
@@ -653,10 +661,10 @@ package com.speedzinemedia.smt.display {
         
         private function setCheckBoxState(cid:String, value:Boolean):void 
         {
-            var cb:CheckBox = $panel.getChildByName(cid) as CheckBox;
-            if (cb === null) { return; }
-            
-            cb.selected = value;
+            var cb:CheckBox = $panel.content.getChildByName(cid) as CheckBox;
+            if (cb) {
+                cb.selected = value;
+            }
         };
         
     } // end class

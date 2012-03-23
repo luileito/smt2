@@ -11,7 +11,7 @@ function array_frequency($input, $threshold = 1)
   $input = (!is_array($input)) ? explode(",", $input) : $input;
   // count occurrences (array keys must be strings or integers)
   $unique = array_count_values($input); // returns an associative array of values from $input as keys and their count as value.
-  // $hovered is an associative array(string => int)
+  // $input is an associative array(string => int)
   $unique = array_sanitize($unique);
   
   // exit if there are no data
@@ -20,7 +20,7 @@ function array_frequency($input, $threshold = 1)
   // compute sum
   $sum  = array_sum($unique);
   $data = array();
-  // now calculate the frequency of each hovered element (in percentage)
+  // now calculate the frequency of each input element (in percentage)
   foreach ($unique as $k => $value) {
     $frequency = round(100*$value/$sum, 2);
     // store frecuencies above given threshold
@@ -107,8 +107,6 @@ function array_avg_weighted($input, $weights)
  */
 function array_avg($input)
 {
-  if (!count($input)) return 0;
-
   return round( array_sum($input) / count($input), 2);
 }
 
@@ -141,8 +139,6 @@ function matrix_avg($matrix)
  */
 function array_sd($input)
 {
-  if (!count($input)) return 0;
-
   $variance = 0;
   $mean = array_avg($input);
   foreach ($input as $elem) {

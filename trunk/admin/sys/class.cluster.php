@@ -13,7 +13,7 @@ class Cluster
   public $maxPoint;
   /** Cluster center (mean) */
   public $avgPoint;
-  /** Cluster meadian */
+  /** Cluster median */
   public $medPoint;
   /** Cluster variance */
   public $variance;
@@ -22,8 +22,7 @@ class Cluster
   {
     $this->avgPoint = $center;
     // to begin, variance is set to 0
-    $vP = new Point(0, 0);
-    $this->variance = $vP;
+    $this->variance = new Point(0, 0);
   }
   
   /** Sets the maximum point value from vectors sample */

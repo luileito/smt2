@@ -31,13 +31,14 @@ $where = (!empty($_SESSION['filterquery'])) ? $_SESSION['filterquery'] : "1"; //
 
 $records = db_select_all(
                           TBL_PREFIX.TBL_RECORDS,
+                          //"id,client_id,cache_id,os_id,browser_id,ftu,ip,sess_date,sess_time,coords_x,coords_y,clicks",
                           "*",
                           $where." ORDER BY sess_date DESC, client_id LIMIT $limit"
                         );
 // if there are no more records, display message
 if ($records) 
 { 
-  $GROUPED = '<abbr title="Data is grouped">&mdash;</abbr>';
+  $GROUPED = '<abbr title="Data are grouped">&mdash;</abbr>';
   // show pretty dates over timestamps if PHP >= 5.2.0
   if (check_systemversion("php", "5.2.0")) {
     $usePrettyDate = true;
@@ -121,7 +122,7 @@ if ($records)
       $clientId = mask_client($r['client_id']);
 
       // display number of mouse clicks
-      $numClicks = count_clicks($r['clicks_x'], $r['clicks_y']);
+      $numClicks = count_clicks($r['clicks']);
     }
     
     // create list item
@@ -140,12 +141,13 @@ if ($records)
         $tablerow .= $GROUPED;
       } else {
         // apend dynamically the API to the query string, based on browser capabilities
-        $tablerow .= '<a href="track.php?'.$displayId.'" class="view" rel="external" title="visualize interaction data">view</a>'.PHP_EOL;
+        $tablerow .= '<a href="track.php?'.$displayId.'" class="view" title="View log"><img src="styles/track-view.png" alt="view"/></a>'.PHP_EOL;
       }
       
-      $tablerow .= ' <a href="analyze.php?'.$displayId.'">analyze</a>'.PHP_EOL;
+      $tablerow .= ' <a href="analyze.php?'.$displayId.'" title="Analyze log"><img src="styles/track-analyze.png" alt="analyze"/></a>'.PHP_EOL;
+      $tablerow .= ' <a href="download.php?'.$displayId.'" title="Download log"><img src="styles/track-download.png" alt="download"/></a>'.PHP_EOL;
       if ($ROOT) {
-        $tablerow .= ' <a href="delete.php?'.$displayId.'" class="del">delete</a>'.PHP_EOL;
+        $tablerow .= ' <a href="delete.php?'.$displayId.'" class="del" title="Delete log"><img src="styles/track-remove.png" alt="delete"/></a>'.PHP_EOL;
       }
     }
     else

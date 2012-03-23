@@ -57,7 +57,12 @@ foreach ($defaults as $key => $value)
       if ( isset($_SESSION[$key]) && isset($_POST[$key]) ) {
         ${$key} = $_SESSION[$key];
         // sanitize zero values. Skip empty values on time range, but not break the loop because it should be unset if "save" is not checked
-        if ($key != "mintime" && $key != "maxtime" && (int)$_POST[$key] === 0 && $_POST[$key] <= $_SESSION[$key]) { ${$key} = 0; }
+        if ($key == "mintime" || $key == "maxtime") {
+          ${$key} = $value;
+        } else if ( (int)$_POST[$key] === 0 && $_POST[$key] <= $_SESSION[$key] ) { 
+          ${$key} = 0; 
+        }
+        //OLD usage: if ($key != "mintime" && $key != "maxtime" && (int)$_POST[$key] === 0 && $_POST[$key] <= $_SESSION[$key]) { ${$key} = 0; }
       } else {
         ${$key} = $value;
       }      

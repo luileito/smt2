@@ -61,12 +61,12 @@ package com.speedzinemedia.smt.utils {
         };
         
         /** Initializes the Stage (quality, alignment, scaling...). */
-        public static function initStage(s:Stage, application:DisplayObjectContainer):void 
+        public static function initStage(application:DisplayObjectContainer):void 
         {   
             // configure stage
-            s.align = StageAlign.TOP_LEFT;
-            s.scaleMode = StageScaleMode.NO_SCALE;
-            s.quality = StageQuality.LOW;
+            application.stage.align = StageAlign.TOP_LEFT;
+            application.stage.scaleMode = StageScaleMode.NO_SCALE;
+            application.stage.quality = StageQuality.LOW;
             // customize right click menu (do not remove!)
             var cm:ContextMenu = new ContextMenu();
             var cmi:ContextMenuItem = new ContextMenuItem("about smt2");

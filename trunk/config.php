@@ -3,7 +3,7 @@
  * This is the directory where you put the smt2 CMS.
  * You can use relative as well as full URLs like /smt2/ or http://myserver.name/smt2/
  */
-define ('ABS_PATH', "http://localhost/smt2/"); // always place here an ending slash (/)
+define ('ABS_PATH', "http://localhost/smt2/"); // always put an ending slash (/)
 
 // ----------------------------------------------------- MySQL database info ---
 
@@ -43,8 +43,8 @@ define ('TBL_PREFIX',  "smt2_");
  */
 define ('GG_KEY', "ABQIAAAAElGM1_G8Y0SLRJtsUmEeART2yXp_ZAY8_ufC3CFXhHIE1NvwkxTjJAIz5IfhLGJPdYN9-8jws6kgmQ");
 
-
-// ------------------------------------ (smt) admin functions - do not edit! ---
-define ('INC_PATH', dirname(__FILE__).'/admin/');
-require_once(INC_PATH.'sys/functions.php');
+// ------------------------------------------ (smt) functions - do not edit! ---
+define ('BASE_PATH', dirname(__FILE__));
+define ('INC_PATH', BASE_PATH.'/admin/');
+require_once INC_PATH.'sys/functions.php';
 ?>

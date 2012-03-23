@@ -4,6 +4,14 @@ if (empty($_POST)) exit;
 require_once '../config.php';
 
 $URL = $_POST['url'];
+
+// check proxy requests
+$pattern = "proxy/index.php?url=";
+if (strpos($URL, $pattern)) {
+  list($remove, $URL) = explode($pattern, $URL);
+  $URL = base64_decode($URL);
+}
+
 // get remote webpage
 $request = get_remote_webpage(
                                 $URL,
@@ -103,7 +111,7 @@ if (!$osname) {
 /* create database entry ---------------------------------------------------- */
 $fields  = "client_id,cache_id,os_id,browser_id,browser_ver,user_agent,";
 $fields .= "ftu,ip,scr_width,scr_height,vp_width,vp_height,";
-$fields .= "sess_date,sess_time,fps,coords_x,coords_y,clicks_x,clicks_y,hovered,clicked"; 
+$fields .= "sess_date,sess_time,fps,coords_x,coords_y,clicks,hovered,clicked"; 
 
 $values  = "'". $_POST['client']                    ."',";
 $values .= "'". $logid                              ."',";
@@ -124,8 +132,7 @@ $values .= "'". (float) $_POST['time']              ."',";
 $values .= "'". (int)   $_POST['fps']               ."',";
 $values .= "'". $_POST['xcoords']                   ."',";
 $values .= "'". $_POST['ycoords']                   ."',";
-$values .= "'". $_POST['xclicks']                   ."',";
-$values .= "'". $_POST['yclicks']                   ."',";
+$values .= "'". $_POST['clicks']                    ."',";
 $values .= "'". array_sanitize($_POST['elhovered']) ."',";
 $values .= "'". array_sanitize($_POST['elclicked']) ."'";
 

@@ -13,13 +13,17 @@ function computeDOMelements($arr, $name)
   return $status;
 }
 
-if (isset($_GET['cid'])) { 
-  echo '<p class="center"><em>This table is computed for ALL pages that this user browsed. Thus, here you have their user model.</em></p>'; 
+if (isset($_GET['cid'])) {
+  echo '<p class="center"><em>These tables are computed for ALL pages that this user browsed. Thus, here you have their user model.</em></p>';
 }
-else if (isset($_GET['pid'])) { 
-  echo '<p class="center"><em>This table takes into account ALL users that browsed 
+else if (isset($_GET['pid'])) {
+  echo '<p class="center"><em>These tables take into account ALL users that browsed
         <a rel="external" href="track.php?pid='.$_GET['pid'].'&amp;api=swf">this page</a>.
         Thus, here you have the page model.</em></p>'; 
+} else if (isset($_GET['ip'])) {
+  $IP = empty($_GET['ip']) ? "NO_IP" : $_GET['ip'];
+  echo '<p class="center"><em>These tables are computed for ALL users that came from <strong>'.$IP.'</strong>.
+        Thus, here you have their user model.</em></p>';
 }
 ?>
 
