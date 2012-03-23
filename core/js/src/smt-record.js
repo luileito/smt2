@@ -1,11 +1,11 @@
 /** 
- * (smt)2 simple mouse tracking - record mode (smt-record.js)
- * Copyleft (cc) 2006-2010 Luis Leiva
- * Release date: September 30th 2010
- * http://smt.speedzinemedia.com
+ * (smt)2 simple mouse tracking - record script (smt-record.js)
+ * Copyleft (cc) 2006-2012 Luis Leiva
+ * Release date: March 23 2012
+ * http://smt2.googlecode.com & http://smt.speedzinemedia.com
  * @class smt2-record
  * @requires smt2-aux Auxiliary (smt)2 functions  
- * @version 2.0.2
+ * @version 2.1.0
  * @author Luis Leiva 
  * @license Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses. 
  * @see smt2fn
@@ -65,6 +65,14 @@
      */
     cookieDays: 365,
     /** 
+     * Main layout content diagramation; a.k.a 'how page content flows'. 
+     * Values: "left" (fixed), "center" (fixed and centered), or "liquid" (adaptable, default behavior).
+     * In "left" and "center" layouts the content is not adapted on resizing the browser.
+     * An example of left diagramation is http://smt.speedzinemedia.com
+     * @type string
+     */
+    layoutType: "liquid",
+    /** 
      * Random user selection: if true, (smt)2 is not initialized.
      * Setting it to false (or 0) means that all the population will be tracked.
      * You should use random sampling for accurate statistical analysis.     
@@ -89,8 +97,7 @@
     mouse:    { x:0, y:0 },                       // mouse position
     page:     { width:0, height:0 },              // data normalization
     discrepance: { x:1, y:1 },                    // discrepance ratios
-    coords:   { x:[], y:[] },                     // saved position coords
-    clicks:   { x:[], y:[] },                     // saved click coords
+    coords:   { x:[], y:[], type:[] },            // position coords and mouse click state
     elem:     { hovered:[], clicked:[] },         // clicked and hovered elements
     url:      null,                               // document URL
     rec:      null,                               // recording identifier
@@ -121,6 +128,7 @@
     },
     /** 
      * Normalizes data on window resizing.
+     * @deprecated since v2.0.2
      */
     normalizeData: function() 
     { 
@@ -135,21 +143,30 @@
      */
     getMousePos: function(e) 
     { 
-      var posX = 0, posY = 0;
       if (!e) { e = window.event; }
+      var o = e.currentTarget || e.srcElement; // for iframe compatibility
+      var doc = o.document || o;
+      var x = 0, y = 0;
     	if (e.pageX || e.pageY) {
-    		posX = e.pageX;
-    		posY = e.pageY;
+    		x = e.pageX;
+    		y = e.pageY;
     	}	else if (e.clientX || e.clientY) {
-    		posX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-    		posY = e.clientY + document.body.scrollTop  + document.documentElement.scrollTop;
+    		x = e.clientX + doc.body.scrollLeft + doc.documentElement.scrollLeft;
+    		y = e.clientY + doc.body.scrollTop  + doc.documentElement.scrollTop;
     	}
-    	// in certain situations the mouse coordinates could be negative values(e.g. Opera)
-    	if (posX < 0) posX = 0;
-    	if (posY < 0) posY = 0;
-    	
-    	smtRec.mouse.x = posX;
-    	smtRec.mouse.y = posY;
+    	var frame = o.frameElement;
+      if (frame && frame.offsetParent) {
+        do {
+          x += frame.offsetLeft;
+          y += frame.offsetTop;
+        } while (frame = frame.offsetParent);
+      }
+      // in certain situations the mouse coordinates could be negative values (e.g. Opera)
+    	if (x < 0 || !x) x = 0;
+    	if (y < 0 || !y) y = 0;
+                	
+    	smtRec.mouse.x = x;
+    	smtRec.mouse.y = y;
     },
     /** 
      * This method allows to register single clicks and drag and drop operations.
@@ -182,13 +199,11 @@
         
         smtRec.coords.x.push(x);
         smtRec.coords.y.push(y);
-        // track also mouse clicks
+        // track also mouse clicks (Motorola protocol)
         if (!smtRec.clicked) {
-          smtRec.clicks.x.push(null);
-          smtRec.clicks.y.push(null);
+          smtRec.coords.type.push(0);
         } else {
-          smtRec.clicks.x.push(x);
-          smtRec.clicks.y.push(y);
+          smtRec.coords.type.push(1);
         }
     	} else {
     	  // timeout reached
@@ -218,15 +233,15 @@
           data += "&ftu="       + smtRec.firstTimeUser;
           data += "&xcoords="   + smtRec.coords.x;
           data += "&ycoords="   + smtRec.coords.y;
-          data += "&xclicks="   + smtRec.clicks.x;
-          data += "&yclicks="   + smtRec.clicks.y;
+          data += "&clicks="    + smtRec.coords.type;
           data += "&elhovered=" + smtRec.elem.hovered;
           data += "&elclicked=" + smtRec.elem.clicked;
           data += "&action="    + "store";
           data += "&remote="    + smtOpt.storageServer;
       // send request
+      var gatewayUrl = aux.ensureLastURLSlash(smtOpt.trackingServer) + "core/gateway.php";
       aux.sendAjaxRequest({
-        url:       smtOpt.trackingServer + "/core/gateway.php", 
+        url:       gatewayUrl,
         callback:  smtRec.setUserId, 
         postdata:  data, 
         xmlhttp:   smtRec.xmlhttp
@@ -269,15 +284,15 @@
           data += "&pageh="     + smtRec.page.height;
           data += "&xcoords="   + smtRec.coords.x;
           data += "&ycoords="   + smtRec.coords.y;
-          data += "&xclicks="   + smtRec.clicks.x;
-          data += "&yclicks="   + smtRec.clicks.y;
+          data += "&clicks="    + smtRec.coords.type;
           data += "&elhovered=" + smtRec.elem.hovered;
           data += "&elclicked=" + smtRec.elem.clicked;
           data += "&action="    + "append";
           data += "&remote="    + smtOpt.storageServer;
       // send request
+      var gatewayUrl = aux.ensureLastURLSlash(smtOpt.trackingServer) + "core/gateway.php";
       aux.sendAjaxRequest({
-        url:       smtOpt.trackingServer + "/core/gateway.php", 
+        url:       gatewayUrl, 
         postdata:  data,
         xmlhttp:   smtRec.xmlhttp
       });
@@ -291,8 +306,7 @@
     {
       smtRec.coords.x = [];
       smtRec.coords.y = [];
-      smtRec.clicks.x = [];
-      smtRec.clicks.y = [];
+      smtRec.coords.type = [];
       smtRec.elem.hovered = [];
       smtRec.elem.clicked = [];
     },
@@ -320,6 +334,31 @@
       smtRec.page.width  = doc.width;
       smtRec.page.height = doc.height;
     },
+    /**
+     * Tracks mouse activity inside iframes.
+     * This function will fail silently on iframes outside the domain of the caller HTML.
+     * @param {Object}  d   document object   
+     * @return void
+     */     
+    trackIFrames: function(d)
+    {
+      var iframes = d.getElementsByTagName('iframe');
+      for (var i = 0, f = iframes.length; i < f; ++i) {
+        var doc = iframes[i].contentWindow || iframes[i].contentDocument;
+        aux.addEvent(doc, "load", function(e){
+          try {
+            var doc = e.target || e.srcElement;
+            aux.addEvent(doc.document, "mousemove", function(e){
+              smtRec.getMousePos(e);  // as usual
+              smtRec.pause = false;   // we don't want to stop tracking when interacting on an iframe
+            });            
+          } catch(err){} // we can access only the iframes on the same domain than the caller HTML
+          // recursive traversal
+          smtRec.trackIFrames(doc.document);
+          aux.allowTrackingOnFlashObjects(doc.document);
+        });
+      }
+    }, 
     /** 
      * System initialization.
      * Assigns events and performs other initialization routines.     
@@ -333,14 +372,14 @@
       var interval = Math.round(1000/smtOpt.fps);
       smtRec.rec   = setInterval(smtRec.recMouse, interval);
       // allow mouse tracking over Flash animations
-      aux.allowTrackingOnFlashObjects();
-
+      aux.allowTrackingOnFlashObjects(document);
+      // get mouse coords also on iframes
+      smtRec.trackIFrames(document);
       // add unobtrusive events
       aux.addEvent(document, "mousemove", smtRec.getMousePos);            // get mouse coords
       aux.addEvent(document, "mousedown", smtRec.setClick);               // mouse is clicked
       aux.addEvent(document, "mouseup",   smtRec.releaseClick);           // mouse is released
       aux.addEvent(window,   "resize",    smtRec.computeAvailableSpace);  // update viewport space
-
       // only record mouse when window is active
       if (document.attachEvent) {
         // see http://todepoint.com/blog/2008/02/18/windowonblur-strange-behavior-on-browsers/
@@ -361,14 +400,13 @@
         // page is unloaded (for old browsers)
         aux.addEvent(window, "unload", smtRec.appendMouseData);
       }
-
       // this is the fully-cross-browser method to store tracking data successfully
       setTimeout(smtRec.initMouseData, smtOpt.postInterval*1000);
       // log session time by date instead of dividing coords length by frame rate
       smtRec.timestamp = (new Date()).getTime();
     }
   };
-  
+    
   // do not overwrite the smt2 namespace
   if (typeof window.smt2 !== 'undefined') { throw("smt2 namespace conflict"); }
   // else expose record method

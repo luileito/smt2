@@ -8,7 +8,7 @@ package com.speedzinemedia.smt.utils {
     {   
         public static function roundTo(num:Number, digits:int):Number
         {
-            var precision:int = Math.pow(10, digits);
+            const precision:int = Math.pow(10, digits);
             
             return Math.round(num * precision)/precision;
         };
@@ -35,8 +35,8 @@ package com.speedzinemedia.smt.utils {
         
         public static function arrayAvg(values:Array):Number
         {
-        	var sum:Number = 0;
         	const N:int = values.length;
+        	var sum:Number = 0;
         	// do not call arrayCastNumbers to boost performance
         	for (var i:int = 0; i < N; ++i) { 
                 sum += Number(values[i]); 
@@ -47,7 +47,7 @@ package com.speedzinemedia.smt.utils {
         
         public static function arrayCastNumbers(values:Array):Array
         {
-            var tmp:Array = new Array();
+            var tmp:Array = [];
         	// Number casting is needed because each array member parsed from Flash vars is a String instance
         	for (var i:int = 0, t:int = values.length; i < t; ++i) {
                 tmp.push(Number(values[i])); 

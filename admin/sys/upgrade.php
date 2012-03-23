@@ -8,7 +8,9 @@ require '../../config.php';
 // is root logged?
 if (!is_root()) { die_msg($_loginMsg["NOT_ALLOWED"]); }
 
-include INC_DIR.'doctype.php'
+include INC_DIR.'doctype.php';
+
+$UPGRADED = false;
 ?>
 
 <head>
@@ -24,35 +26,76 @@ include INC_DIR.'doctype.php'
 <h1>(smt) simple mouse tracking upgrade</h1>
 
 <?php
-$UPGRADED = false;
+// alter records table
+$res = db_query("SHOW COLUMNS FROM ".TBL_PREFIX.TBL_RECORDS." LIKE 'ip'");
+if (!mysql_num_rows($res)) {
+  $sql  = "ALTER TABLE `".TBL_PREFIX.TBL_RECORDS."` ADD `ip` VARCHAR(15) NOT NULL AFTER `ftu`, ";
+  $sql .= "MODIFY `client_id` CHAR(32) NOT NULL";
+  db_query($sql);
+  $UPGRADED = true;
+}
+// check if clicks should be updated
+$res = db_query("SHOW COLUMNS FROM ".TBL_PREFIX.TBL_RECORDS." LIKE 'clicks'");
+if (!mysql_num_rows($res)) {
+  // convert previous clicks to the UNIPEN format
+  $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "id,clicks_x", 1); // there is no need to parse clicks_y for this conversion
+  if ($logs) {
+    $info = array();
+    foreach ($logs as $log) {
+      $oldclicks = explode(",", $log['clicks_x']);
+      $clicks = array();
+      foreach ($oldclicks as $cx) {
+        $clicks[] = (!empty($cx)) ? 1 : 0;
+      }
+      $info[] = array(
+                        "id"     => $log['id'],
+                        "clicks" => implode(",", $clicks),
+                     );
+    }
+    // create new column
+    $sql = "ALTER TABLE `".TBL_PREFIX.TBL_RECORDS."` ADD `clicks` MEDIUMTEXT NOT NULL AFTER `fps`";
+    db_query($sql);
+    // and update old DB records with the new values
+    foreach ($info as $log) {
+      db_update(TBL_PREFIX.TBL_RECORDS, "clicks = '".$log['clicks']."'", "id=".$log['id']);  
+    }
+    // then remove old columns
+    $sql = "ALTER TABLE ".TBL_PREFIX.TBL_RECORDS." DROP COLUMN `clicks_x`, DROP COLUMN `clicks_y`";
+    db_query($sql);
+  }
+  $UPGRADED = true;
+}
 
 // define helper function
-function update($table, $arrValue) 
+function update_cms($table, $fields, $values, $condition)
 {
   global $UPGRADED;
 
   // was upgraded before?
-  if (!db_select($table, "id", "name = '".$arrValue[1]."'")) {
-    $sql  = "INSERT INTO ".$table." (type,name,value,description)";
-    $sql .= " VALUES ('".$arrValue[0]."','".$arrValue[1]."','".$arrValue[2]."','".$arrValue[3]."')";
-    db_query($sql);
-    
+  if (!db_select($table, "id", $condition)) {
+    db_insert($table, $fields, $values);
     $UPGRADED = true;
   }
 }
 
 // put common visualization options on CMS table
 $opts = array(
-                array(CMS_TYPE,   "maxSampleSize",      0, "Number of logs to replay/analyze simultaneously (0 means no limit). If your database has a lot of records for the same URL, you can take into account only a small subset of logs."),
+                array(CMS_TYPE,   "maxSampleSize",      0, "Number of logs to replay/analyze simultaneously (0 means no limit). If your database has a lot of records for the same URL, you can take into account only a certain subset of logs."),
                 // disabled by default
                 array(CMS_CHOICE, "mergeCacheUrl",      0, "Merges all logs that have the same URL. Useful when grouping records by page ID, and one wants to analyze all common URLs."),
                 array(CMS_CHOICE, "displayWidgetInfo",  0, "Display hover and click frequency for each interacted DOM element."),
                 array(CMS_CHOICE, "refreshOnResize",    0, "Reload visualization page on resize window &ndash; <em>use with care</em>, as on some browsers the resize event will fire endlessly."),
-                array(CMS_CHOICE, "displayWidgetInfo",  0, "Display hover and click frequency for most interacted DOM elements.")
+                array(CMS_CHOICE, "displayWidgetInfo",  0, "Display hover and click frequency for most interacted DOM elements."),
+                array(CMS_CHOICE, "enableDebugging",    0, "Turn on PHP strict mode and work with JS src files instead of minimized ones.")
              );
 // update CMS options table
 foreach ($opts as $arrValue) {
-  update(TBL_PREFIX.TBL_CMS, $arrValue);
+  update_cms(
+              TBL_PREFIX.TBL_CMS,
+              "type,name,value,description",
+              "'".$arrValue[0]."','".$arrValue[1]."','".$arrValue[2]."','".$arrValue[3]."'",
+              "name = '".$arrValue[1]."'"
+            );
 }
 
 // put new javascript options on JS table
@@ -61,11 +104,16 @@ $opts = array(
              );
 // update JS options table
 foreach ($opts as $arrValue) {
-  update(TBL_PREFIX.TBL_JSOPT, $arrValue);
+  update_cms(
+              TBL_PREFIX.TBL_JSOPT,
+              "type,name,value,description",
+              $arrValue[0]."','".$arrValue[1]."','".$arrValue[2]."','".$arrValue[3],
+              "name = '".$arrValue[1]."'"
+            );
 }
 
 // display message
-$msg = ($UPGRADED) ? "smt2 has been upgraded!" : "You already have the latest version.";
+$msg = ($UPGRADED) ? "smt2 has been upgraded!" : "You already have the latest upgrades.";
 ?>
 
 <p><?=$msg?> <a href="../">Go to admin page</a>.</p>

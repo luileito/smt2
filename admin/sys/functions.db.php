@@ -55,7 +55,7 @@ function db_select($table, $column, $condition)
 }
 
 /** 
- * Selects ALL rows and columns from table that match the given condition.
+ * Selects ALL rows from table that match the given condition.
  * @param   string  $table      table name
  * @param   string  $column     column name
  * @param   string  $condition  WHERE condition. To allow row ordering without WHERE clause, you can use "1 ORDER BY ..."
@@ -64,7 +64,7 @@ function db_select($table, $column, $condition)
 function db_select_all($table, $column, $condition)
 {
   $sql = "SELECT $column FROM $table WHERE $condition";
-  
+
   $res = db_query($sql);
   // get ALL rows
   $opt = array();
@@ -126,11 +126,10 @@ function db_update($table, $tuples, $condition)
 function db_check() 
 {
   global $_lookupTables;
-  // try to connect first
-  $cnx = db_connect() or exit(0);
-  
+
   foreach ($_lookupTables as $table) {
-    if (!mysql_num_rows(mysql_query("SHOW TABLES LIKE '".TBL_PREFIX.$table."'", $cnx))) {
+    $res = db_query("SHOW TABLES LIKE '".TBL_PREFIX.$table."'", $cnx);
+    if (!mysql_num_rows($res)) {
       return false;
     }
   }
@@ -162,7 +161,7 @@ function db_records($getColNames = false)
 }
 
 /** 
- * Selects one and only row from an "options" table (CMS or JSOPT).
+ * Selects one (and only one) row from an "options" table (CMS or JSOPT).
  * This function is a wrapper for 'db_select()'.
  * Instead of having to deal with an associative array of one key alone, 
  * this function speeds the process and returns the array member value.

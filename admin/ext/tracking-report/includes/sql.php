@@ -16,15 +16,14 @@ if (!empty($_GET['id']))
   $viewportWidth  = (int) $log['vp_width'];
   $viewportHeight = (int) $log['vp_height'];
   $fps            = (int) $log['fps'];
-  $coordsX        = array_sanitize($log['coords_x']);
-  $coordsY        = array_sanitize($log['coords_y']);
-  $clicksX        = implode(",", array_null($log['clicks_x']));
-  $clicksY        = implode(",", array_null($log['clicks_y']));
+  $clicks         = $log['clicks'];
+  $coordsX        = $log['coords_x'];
+  $coordsY        = $log['coords_y'];
   $hovered        = $log['hovered'];
   $clicked        = $log['clicked'];
   
   // build JavaScript object
-  $JSON[] = '{"xcoords": ['.$coordsX.'], "ycoords": ['.$coordsY.'], "xclicks": ['.$clicksX.'], "yclicks": ['.$clicksY.'], "timestamp": "'.$timestamp.'", "wprev": '.$log['vp_width'].', "hprev": '.$log['vp_height'].'}';
+  $JSON[] = '{"xcoords": ['.$coordsX.'], "ycoords": ['.$coordsY.'], "clicks": ['.$clicks.'], "timestamp": "'.$timestamp.'", "wprev": '.$log['vp_width'].', "hprev": '.$log['vp_height'].'}';
 } 
 
 else if (!empty($_GET['pid'])) 
@@ -32,7 +31,7 @@ else if (!empty($_GET['pid']))
   // get page identifier
   $pgid  = (int) $_GET['pid'];
   // merge logs?
-  $add = (db_option(TBL_PREFIX.TBL_CMS, "mergeCacheUrl")) ? get_common_url($pgid) : null;
+  $add = (db_option(TBL_PREFIX.TBL_CMS, "mergeCacheUrl")) ? get_cache_common_url($pgid) : null;
   $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "cache_id = '".$pgid."'".$add);
   
   $sampleSize = db_option(TBL_PREFIX.TBL_CMS, "maxSampleSize");
@@ -49,24 +48,18 @@ else if (!empty($_GET['pid']))
     $viewportHeight[] = (int) $log['vp_height'];
     $cX = explode(",", $log['coords_x']);
     $cY = explode(",", $log['coords_y']);
-    $coordsX[] = $cX;
-    $coordsY[] = $cY;
+    $cl = explode(",", $log['clicks']);
     $weights[] = count($cX);
-    //$clicksX[] = explode(",", $log['clicks_x']);
-    //$clicksY[] = explode(",", $log['clicks_y']);
-    $fps[]     = (int) $log['fps'];
+    $coordsX[] = $cX; // we'll need'em later
+    $coordsY[] = $cY; //
+    $clicks[]  = $cl; //
+    $fps[]    = (int) $log['fps'];
     $hovered .= $log['hovered'];
     $clicked .= $log['clicked'];
 
     // build JavaScript object
     $timestamp = mask_client($log['client_id']).'\n'.date("h:i A", strtotime($log['sess_date']));
-    $cdX = array_sanitize($log['coords_x']);
-    $cdY = array_sanitize($log['coords_y']);
-    $clX = implode(",", array_null($log['clicks_x']));
-    $clY = implode(",", array_null($log['clicks_y']));
-    
-    // build JavaScript object
-    $JSON[] = '{"xcoords": ['.$cdX.'], "ycoords": ['.$cdY.'], "xclicks": ['.$clX.'], "yclicks": ['.$clY.'], "timestamp": "'.$timestamp.'", "wprev": '.$log['vp_width'].', "hprev": '.$log['vp_height'].'}';
+    $JSON[] = '{"xcoords": ['.$log['coords_x'].'], "ycoords": ['.$log['coords_y'].'], "clicks": ['.$log['clicks'].'], "timestamp": "'.$timestamp.'", "wprev": '.$log['vp_width'].', "hprev": '.$log['vp_height'].'}';
   }
   
   // now compute the average user path -----------------------------------------
@@ -82,8 +75,7 @@ else if (!empty($_GET['pid']))
     if ($diff > 0 ) {
       $coordsX[$i] = array_pad($coordsX[$i], $items+$diff, 0);
       $coordsY[$i] = array_pad($coordsY[$i], $items+$diff, 0);
-      //$clicksX[$i] = array_pad($clicksX[$i], $items+$diff, 0);
-      //$clicksY[$i] = array_pad($clicksY[$i], $items+$diff, 0);
+      $clicks[$i] = array_pad($clicks[$i], $items+$diff, 0);
     }
   }
   $users = count($logs);
@@ -93,28 +85,25 @@ else if (!empty($_GET['pid']))
     // compound single path
     foreach ($coordsX[$i] as $j => $vector) 
     {
-      $sumCoordsX = 0; $sumCoordsY = 0; $sumClicksX = 0; $sumClicksY = 0;
+      $sumCoordsX = 0; $sumCoordsY = 0; $sumClicks = 0;
       foreach ($weights as $k => $w) 
       {
         $sumCoordsX += (int) $coordsX[$k][$j];
         $sumCoordsY += (int) $coordsY[$k][$j];
-        //$sumClicksX += (int) $clicksX[$k][$j];
-        //$sumClicksY += (int) $clicksY[$k][$j];
+        $sumClicks += (int) $clicks[$k][$j];
       }
       $avgCoordsX[] = round($sumCoordsX/$users);
       $avgCoordsY[] = round($sumCoordsY/$users);
-      //$avgClicksX[] = round($sumClicksX/$users);
-      //$avgClicksY[] = round($sumClicksY/$users);
+      $avgClicks[] = round($sumClicks/$users);
     }
     // only one iteration is needed
     break;
   }
   $coordsX = implode(",", $avgCoordsX);
   $coordsY = implode(",", $avgCoordsY);
-  //$clicksX = implode(",", $avgClicksX);
-  //$clicksY = implode(",", $avgClicksY);
+  $clicks = implode(",", $avgClicks);
   if (count($JSON) > 1) {
-    $JSON[] = '{"xcoords": ['.$coordsX.'], "ycoords": ['.$coordsY.'], "xclicks": [], "yclicks": [], "avg": true, "wprev": '.$viewportWidth.', "hprev": '.$viewportHeight.'}';
+    $JSON[] = '{"xcoords": ['.$coordsX.'], "ycoords": ['.$coordsY.'], "clicks": ['.$clicks.'], "avg": true, "wprev": '.$viewportWidth.', "hprev": '.$viewportHeight.'}';
   }
   
   // set page that matches the given cache id (via GET)

@@ -158,7 +158,20 @@ else
   if ($cache > $dblog) {
     echo display_text($_displayType["WARNING"], 'There are '.$cache.' logs in cache dir, but there are '.$dblog.' in database, which is something weird :/');
   }
+  
+  // ensure that logs can be written
+  if (!is_writeable(CACHE_DIR)) {
+    $perms = substr(decoct( fileperms(CACHE_DIR) ), 2);
+    if (($perms != "775" || $perms != "777") && !chmod(CACHE_DIR, 0775)) 
+    {
+      echo display_text($_displayType["ERROR"],
+                        'Settings permissions to <strong>'.CACHE_DIR.'</strong> failed.
+                         You must set write permissions to that directory manually.'
+                       );
+    }
+  }
 }
+
 
 // include footer file
 include INC_DIR.'footer.php';

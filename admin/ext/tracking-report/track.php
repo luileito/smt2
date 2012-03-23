@@ -13,6 +13,8 @@ if (!file_exists($apiFile)) { die("API file not found!"); }
 include './includes/settings.php';  // custom tracking analysis options
 include './includes/sql.php';       // load tracking data from database
 
+//include './includes/kmeans.elbow.php';
+
 // parse HTML log
 $file = CACHE_DIR.$htmlFile;
 // load file

@@ -5,7 +5,7 @@
  * @date 20/December/2009
  */
  
-//require_once 'functions.php';
+require_once 'functions.php';
 require_once REQUIRED.'/class.cluster.php';
 require_once REQUIRED.'/class.point.php';
 
@@ -54,7 +54,8 @@ class KMeans {
   {
     //ini_set('max_execution_time', 60);
     if (!$this->clusters) {
-      $this->clusters = $this->initRandom($this->k, $this->points);
+      // no initialization technique given, just use random
+      $this->initRandom($this->k, $this->points);
     }
     // now deploy points to closest center
     for ($a = 0; $a < $this->maxIterations; ++$a)
@@ -82,7 +83,7 @@ class KMeans {
       $center = new Point(rand(0, $max->x), rand(0, $max->y));
       $clusters[] = new Cluster($center);
       // set max point, if no points are assigned to one cluster
-      $clusters[$i]->setMaxPoint( new Point($max->x, $max->y) );
+      $clusters[$i]->setMaxPoint($max);
     }
 
     $this->clusters = $clusters;
@@ -99,7 +100,6 @@ class KMeans {
   public function initKatsavounidis()
   {
     $norms = array();
-    // note that this initialization
     foreach ($this->points as $i => $point)
     {
       $norms[] = $this->vectorNorm($point, "uL2");

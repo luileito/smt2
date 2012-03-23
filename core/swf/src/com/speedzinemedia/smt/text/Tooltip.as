@@ -17,7 +17,7 @@ package com.speedzinemedia.smt.text {
      *                  class TtExample {
      *                      private var tip:Tooltip;
      *                      public function TtExample() {
-     *                          tip = Tooltip.instance();
+     *                          tip = Tooltip.getInstance();
      *                          addChild(tip);
      *
      *                          var s:Shape = new Shape();
@@ -33,7 +33,7 @@ package com.speedzinemedia.smt.text {
         private static var _instance:Tooltip = new Tooltip();
         //private static var _tabIndex:int = 0;
         
-        public static function instance():Tooltip
+        public static function getInstance():Tooltip
         {
             return _instance;
         };
@@ -42,7 +42,7 @@ package com.speedzinemedia.smt.text {
         public function Tooltip()
         {
             if (_instance) {
-                throw new Error("Tooltip is a singleton class, and can only be accessed through Tooltip.instance() method");
+                throw new Error("Tooltip is a singleton class, and can only be accessed through Tooltip.getInstance() method");
             } else init();
         };
 

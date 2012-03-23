@@ -1,11 +1,11 @@
 /** 
- * (smt)2 simple mouse tracking - replay mode (smt-replay.js)
- * Copyleft (cc) 2006-2010 Luis Leiva
- * Release date: September 30th 2010
- * http://smt.speedzinemedia.com  
+ * (smt)2 simple mouse tracking - replay script (smt-replay.js)
+ * Copyleft (cc) 2006-2012 Luis Leiva
+ * Release date: March 23 2012
+ * http://smt2.googlecode.com & http://smt.speedzinemedia.com
  * @class smt2-replay
  * @requires smt2-aux Auxiliary (smt)2 functions  
- * @version 2.0.2
+ * @version 2.1.0
  * @author Luis Leiva 
  * @license Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses. 
  * @see smt2fn
@@ -81,7 +81,15 @@
      * Show direction vector (useful if realTime: false)
      * @type boolean      
      */
-    dirVect:  false
+    dirVect:  false,
+    /** 
+     * Main layout content diagramation; a.k.a 'how page content flows'. 
+     * Values: "left" (fixed), "center" (fixed and centered), or "liquid" (adaptable, default behavior).
+     * In "left" and "center" layouts the content is not adapted on resizing the browser.
+     * An example of left diagramation is http://smt.speedzinemedia.com
+     * @type string
+     */
+    layoutType: "liquid"    
   };
   
   
@@ -92,10 +100,10 @@
   var jsGraphics  = window.jsGraphics;
   var aux         = window.smt2fn;
   // check
-  if (typeof smtData === 'undefined')     { throw("user data is malformed or not set");   }
-  if (typeof jsGraphics === 'undefined')  { throw("jsGraphics library not found");        } 
-  if (typeof aux === 'undefined')         { throw("auxiliar (smt) functions not found");  }
-  if (typeof JSON.parse !== 'function')   { throw("JSON parser not found");               }
+  if (typeof smtData === 'undefined')     { throw("user data is malformed or not set");  }
+  if (typeof jsGraphics === 'undefined')  { throw("jsGraphics library not found");       } 
+  if (typeof aux === 'undefined')         { throw("auxiliar (smt) functions not found"); }
+  if (typeof JSON.parse !== 'function')   { throw("JSON parser not found");              }
   
   // when using the JS api, draw only the average path
   var user, users = JSON.parse(unescape(smtData.users));
@@ -313,13 +321,23 @@
     drawCentroid: function()
     {
       smtRep.jg.setColor(smtOpt.cenPt);
+      var xsum = aux.array.sum(xclean) / xclean.length;
+      var ysum = aux.array.sum(yclean) / yclean.length;
       // the centroid is computed discarding null distances
-      var u = Math.round(aux.array.sum(xclean) * smtRep.discrepance.x / xclean.length),
-          v = Math.round(aux.array.sum(yclean) * smtRep.discrepance.y / yclean.length),
+      if (smtOpt.layoutType == "liquid") {
+        xsum *= smtRep.discrepance.x;
+        xsum *= smtRep.discrepance.x;
+      } else if (smtOpt.layoutType == "center") {
+        xsum += smtRep.discrepance.x;
+        xsum += smtRep.discrepance.x;
+      }
+            
+      var u = Math.round(xsum),
+          v = Math.round(ysum),
           l = 20; // centroid line length
       smtRep.jg.setStroke(5);
       smtRep.jg.drawLine(u, v, u+l, v-l); // 1st quadrant
-    	smtRep.jg.drawLine(u, v, u-l, v-l); // 2nd quadrant
+      smtRep.jg.drawLine(u, v, u-l, v-l); // 2nd quadrant
     	smtRep.jg.drawLine(u, v, u-l, v+l); // 3rd quadrant
     	smtRep.jg.drawLine(u, v, u+l, v+l); // 4th quadrant
     	smtRep.jg.setStroke(0); // reset strokes
@@ -374,13 +392,21 @@
                         x: user.xcoords[smtRep.i+1] * smtRep.discrepance.x,
                         y: user.ycoords[smtRep.i+1] * smtRep.discrepance.y 
                      };
+
+      var currClickType = user.clicks[smtRep.i];
+      var nextClickType = user.clicks[smtRep.i+1];
+      var currClickX = currClickType > 0 ? user.xcoords[smtRep.i]   : 0;
+      var nextClickX = nextClickType > 0 ? user.xcoords[smtRep.i+1] : 0;
+      var currClickY = currClickType > 0 ? user.ycoords[smtRep.i]   : 0;
+      var nextClickY = nextClickType > 0 ? user.ycoords[smtRep.i+1] : 0;
+
       var iniClick = {
-                        x: user.xclicks[smtRep.i] * smtRep.discrepance.x, 
-                        y: user.yclicks[smtRep.i] * smtRep.discrepance.y
+                        x: currClickX * smtRep.discrepance.x, 
+                        y: currClickY * smtRep.discrepance.y
                      };
       var endClick = {
-                        x: user.xclicks[smtRep.i+1] * smtRep.discrepance.x, 
-                        y: user.yclicks[smtRep.i+1] * smtRep.discrepance.y
+                        x: nextClickX * smtRep.discrepance.x, 
+                        y: nextClickY * smtRep.discrepance.y
                      };
       
       // draw entry point
@@ -446,7 +472,7 @@
             data += "&xdata=" + JSON.stringify(user.xcoords);
             data += "&ydata=" + JSON.stringify(user.ycoords);
         
-        var basepath = aux.getBase();
+        var basepath = aux.getBaseURL();
         // send request
         aux.sendAjaxRequest({
           url:       basepath + "includes/kmeans.php", 
@@ -565,8 +591,6 @@
       smtRep.createCanvas(smtName);
       // draw the background layer
       if (smtOpt.bgLayer) { smtRep.setBgCanvas(smtName); }
-      // allow mouse replay over Flash animations
-      aux.allowTrackingOnFlashObjects();
       // init
       smtRep.replay(smtOpt.realTime);
     }
@@ -584,7 +608,9 @@
       aux.addEvent(document, "keyup",  smtRep.helpKeys);
       //aux.addEvent(window, "resize", smtRep.reset);
       //aux.addEvent(window, "resize", aux.reloadPage);
-      aux.onDOMload(smtRep.init);
+      aux.onDOMload(aux.allowTrackingOnFlashObjects);
+      aux.addEvent(window, "load", smtRep.init);
+      //aux.onDOMload(smtRep.init);
     }
   }
   

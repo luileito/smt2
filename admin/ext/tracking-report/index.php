@@ -22,7 +22,7 @@ include INC_DIR.'header.php';
 echo check_noscript();
 
 // check defaults from DB or current sesion
-$show = (isset($_SESSION['limit'])) ? $_SESSION['limit'] : db_option(TBL_PREFIX.TBL_CMS, "recordsPerTable");
+$show = (isset($_SESSION['limit']) && $_SESSION['limit'] > 0) ? $_SESSION['limit'] : db_option(TBL_PREFIX.TBL_CMS, "recordsPerTable");
 // sanitize
 if (!$show) { $show = $defaultNumRecords; }
 ?>
@@ -40,7 +40,7 @@ if (!$show) { $show = $defaultNumRecords; }
           <th>location</th>
           <th>page ID</th>
           <th>date</th>
-          <th>time</th>
+          <th>aprox. time</th>
           <th># clicks</th>
           <!--<th>visualize</th>-->
           <th>action</th>
@@ -145,9 +145,9 @@ if (!$show) { $show = $defaultNumRecords; }
           $s .= '</select>';
           return $s;
         }
-        function input($id) 
+        function input_time($id) 
         {
-          $value = (!empty($_SESSION[$id]) && strlen($_SESSION[$id]) < 5) ? $_SESSION[$id] : null;
+          $value = (!empty($_SESSION[$id]) && strlen($_SESSION[$id]) < 5) ? $_SESSION[$id] : "0";
           $c  = '<label for="'.$id.'" class="ml">'.$id.'</label> ';
           $c .= '<input type="text" class="text" size="2" id="'.$id.'" name="'.$id.'" value="'.$value.'" />';
           return $c;
@@ -188,8 +188,8 @@ if (!$show) { $show = $defaultNumRecords; }
           <legend>Time range (seconds)</legend>
           <div id="slider-wrap">
             <div id="slider-range">
-              <?=input("mintime")?>
-              <?=input("maxtime")?>
+              <?=input_time("mintime")?>
+              <?=input_time("maxtime")?>
             </div>
             <p class="center" id="slider-amount"></p>
           </div><!-- end slider-wrap -->
@@ -207,6 +207,40 @@ if (!$show) { $show = $defaultNumRecords; }
 			 */
 			 ?>
         </fieldset>
+        <fieldset class="clear smallround">
+          <legend>Export</legend>
+            <!--<?=checkbox("export-all", "Whole database")?>-->
+            <label for="csv">Format:</label>
+
+            <input id="csv" type="radio" name="format" class="radio" value="csv" checked="checked" />
+            <label for="csv"><abbr title="Comma Separated Values">CSV</abbr></label>
+            
+            <input id="tsv" type="radio" name="format" class="radio" value="tsv" />
+            <label for="tsv"><abbr title="Tab Separated Values">TSV</abbr></label>
+
+            <input id="txt" type="radio" name="format" class="radio" value="txt" /> 
+            <label for="txt"><abbr title="plain TeXT (each field is preceded by a newline char)">TXT</abbr></label>
+
+            <input id="xml" type="radio" name="format" class="radio" value="xml" />
+            <label for="xml"><abbr title="eXtensible Markup Language">XML</abbr></label>
+
+            <input type="submit" class="button round" name="download" value="Download logs" />
+            <?php
+					    /*if (!isset($_SESSION['filterquery'])) {
+						    echo checkbox("dumpdb", "Dump whole database");
+					    }*/
+				    ?>
+				  <!--
+          <p class="left">
+            <small>
+              <sup>1</sup> each log is stored in a single file, then all are compressed in a ZIP file.
+            <br />
+              <sup>2</sup> all logs are dumped in a single file (logs are separated by a newline).
+            </small>
+          </p>
+          -->
+        </fieldset>
+
       </form>
       
 	 <?php } ?>

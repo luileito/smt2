@@ -10,6 +10,9 @@ if (!is_root()) { die_msg($_loginMsg["NOT_ALLOWED"]); }
 
 require SYS_DIR.'class.db.backup.php';
 
+// load maintenance configuration
+require 'config.php';
+
 $backup = new MySQL_Backup();
 $backup->server   = DB_HOST;
 $backup->username = DB_USER;
@@ -17,7 +20,7 @@ $backup->password = DB_PASSWORD;
 $backup->database = DB_NAME;
 // backup all tables on 'backup' dir
 $backup->tables       = array();
-$backup->backup_dir   = './backup/';
+$backup->backup_dir   = BACKUPDIR;
 $backup->fname_format = 'Ymd-His';
 
 $task = (int) $_GET['task'];

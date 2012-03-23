@@ -6,8 +6,6 @@
 package com.speedzinemedia.smt.mouse {
 	 
     import flash.display.DisplayObjectContainer;
-	import flash.external.ExternalInterface;
-	 
     import com.speedzinemedia.smt.events.TrackingEvent;
     import com.speedzinemedia.smt.mouse.MouseView;
     
@@ -16,7 +14,7 @@ package com.speedzinemedia.smt.mouse {
         private var $instances:Array = [];
 		private var $container:DisplayObjectContainer;
 		private var _dynamic:Boolean = true;
-		private var _heatmap:Boolean = false;
+		private var _heatmap:Boolean;
 		private var _paused:Boolean;
 		  
 		public function get paused():Boolean { return _paused; }
@@ -67,7 +65,7 @@ package com.speedzinemedia.smt.mouse {
             element.pause();
         };
 		  
-		private function getInstances():Array 
+		public function getInstances():Array
         {   
             var elems:Array = [];
 			for (var i:int = 0; i < $container.numChildren; ++i) {

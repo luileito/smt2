@@ -43,7 +43,7 @@ function url_get_current($fullURI = false)
   // quick check:
   $url  = url_get_server();
   $url .= $_SERVER['SCRIPT_NAME'];
-  if ($fullURI) { $url .= '?'.$_SERVER['QUERY_STRING']; }
+  if ($fullURI && $_SERVER['QUERY_STRING']) { $url .= '?'.$_SERVER['QUERY_STRING']; }
 
   return $url;
 }

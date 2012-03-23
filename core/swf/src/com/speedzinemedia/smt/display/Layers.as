@@ -52,7 +52,7 @@ package com.speedzinemedia.smt.display {
             { id: id.DISTANCE,      label: "direction & distances", color: null,     visible: false },  // no color because of images
             { id: id.CLUSTER,       label: "active areas",          color: 0x0000FF, visible: true  },
             { id: id.CENTROID,      label: "path centroid",         color: 0xFF99FF, visible: true  },
-            { id: id.CURSOR,        label: "mouse pointers",        color: null,     visible: true  }   // same as distances
+            { id: id.CURSOR,        label: "mouse pointers",        color: null,     visible: true  }   // no color because of images
         ];
         
         /** Precalculates the length of layers collection. */

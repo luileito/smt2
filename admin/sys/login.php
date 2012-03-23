@@ -24,7 +24,7 @@ switch ($_POST['action'])
       if (isset($_POST['remember'])) 
       {
         $expires = time() + 60 * 60 * 24 * 30; // 30 days
-        setcookie('smt-login', $login, $expires, ABS_PATH);
+        setcookie('smt-login', $login, $expires, "/");
       }
       // check redirection (if any) or go to Dashboard
       $goto = (isset($_POST['redirect'])) ? urldecode($_POST['redirect']) : ADMIN_PATH;

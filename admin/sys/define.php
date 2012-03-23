@@ -10,22 +10,29 @@ define ('ADMIN_PATH',    ABS_PATH."admin/");
 define ('CSS_PATH',      ADMIN_PATH."css/");
 /** Path to core ActionScript functions. */
 define ('SWF_PATH',      ABS_PATH."core/swf/");
+// check if debugging is active
+$jspath = ABS_PATH."core/js/";
+$jsext = ".min.js";
+if (db_option(TBL_PREFIX.TBL_CMS, "enableDebugging")) {
+  $jspath .= "src/";
+  $jsext = ".js";
+}
 /** Path to core JavaScript functions. */
-define ('JS_PATH',       ABS_PATH."core/js/");
+define ('JS_PATH',       $jspath);
 /** smt2 record script. */
-define ('SMT_RECORD',    JS_PATH."smt-record.min.js");
+define ('SMT_RECORD',    JS_PATH."smt-record".$jsext);
 /** smt2 replay script. */
-define ('SMT_REPLAY',    JS_PATH."smt-replay.min.js");
+define ('SMT_REPLAY',    JS_PATH."smt-replay".$jsext);
 /** smt2 auxiliar functions. */
-define ('SMT_AUX',       JS_PATH."smt-aux.min.js");
+define ('SMT_AUX',       JS_PATH."smt-aux".$jsext);
 /** WZ JavaScript graphics libary. */
-define ('WZ_JSGRAPHICS', JS_PATH."wz_jsgraphics.min.js");
+define ('WZ_JSGRAPHICS', JS_PATH."wz_jsgraphics".$jsext);
 /** JSON parser. */
-define ('JSON_PARSER',   JS_PATH."json2.min.js");
+define ('JSON_PARSER',   JS_PATH."json2".$jsext);
 /** JavaScript DOM selector library (Sizzle, Peppy, Selector, etc.). */
-define ('JS_SELECTOR',    JS_PATH."selector.min.js");
+define ('JS_SELECTOR',   JS_PATH."selector".$jsext);
 /** SWFObject library. */
-define ('SWFOBJECT',     ADMIN_PATH."js/swfobject.js");
+define ('SWFOBJECT',     ADMIN_PATH."js/swfobject.js"); // it's already minified
 
 /** HTML logs dir. Do not use absolute URLs because fopen wrappers could be disabled. */
 define ('CACHE_DIR',     INC_PATH."cache/");
@@ -34,24 +41,6 @@ define ('SYS_DIR',       INC_PATH."sys/");
 /** Path to common includes (header, footer, and so on). */
 define ('INC_DIR',       INC_PATH."inc/");
 
-/** Table for storing smt2 records. */
-define ('TBL_RECORDS',   "records");
-/** Table for caching HTML logs. */
-define ('TBL_CACHE',     "cache");
-/** Table for storing browser names. */
-define ('TBL_BROWSERS',  "browsers");
-/** Table for storing operating system names. */
-define ('TBL_OS',        "os");
-/** Table for registered users. */
-define ('TBL_USERS',     "users");
-/** Table for managing user roles. */
-define ('TBL_ROLES',     "roles");
-/** Table for registering extension modules. */
-define ('TBL_EXTS',      "exts");
-/** Table for customizing CMS options. */
-define ('TBL_CMS',       "cms");
-/** Table for customizing JS replay options. */
-define ('TBL_JSOPT',     "jsopt");
 /** Form input type: User must enter some value (input text) */
 define ('CMS_TYPE',      0);
 /** Form input type: User must choose between 2 options (checkbox) */

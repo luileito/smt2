@@ -4,84 +4,100 @@
  *  @autor      Luis Leiva   
  */
 package com.speedzinemedia.smt.display {
-    
-    import flash.display.Shape;
+
     import flash.display.Sprite;
-    import flash.utils.Timer;
-    import flash.events.TimerEvent;
-    
-    public class Scrubber extends Sprite
+    import com.speedzinemedia.smt.interfaces.ITimelineControls;
+    import com.speedzinemedia.smt.utils.ProgressTimer;
+    import com.speedzinemedia.smt.events.ProgressTimerEvent;
+    import flash.external.ExternalInterface;
+    public class Scrubber extends Sprite implements ITimelineControls
     {
-        private var $scrub:Shape;
-        private var $step:Number;
-        private var $info:Object;
-        private var $loop:Timer;
-        private var $paused:Boolean;
+        private var __scrub:Sprite;
+        private var __info:Object;
+        private var __step:Number;
+        private var __loop:ProgressTimer;
+        private var __paused:Boolean;
+        private var __finished:Boolean;
+        private var __prevScaleX:Number = 0.0;
         
-        private const VSIZE:int = 2;    // scrubber height
-        private const DELAY:int = 50;   // interval (ms)
-        
+        private const VERTICAL_SIZE:int = 2; // default scrubber height
+
+        public function get finished():Boolean { return __finished; };
+        public function get paused():Boolean { return __paused; };
+        public function get step():Number { return __step; };
         /** 
          * Constructor.
-         * @param prop: { time, color }
+         * @param prop: { time, width, height, color }
          */
         public function Scrubber(prop:Object)
         {
+            var vSize:int = (prop.height) ? prop.height : VERTICAL_SIZE;
+            var color:uint = (prop.color) ? prop.color : 0xFFCC33;
+            
             // draw bounding rectangle
             this.graphics.beginFill(0x000000);
-            this.graphics.drawRect(0,0, prop.width, VSIZE);
+            this.graphics.drawRect(0,0, prop.width, vSize);
             this.graphics.endFill();
             
             // draw scrubber itself
-            var color:uint = (prop.color) ? prop.color : 0xFFCC33;
-            $scrub = new Shape();
-            $scrub.graphics.beginFill(color);
-            $scrub.graphics.drawRect(0,0, 1, VSIZE);
-            $scrub.graphics.endFill();
-            this.addChild($scrub);
+            __scrub = new Sprite();
+            __scrub.graphics.beginFill(color);     
+            __scrub.graphics.drawRect(0,0, prop.width, vSize);
+            __scrub.graphics.endFill();
+            this.addChild(__scrub);
             
             // normalize time step
-            $step = prop.width / Math.ceil(prop.time*1000 / DELAY);
-            // save properties reference
-            $info = prop;
-            
-            // launch timer
-            $loop = new Timer(DELAY);
-            $loop.addEventListener(TimerEvent.TIMER, progress);
-            $loop.start();
+            __step = Math.round(prop.width/prop.time);
+            // save properties for later referencing
+            __info = prop;
+
+            __loop = new ProgressTimer();
+            __loop.maxTimeMs = prop.time*2 * 1000;
+            __loop.addEventListener(ProgressTimerEvent.PROGRESS, progress);
+            __loop.start();
         };
-                    
-        private function progress(e:TimerEvent):void 
-        { 
-            if ($paused) return;
-            
-            if ($scrub.width < $info.width) {
-                $scrub.scaleX += $step;
+
+        private function progress(e:ProgressTimerEvent):void
+        {       
+            if (__paused) {
+                __prevScaleX = __scrub.scaleX;
+                return;
+            }
+            if (__scrub.width < __info.width) {
+                __scrub.scaleX = __prevScaleX + e.progress;
             } else {
-                $loop.stop(); 
+                __loop.stop();
             }
         };
-        
-        /** Toggles scrubber animation. */    
-        public function pause():void 
+
+        /** Toggles scrubber animation. */
+        public function pause():void
         {
-            $paused = !$paused;
+            __paused = !__paused;
+            __loop.pause();
         };
-        
+
         /** Finishes scrubber animation. */
-        public function finish():void 
+        public function finish():void
         {
-            $scrub.width = $info.width;
+            __scrub.scaleX = 1;
+            __prevScaleX = 0;
+            
+            __paused = true;
+            __finished = true;
+            __loop.stop();
         };
-        
-        /** Restarts scrubber animation. */    
-        public function restart():void 
+
+        /** Restarts scrubber animation. */
+        public function restart():void
         {
-            $loop.reset();
-            // reset
-            $scrub.width = 1;
-            $loop.start();
+            __scrub.scaleX = 0;
+            __prevScaleX = 0;
+                       
+            __paused = false;
+            __finished = false;
+            __loop.start();
         };
-          
+
     } // end class
 }

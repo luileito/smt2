@@ -5,26 +5,27 @@ package com.speedzinemedia.smt {
     import flash.events.Event;
     import flash.events.KeyboardEvent;
     import flash.external.ExternalInterface;
-	import flash.geom.Point;
+	  import flash.geom.Point;
     import flash.net.SharedObject;
     import flash.ui.Keyboard;
 
-	import caurina.transitions.Tweener;
-	import com.adobe.serialization.json.*;
-	//import de.polygonal.math.PM_PRNG;
-	
-	import com.speedzinemedia.smt.events.ControlPanelEvent;
-    import com.speedzinemedia.smt.events.TrackingEvent;
+	  import caurina.transitions.Tweener;
+	  import com.adobe.serialization.json.*;
+	  //import de.polygonal.math.PM_PRNG;
+	  import com.speedzinemedia.smt.events.TrackingEvent;
+    import com.speedzinemedia.smt.events.ControlPanelEvent;
+    import com.speedzinemedia.smt.events.PlayerEvent;
     import com.speedzinemedia.smt.display.Asset;
     import com.speedzinemedia.smt.display.ControlPanel;
     import com.speedzinemedia.smt.display.CustomSprite;
     import com.speedzinemedia.smt.display.Layers;
-    import com.speedzinemedia.smt.display.Scrubber;
+    import com.speedzinemedia.smt.display.Player;
+    //import com.speedzinemedia.smt.display.Scrubber;
     import com.speedzinemedia.smt.draw.DrawUtils;
     import com.speedzinemedia.smt.mouse.MouseView;
-	import com.speedzinemedia.smt.mouse.MouseManager;
-	import com.speedzinemedia.smt.text.DebugText;
-	import com.speedzinemedia.smt.utils.Utils;
+	  import com.speedzinemedia.smt.mouse.MouseManager;
+	  import com.speedzinemedia.smt.text.DebugText;
+	  import com.speedzinemedia.smt.utils.Utils;
 	
     /**
      *  (smt) Simple Mouse Tracking application
@@ -37,16 +38,18 @@ package com.speedzinemedia.smt {
         private var $FPS:int;                           // user data ...
         private var $currWindowWidth:int, $currWindowHeight:int;  
         private var $stageWidth:int, $stageHeight:int;
-		private var $users:String;
+		    private var $users:String;
         
         private var $cp:ControlPanel;                   // control panel instance
         private var $savedSettings:SharedObject;        // get saved visualization settings
-		private var $MOUSE:MouseManager;                // mouse track(s) manager
-		private var $scrubber:Scrubber;                 // timeline scrubber
+		    private var $MOUSE:MouseManager;                // mouse track(s) manager
+		    //private var $scrubber:Scrubber;               // timeline scrubber
+		    private var $player:Player;                     // timeline player (w/ scrubber)
+		    private var $endQueue:int;                      // count finished mouse tracks
         
         public function Tracking() 
         {
-            Utils.initStage(stage, this);
+            Utils.initStage(this);
             // get user data
             var p:Object = this.loaderInfo.parameters;
             try {
@@ -83,28 +86,31 @@ package com.speedzinemedia.smt {
         private function init():void 
         {
             createLayers();
-			// set stage frame rate from user data
-            stage.frameRate = $FPS;
+			      // set stage frame rate from user data
+            stage.frameRate = $FPS;            
             // allow pausing the mouse visualization
             stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
-            // listen to changes from ControlPanel
+            // listen to changes from other classess
             addEventListener(ControlPanelEvent.TOGGLE_REPLAY_MODE, toggleReplay);
-            // and from MouseController
             addEventListener(TrackingEvent.MOUSE_END, endReplay);
+            addEventListener(PlayerEvent.PLAY, onPlayerPlay);
+            addEventListener(PlayerEvent.PAUSE, onPlayerPause);
+            addEventListener(PlayerEvent.STOP, onPlayerStop);
 
             var userInfo:Array = loadUserInfo();
+            $endQueue = userInfo.length;
             // create control panel
             $cp = new ControlPanel(this, userInfo);
-			// load Mouse Manager
-			$MOUSE = new MouseManager(this);
-
+			      // load Mouse Manager
+			      $MOUSE = new MouseManager(this);
+            
             // start replay
             if ($savedSettings.size > 0) {
-                // use saved settings (realtime can be true or false)
-                toggleReplay();
+              // use saved settings (realtime can be true or false)
+              toggleReplay();
             } else {
-                // begin with default settings (real-time replay, no heatmap visualizations)
-				$MOUSE.init();
+              // begin with default settings (real-time replay, no heatmap visualizations)
+				      $MOUSE.init();
             }
         };
         
@@ -115,7 +121,7 @@ package com.speedzinemedia.smt {
             var rnd:PM_PRNG = new PM_PRNG();
             rnd.seed = Math.random() * 0x7FFFFFFE;
             */
-
+            
             var drawCanvas:Array = buildCanvas();
 
             var arrOpts:Array = [];
@@ -123,16 +129,15 @@ package com.speedzinemedia.smt {
             for (var i:int = 0, numUsers:int = user.length; i < numUsers; ++i)
             {
                 // create info objects
-				var mouseInfo:Object = {
-					coords: { x: user[i].xcoords, y: user[i].ycoords },
-					clicks: { x: user[i].xclicks, y: user[i].yclicks },
-					fps:    $FPS
-				};
-				var screenInfo:Object = {
-                    viewport:   { width: $currWindowWidth, height: $currWindowHeight },
-				    currWindow: { width: $stageWidth,      height: $stageHeight      },
-					prevWindow: { width: user[i].wprev,    height: user[i].hprev     }
-				};
+				        var mouseInfo:Object = {
+					        coords: { x: user[i].xcoords, y: user[i].ycoords, type: user[i].clicks },
+					        fps:    $FPS
+				        };
+				        var screenInfo:Object = {
+                  viewport:   { width: $currWindowWidth, height: $currWindowHeight },
+				          currWindow: { width: $stageWidth,      height: $stageHeight      },
+					        prevWindow: { width: user[i].wprev,    height: user[i].hprev     }
+				        };
                 // create mouse view instance
                 var m:MouseView = new MouseView(mouseInfo, screenInfo, drawCanvas);
 
@@ -149,19 +154,25 @@ package com.speedzinemedia.smt {
                     }
                 } else {
                     // follow mouse on scroll
-					m.leader = true;
-					// add scrubber
+					          m.leader = true;
+					
+                    $player = new Player(this, {
+                        width:  $stageWidth,
+                        time:   user[i].xcoords.length / $FPS,
+                        color:  0xFFCC33
+                    });
+                    /*
+                    // add scrubber
                     $scrubber = new Scrubber({
                         width:  $stageWidth,
                         time:   user[i].xcoords.length / $FPS,
                         color:  0xFFCC33
                     });
                     addChild($scrubber);
-				}
-
-				addChild(m);
-
-				// save mouse info
+                    */
+				        }
+				        addChild(m);
+				        // save mouse info
                 arrOpts.push({ activity: mouseInfo, screen: screenInfo, color: m.color, avg: user[i].avg });
             }
 
@@ -172,13 +183,13 @@ package com.speedzinemedia.smt {
         {
             var c:Array = [];
             // do not include the background layer
-			for (var i:int = 1; i < Layers.collectionLength; ++i) {
+			      for (var i:int = 1; i < Layers.collectionLength; ++i) {
                 var name:String = Layers.collection[i].id;
                 c[name] = getChildByName(name) as Sprite;
             }
 				
-			return c;
-		};
+			      return c;
+		    };
 		
         private function createLayers():void
         {
@@ -234,46 +245,45 @@ package com.speedzinemedia.smt {
             }
             
             // reset mouse manager
-            var useHeatMap:Boolean = (e) ? e.data.heatMap  : $savedSettings.data.heatMap;
+            var useHeatMap:Boolean = (e) ? e.data.heatMap : $savedSettings.data.heatMap;
             
-			$MOUSE.dynamic = isRealtime;
-			$MOUSE.heatmap = useHeatMap;
-			$MOUSE.init();
+			      $MOUSE.dynamic = isRealtime;
+			      $MOUSE.heatmap = useHeatMap;
+			      $MOUSE.init();
 			
-			if ($scrubber) 
+			      if ($player)
             {
                 if (isRealtime) {
-                    $scrubber.restart();
+                    $player.restart();
                 } else {
-                    $scrubber.finish();
+                    $player.finish();
                 }
             }
 			
-			if (isRealtime) {
+			      if (isRealtime) {
                 stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
             }
         };
         
         private function keyUpHandler(e:KeyboardEvent):void
         {
-			switch(e.keyCode) 
-			{
-				case Keyboard.SPACE:
-					pauseReplay();
-					break;
-				case Keyboard.ESCAPE:
-					cancelReplay();
-					break;
-				default:
-					break;
-			}
+            switch(e.keyCode) 
+			      {
+				      case Keyboard.SPACE:
+					      pauseReplay();
+					      break;
+				      case Keyboard.ESCAPE:
+					      cancelReplay();
+					      break;
+				      default:
+					      break;
+			      }
         };
         
-		public function pauseReplay():void 
+		    public function pauseReplay():void 
         {
-			$MOUSE.pause();
-			
-			if ($scrubber) $scrubber.pause();
+			      $MOUSE.pause();
+			      if ($player) $player.pause();
 			
             // display icon
             var icon:Sprite = ($MOUSE.paused) ? new Asset.iconPause() : new Asset.iconPlay();
@@ -286,27 +296,43 @@ package com.speedzinemedia.smt {
             addChild(icon);
             
             Tweener.addTween(icon, {alpha:0, time:2, transition:"easeOutQuart", onComplete:removePlayPauseIcon});
-		};
-          		 
-		private function cancelReplay():void
+		    };
+
+		    private function cancelReplay():void
         {
-			$MOUSE.finish();
-			
-            if ($scrubber) $scrubber.finish();
-			
-			endReplay();
-		};
+            $MOUSE.finish();
+            if ($player) $player.finish();
+
+			      endReplay();
+		    };
 		
         private function endReplay(e:TrackingEvent = null):void 
         {
             $cp.dispatchEvent(new ControlPanelEvent(ControlPanelEvent.REPLAY_COMPLETE));
-            
-            stage.removeEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+            --$endQueue;
+
+            if ($endQueue <= 0) {
+                stage.removeEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+                if ($player) $player.finish();
+            }
         };
         
         private function removePlayPauseIcon():void 
         {
             removeChild(getChildByName("resumeIcon"));
+        };
+        
+        private function onPlayerPlay(e:PlayerEvent):void
+        {
+            pauseReplay();
+        };
+        private function onPlayerPause(e:PlayerEvent):void
+        {
+            pauseReplay();
+        };
+        private function onPlayerStop(e:PlayerEvent):void
+        {
+            toggleReplay();
         };
         
     } // end class

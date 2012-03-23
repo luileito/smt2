@@ -2,9 +2,8 @@
 /**
  * smt2 CMS core functions.
  * @date 27/March/2009  
- * @rev 30/March/2011
+ * @rev 30/September/2010
  */
-//error_reporting(E_ALL | E_STRICT); // uncomment for debugging
 unregister_GLOBALS();
 
 // ignore PHP strict notice if time zone has not been set in php.ini
@@ -20,12 +19,12 @@ if ($defaultTimeZone) {
 // set date
 date_default_timezone_set($location);
 
-// enable PHP short open tag
-ini_set("short_open_tag", "1");
-
 // load base files
 define('REQUIRED', dirname(__FILE__));
 
+// ------------------------------------------------------------ database API ---
+require REQUIRED.'/define.db.php';
+require REQUIRED.'/functions.db.php';
 // ---------------------------------------------------------- smt2 constants ---
 require REQUIRED.'/define.php';
 require REQUIRED.'/messages.php';
@@ -33,15 +32,20 @@ require REQUIRED.'/messages.php';
 require REQUIRED.'/class.domutil.php';
 require REQUIRED.'/class.browser.php';
 require REQUIRED.'/class.point.php';
-// ------------------------------------------------------------ database API ---
-require REQUIRED.'/functions.db.php';
 // ------------------------------------------------------------------ others ---
 require REQUIRED.'/functions.array.php';
 require REQUIRED.'/functions.url.php';
-require_once realpath(REQUIRED.'/../../').'/core/functions.php';
+//require_once realpath(REQUIRED.'/../../').'/core/functions.php';
+require_once BASE_PATH.'/core/functions.php';
+
+if (db_option(TBL_PREFIX.TBL_CMS, "enableDebugging")) {
+  error_reporting(E_ALL | E_STRICT);
+} else {
+  error_reporting(E_ERROR);
+}
 
 /** 
- * Additional head tags. Allows inserting custom tags on page head.
+ * Additional head tags. Enable inserting custom tags on page head.
  * @global array $_headAdded
  */
 $_headAdded = array();
@@ -57,8 +61,7 @@ function check_systemversion($type, $minReqVer = "5.0.0")
 {
   switch (strtolower($type)) {
     case 'mysql':
-      $cnx = db_connect();
-      $ver = mysql_get_server_info($cnx);
+      $ver = mysql_get_server_info();
       break;
     case 'php':
       $ver = phpversion();
@@ -79,7 +82,7 @@ function check_systemversion($type, $minReqVer = "5.0.0")
 function get_smt_releases()
 {
   // connect to Web Service
-  $ws = get_remote_webpage("http://smt.speedzinemedia.com/smt/versioncheck.php?v=".SMT_VERSION);
+  $ws = get_remote_webpage("http://smt.speedzinemedia.com/versioncheck.php?v=".SMT_VERSION);
   
   return $ws['content'];
 }
@@ -92,7 +95,7 @@ function check_smt_releases()
 {
   global $_displayType;
   
-  $dwnurl = "http://smt.speedzinemedia.com/smt/downloads.php";
+  $dwnurl = "http://smt.speedzinemedia.com/downloads.php";
   
   $code = get_smt_releases();
   
@@ -262,6 +265,7 @@ function mask_client($hash)
  * @param  string   $bodyText additional info to display on page body
  * @return string             The error page 
  */
+
 function error_webpage($bodyText = "") 
 {  
   $webpage = '<html><head><title>Error</title></head><body>'.$bodyText.'</body></html>';
@@ -307,28 +311,51 @@ function convert_points($xcoords, $ycoords, $getDistances = false)
 /**
  * Counts the number of mouse clicks.
  * Drag and drop traces are removed.
- * @param   array  $xclicks   horizontal click coordinates
- * @param   array  $yclicks   vertical click coordinates
- * @return  int               number of clicks
+ * @param   array  $clicks   array of click types (from Motorola protocol)
+ * @return  int              number of clicks
  */
-function count_clicks($xclicks, $yclicks)
+function get_click_coordinates($coords_x, $coords_y, $clicks)
+{ 
+  // check
+  if (!is_array($coords_x)) { $coords_x = explode(",", $coords_x); }
+  if (!is_array($coords_y)) { $coords_y = explode(",", $coords_y); }
+  if (!is_array($clicks)) { $clicks = explode(",", $clicks); }
+  
+  $clickCoords = array( 
+                        "x" => array(), 
+                        "y" => array()
+                      );
+  foreach ($clicks as $i => $value)
+  {
+    $currClickX = $value > 0 ? $coords_x[$i] : 0;
+    $currClickY = $value > 0 ? $coords_y[$i] : 0;
+    $clickCoords['x'][] = $currClickX;
+    $clickCoords['y'][] = $currClickY;
+  }
+
+  return $clickCoords;
+}
+
+/**
+ * Counts the number of mouse clicks.
+ * Drag and drop traces are removed.
+ * @param   array  $clicks   array of click types (from Motorola protocol)
+ * @return  int              number of clicks
+ */
+function count_clicks($clicks)
 {
   $numClicks = 0;
   
-  // check
-  if (!is_array($xclicks)) { $xclicks = array_null($xclicks); }
-  if (!is_array($yclicks)) { $yclicks = array_null($yclicks); }
+  if (!is_array($clicks)) { $clicks = explode(",", $clicks); }
   
-  $maxCount = count($xclicks) - 1;
-  // transform points
-  foreach ($xclicks as $i => $value)
+  $maxCount = count($clicks) - 1;
+  foreach ($clicks as $i => $value)
   {
-    $p = new Point($value, $yclicks[$i]);
     // check if next point exists
     if ($i >= $maxCount) { break; }
 
-    $q = new Point($xclicks[$i + 1], $yclicks[$i + 1]);
-    if ($p->getDistance($q) > 0 && !$q->x) {
+    $next = $clicks[$i + 1];
+    if ($value > 0 && $value != $next) {
       $numClicks++;
     }
   }
@@ -365,7 +392,7 @@ function ext_available()
   {
     while (false !== ($file = readdir($handle))) {
       // look for available module extensions
-      if (is_dir($dir.'/'.$file) && !str_startswith($file,'.')) {
+      if ($file != "." && $file != ".." && is_dir($dir.'/'.$file)) {
         $ext[] = $file;
       }
     }
@@ -484,7 +511,7 @@ function count_dir_files($dir)
   $count = 0;
   if ($handle = opendir($dir)) {
     while (false !== ($file = readdir($handle))) {
-      if (is_file($dir.'/'.$file) && !str_startswith($file,'.')) {
+      if ($file != "." && $file != ".." && is_file($dir.'/'.$file)) {
         $count++;
       }
     }
@@ -675,16 +702,5 @@ function get_cache_common_url($pageId)
   }
 
   return $merge;
-}
-
-/**
- * Checks if a string starts with a certain prefix.
- * @param   source  string  source string
- * @param   prefix  string  prefix to find
- * @return          boolean TRUE on success or FALSE on failure
- */
-function str_startswith($source, $prefix)
-{
-   return strncmp($source, $prefix, strlen($prefix)) == 0;
 }
 ?>

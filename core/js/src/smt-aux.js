@@ -1,10 +1,10 @@
 /**
  * (smt)2 simple mouse tracking - auxiliary functions (smt-aux.js)
- * Copyleft (cc) 2006-2010 Luis Leiva
- * Release date: September 30th 2010
- * http://smt.speedzinemedia.com
+ * Copyleft (cc) 2006-2012 Luis Leiva
+ * Release date: March 23 2012
+ * http://smt2.googlecode.com & http://smt.speedzinemedia.com
  * @class smt2-aux
- * @version 2.0.2
+ * @version 2.1.0
  * @author Luis Leiva
  * @license Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
  */
@@ -36,19 +36,20 @@ var smt2fn = {
    * However, to avoid possible performance issues, it's best use the "opaque" mode.
    * Note: The WMODE parameter is supported only on some browser/Flash Player version combinations.
    * If the WMODE parameter is not supported, the Flash movie will always display on top.
+   * @param {Object}  d   document object   
    * @return void
    */
-  allowTrackingOnFlashObjects: function()
+  allowTrackingOnFlashObjects: function(d)
   {
-    var obj = document.getElementsByTagName("object");
+    var obj = d.getElementsByTagName("object");
     for (var i = 0, t = obj.length; i < t; ++i) {
-      var param = document.createElement("param");
+      var param = d.createElement("param");
       param.setAttribute("name", "wmode");
       param.setAttribute("value","opaque");
       obj[i].appendChild(param);
     }
 
-    var embed = document.getElementsByTagName("embed");
+    var embed = d.getElementsByTagName("embed");
     for (var j = 0, u = embed.length; j < u; ++j) {
       embed[j].setAttribute("wmode", "opaque");
       // recording on some browsers is tricky (replaying is ok, though)
@@ -62,7 +63,7 @@ var smt2fn = {
       }
     }
   },
-  
+     
   /**
    * Traces any kind of objects in the debug console (if available).
    * @return void
@@ -100,7 +101,7 @@ var smt2fn = {
         script.onreadystatechange = function() {
           if (this.readyState === 'complete') { callback(); }
         };
-      } catch(e) {}
+      } catch(err) {}
     }
     else {
       // fallback: old browsers use the window.onload event
@@ -255,50 +256,6 @@ var smt2fn = {
   },
   
   /**
-   * Failsafe (and experimental) function.
-   * If your pages' HTML code have a lot of images and you do not allocate the image's dimensions (width/height attributes),
-   * then the page size sometimes could not be accurately computed and the tracking layer could be cropped.
-   * @return {object} viewport dimensions - object with 2 properties: width {integer}, and height {integer}
-   */
-  getHardcorePageSize: function()
-  {
-    // let's define some helpers
-    var w1=0, h1=0, w2=0, h2=0, w3=0, h3=0, w4=0, h4=0,
-        de = document.documentElement,
-        db = document.body;
-
-    if (window.innerHeight) {
-      w1 = window.innerWidth;
-      h1 = window.innerHeight;
-      if (window.scrollMaxY) {
-        w1 += window.scrollMaxY;
-        h1 += window.scrollMaxY;
-      }
-    }
-    if (de && de.offsetHeight) {
-      w2 = de.offsetWidth;
-      h2 = de.offsetHeight;
-    }
-    if (db && db.scrollHeight) {
-      w3 = db.scrollWidth;
-      h3 = db.scrollHeight;
-    }
-    if (db && db.offsetWidth) {
-      w4 = db.offsetWidth;
-      h4 = db.offsetHeight;
-      if (db.offsetLeft) {
-        w4 += db.offsetLeft;
-        h4 += db.offsetTop;
-      }
-    }
-    // now return the max value
-    var maxHeight = Math.max(h1,h2,h3,h4);
-    var maxWidth = Math.max(w1,w2,w3,w4);
-
-    return { width: maxWidth, height: maxHeight };
-  },
-  
-  /**
    * Gets the max z-index level available on the page.
    * @return {integer}    z-index level
    * @param {object} e    DOM element (default: document)
@@ -332,13 +289,26 @@ var smt2fn = {
    * Gets the base path of the current window location.
    * @return {string}    path
    */
-  getBase: function()
+  getBaseURL: function()
   {
     var basepath = window.location.href;
     var dirs = basepath.split("/");
     delete dirs[ dirs.length - 1 ];
 
     return dirs.join("/");
+  },
+  
+  /**
+   * Checks that a URL ends with a slash; otherwise it will be appended at the end of the URL.
+   * @return {string}    url
+   */  
+  ensureLastURLSlash: function(url) 
+  {
+    if (url.lastIndexOf("/") != url.length - 1) {
+      url += "/";
+    }
+
+    return url;
   },
   
   /**
@@ -416,7 +386,7 @@ var smt2fn = {
     for (var i = 0; i < XMLHttpFactories.length; ++i) {
       try {
         xmlhttp = XMLHttpFactories[i]();
-      } catch(e) { continue; }
+      } catch(err) { continue; }
       break;
     }
 
@@ -530,9 +500,13 @@ var smt2fn = {
   /**
    * Core for tracking widgets.
    * The word "widget" stands for *any* DOM element on the page.
-   * This snippet was developed years ago as 'DOM4CSS', and now lives in harmony with (smt).
+   * This snippet was developed years ago as 'DOM4CSS', and now lives in harmony with smt2.
    */
   widget: {
+    /**
+     * Concatenation token.
+     */  
+    chainer: ">",
     /**
      * Finds the first available element with an ID.
      * Traversing count starts from current element to node parents.
@@ -561,8 +535,9 @@ var smt2fn = {
      */
     getID: function(o)
     {
-      // do not track HTML and BODY nodes
-      if (o.nodeName == 'HTML' || o.nodeName == 'BODY') { return null; }
+      // save HTML and BODY nodes?
+      //if (o.nodeName == 'HTML' || o.nodeName == 'BODY') { return false; }
+      
       return o.nodeName + "#" + o.id;
     },
     /**
@@ -573,8 +548,9 @@ var smt2fn = {
      */
     getClass: function(o)
     {
-      // do not track HTML and BODY nodes
-      if (o.nodeName == 'HTML' || o.nodeName == 'BODY') { return null; }
+      // save HTML and BODY nodes?
+      //if (o.nodeName == 'HTML' || o.nodeName == 'BODY') { return false; }
+      
       // if the element has no class, return its node name only
       return (o.className) ? o.nodeName + "." + o.className.split(" ")[0] : o.nodeName;
     },
@@ -587,7 +563,7 @@ var smt2fn = {
     {
       // store current node first
       var elem = (o.id) ? this.getID(o) : this.getClass(o);
-      var list = [elem]; //(elem) ? [elem] : [];
+      var list = (elem) ? [elem] : [];
       // get all parents until find an element with ID
       while (o.parentNode)
       {
@@ -599,18 +575,18 @@ var smt2fn = {
             elem = this.getID(o);
             list.unshift(elem);
             // if parent has an ID, end finding
-            return list.join(" ");
+            return list.join(this.chainer);
           } else {
             elem = this.getClass(o);
             list.unshift(elem);
           }
           if (o == parent) {
             // #document reached
-            return list.join(" ");
+            return list.join(this.chainer);
           }
         }
       }
-      return list.join(" ");
+      return list.join(this.chainer);
     }
   },
   
@@ -623,7 +599,7 @@ var smt2fn = {
    *   for (var i = 0; i < array.length; ++i) {
    *     if (array[i] != null) { narray.push(array[i]); }
    *   }
-   *   // now narray is converted in a 'dense' array
+   *   // now narray is converted to a 'dense' array
    * </code>
    */
   array: {

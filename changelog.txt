@@ -1,27 +1,36 @@
 --------------------------------------------------------------------------------
-(smt)2 ChangeLog - 30th September 2010
+(smt)2 ChangeLog - 23rd March 2012
 --------------------------------------------------------------------------------
-This is the change log for the 2.0.2 version.
+This is the change log for the 2.1.0 version.
 
 You may find the latest source code on the SVN:
 svn checkout http://smt2.googlecode.com/svn/trunk/
 
-You can browse and see the changes in code here:
+You can browse and see the changes in the code here:
 http://code.google.com/p/smt2/source/browse/
 
-Aditionally, there is a zipped version ready for downloading on (smt) website:
-http://smt.speedzinemedia.com/smt/downloads.php
 --------------------------------------------------------------------------------
 
 [To-Do List] For next releases
 
-* Enable downloading logs for data mining.
-* Document the SWF API.
-* 3D visualization. 
-* Realtime in-person tracking (aka Web Activity Sharing).
+* New layout types were added for mouse track normalization and will be implemented soon.
+* Document the SWF API. Code started to be reviewed.
+* Realtime in-person tracking (a.k.a 'Web Activity Sharing' or so).
+
+
+[2.1.0] March 23rd 2012
+
++ Click tracking refactored according to the UNIPEN format.
++ Added option to export database logs.
++ Enabled tracking inside iframes (note: same-origin policy applies).
++ IPv6 supported when getting the client location.
++ Links with rel="noindex, nofollow" in admin interface pages, to prevent search engine indexing.
++ A 3D visualization module is available in the control panel (experimental).
++ Integrated smt2 with Phill Sacre's php-web-proxy to track external websites (highly experimental).
 
 
 [2.0.2] September 30th 2010
+
 + Added new extension: Maintenance (backup database, check 'orphan' cache logs, etc.)
 + Enabled cross-site POST requests.
 + Improved user identification (e.g., different users from the same LAN are now distinguished).
@@ -55,7 +64,7 @@ http://smt.speedzinemedia.com/smt/downloads.php
 
 + Remember agree statement if warning is enabled. <benjamin>
 + Enabled log filtering and user/page grouping. That makes delete tasks easier. <steven, griser>
-+ Exclude the root user from being recorded. <steven>
+- Exclude the root user from being recorded. <steven>
 + Logs with no mouse movements are deleted automatically.
 + Enabled window auto-scrolling when replaying logs.
 + Added a visual clue JS drawing API when the user is not moving the mouse (a circle with "Stop..." text).
@@ -77,9 +86,9 @@ http://smt.speedzinemedia.com/smt/downloads.php
 
 + Fixed root permissions when updating password. <leo>
 - Removed the window resize callback function (on IE seemed to happen the same as described on wiki issue #1): http://code.google.com/p/smt2/issues/detail?id=1
-- Added the option to change the color background layer on JS replay file.
++ Added the option to change the color background layer on JS replay file.
 
 
 [beta1] July 19th 2009
 
-- First Beta release.
++ First Beta release.

@@ -5,86 +5,89 @@
  */
 package com.speedzinemedia.smt.mouse {
 
-    import flash.display.Bitmap;
-    import flash.display.Shape;
+  import flash.display.Bitmap;
+  import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display.BlendMode;
 	import flash.display.GradientType;
-    import flash.external.ExternalInterface;
-    import flash.events.Event;
+  import flash.external.ExternalInterface;
+  import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Matrix;
-    import flash.net.URLLoader;
+  import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
-	import flash.net.URLVariables;
-    import flash.text.TextField;
-    import flash.text.TextFormat;
-    import flash.text.TextFieldAutoSize;
-	 
-    import com.adobe.serialization.json.*;
-    import caurina.transitions.Tweener;
-    //import de.polygonal.math.PM_PRNG;
+  import flash.net.URLVariables;
+  import flash.text.TextField;
+  import flash.text.TextFormat;
+  import flash.text.TextFieldAutoSize;
+	   
+  import com.adobe.serialization.json.*;
+  //import caurina.transitions.Tweener;
+  //import de.polygonal.math.PM_PRNG;
     
 	import com.speedzinemedia.smt.display.Asset;
 	import com.speedzinemedia.smt.display.Layers;
-    import com.speedzinemedia.smt.events.TrackingEvent;
-    import com.speedzinemedia.smt.draw.DrawUtils;
-    import com.speedzinemedia.smt.draw.HeatMap;
+  import com.speedzinemedia.smt.events.TrackingEvent;
+  import com.speedzinemedia.smt.draw.DrawUtils;
+  import com.speedzinemedia.smt.draw.HeatMap;
 	import com.speedzinemedia.smt.text.Tooltip;
-	import com.speedzinemedia.smt.text.Singleton;
 	import com.speedzinemedia.smt.utils.*
     
-    public class MouseView extends MouseEventDispatcher
-    {   
-        private var $cursor:Bitmap = new Asset.cursorNormal();
+  public class MouseView extends MouseEventDispatcher
+  {
+    private var $cursor:Bitmap = new Asset.cursorNormal();
 		private var $cursorWait:Bitmap = new Asset.cursorWait();
 		private var _leader:Boolean;			// follow this instance (if multiuser)
 		private var _color:uint;				// strokes color (if multiuser)
-        private var _thick:Number = 0;			// strokes thickness (if multiuser)
-        private var _label:String;				// display user text
-        private var _avg:Boolean;			    // strokes thickness (if multiuser)
-        private var $userLabel:TextField;       // private label
-        private var $canvas:Array = [];		    // drawing areas
+    private var _thick:Number = 0;			// strokes thickness (if multiuser)
+    private var _label:String;				// display user text
+    private var _avg:Boolean;			    // strokes thickness (if multiuser)
+    private var $userLabel:TextField;       // private label
+    private var $canvas:Array = [];		    // drawing areas
 		private var $varCircles:Array = [];	    // drawing areas
 		private var $tip:Tooltip;         	    // display info at runtime
 		private var $mouse:Object;			    // user info
 		private var $screen:Object;			    // additional user info
+		private var $count:int = 0;
 		
+    private const $cursorType:Object = {
+      ENTRY:  "entry",
+      EXIT:   "exit"
+    };
 		// compute heatmaps for single-point items
-		private var $heatMapLayers:Array = [
-            Layers.id.REGISTRATION,
-            Layers.id.DRAG,
-            Layers.id.STOP, // hesitations, as active areas, are clustered items
-            Layers.id.CLICK
-        ];
+		private const $heatMapLayers:Array = [
+      Layers.id.REGISTRATION,
+      Layers.id.DRAG,
+      Layers.id.CLICK
+    ];
 		private var $heatMapSize:int = 15;      // diameter of heatmap's sphere of influence
 
-		public function set leader(value:Boolean):void   { _leader = value; }
-		public function set color(value:uint):void 	     { _color  = value; }
-        public function set thick(value:Number):void 	 { _thick  = value; }
-        public function set label(value:String):void 	 { _label  = value; }
-        public function set avg(value:Boolean):void 	 { _avg    = value; }
+		public function set leader(value:Boolean):void { _leader = value; }
+		public function set color(value:uint):void 	   { _color  = value; }
+    public function set thick(value:Number):void 	 { _thick  = value; }
+    public function set label(value:String):void 	 { _label  = value; }
+    public function set avg(value:Boolean):void 	 { _avg    = value; }
         
-        public function get avg():Boolean { return _avg; }
-        public function get color():uint { return _color; }
+    public function get avg():Boolean { return _avg; }
+    public function get color():uint { return _color; }
 		  
-        public function MouseView(mouseData:Object, screenInfo:Object, canvas:Array) 
-        {
+    public function MouseView(mouseData:Object, screenInfo:Object, canvas:Array) 
+    {
 			// pass settings to controller
-            super(mouseData, screenInfo);
+      super(mouseData, screenInfo);
 			// save references for drawing
 			$mouse  = mouseData;
 			$screen = screenInfo;
 			$canvas = canvas;
 			
-			//Tweener.addTween($canvas[Layers.id.BACKGROUND], {alpha:0, time:2, transition:"easeOutQuart"});
+			//Tweener.addTween($canvas[Layers.id.BACKGROUND], {alpha:0, time:.3, transition:"easeOutQuart"});
 			
-			// create an empty tooltip instance
-            $tip = Tooltip.instance();
+			// create tooltip
+            $tip = Tooltip.getInstance();
             $tip.border = false;
-            $tip.backgroundColor = 0xFFFFBB;
+            $tip.backgroundColor = 0xFFFFCC;
             addChild($tip);
             
             // listen to recorded mouse events
@@ -99,9 +102,14 @@ package com.speedzinemedia.smt.mouse {
 
 		protected function onIni(e:TrackingEvent):void 
         {
-			drawMousePointer(e.data as Point, "entry");
-			addLabels();
+            addLabels();
 			addCursors();
+			
+            var p:Point = e.data as Point;
+            $cursor.x = p.x;
+            $cursor.y = p.y;
+            
+			drawMousePointer(p, $cursorType.ENTRY);
 			
             if (super.heatMap)
             {
@@ -121,8 +129,8 @@ package com.speedzinemedia.smt.mouse {
 		  
 		protected function onMove(e:TrackingEvent):void 
         {   
-			var p:Point = new Point(e.data.ini.x, e.data.ini.y);
-            var q:Point = new Point(e.data.end.x, e.data.end.y);
+			var p:Point = e.data.ini;
+			var q:Point = e.data.end;
 
             if (_label) {
                 // add client id and login time
@@ -134,7 +142,6 @@ package com.speedzinemedia.smt.mouse {
             $cursor.y = q.y;
 				
 			drawRegistrationPoint(p);
-				
 			drawMousePath(p,q);
 				
 			if (super.realTime && _leader) {
@@ -216,13 +223,12 @@ package com.speedzinemedia.smt.mouse {
             c.name = "drag @ (" + Math.round(p.x) + ", " + Math.round(p.y) + ")";
             // draw hit area for tooltip
             DrawUtils.drawCircle(c, p, size*2, 0x000000, 0);
-
             $tip.addItem(c);
             
             $canvas[Layers.id.DRAG].addChild(c);
-
-            $canvas[Layers.id.DRAG].graphics.lineStyle(3, Layers.getColor(Layers.id.DRAG));
-            DrawUtils.drawStar($canvas[Layers.id.DRAG], p, size);
+            /*$canvas[Layers.id.DRAG].graphics.lineStyle(3, Layers.getColor(Layers.id.DRAG));
+            DrawUtils.drawStar($canvas[Layers.id.DRAG], p, size);*/
+            DrawUtils.drawCircle($canvas[Layers.id.DRAG], p, size, Layers.getColor(Layers.id.DRAG));
         };
 		  
 		protected function onEnd(e:TrackingEvent):void 
@@ -233,9 +239,11 @@ package com.speedzinemedia.smt.mouse {
             if (_label) {
                 $canvas[Layers.id.CURSOR].removeChild($userLabel);
             }
-				
-			drawMousePointer(e.data as Point, "exit");
 
+            drawRegistrationPoint(e.data as Point);
+			drawMousePointer(e.data as Point, "exit");
+			// reset hesitation computations
+            $varCircles = [];
 			// compute path centroid
             var centroid:Point = new Point( Maths.arrayAvg(super.cleans.x) * super.discrepance.x, Maths.arrayAvg(super.cleans.y) * super.discrepance.y );
             drawCentroid(centroid);
@@ -259,12 +267,12 @@ package com.speedzinemedia.smt.mouse {
       
 		protected function requestClusters():void
 		{ 
-            var vars:URLVariables = new URLVariables();
+      var vars:URLVariables = new URLVariables();
 			vars.xdata = JSON.encode(super.cleans.x);
 			vars.ydata = JSON.encode(super.cleans.y);
 			vars.xhr = true; // identify Ajax request
 			// prepare the PHP request
-			var basePath:String = ExternalInterface.call("window.smt2fn.getBase");
+			var basePath:String = ExternalInterface.call("window.smt2fn.getBaseURL");
 			var request:URLRequest = new URLRequest(basePath + "includes/kmeans.php");
 			request.method = URLRequestMethod.POST;
 			request.data = vars;
@@ -275,7 +283,7 @@ package com.speedzinemedia.smt.mouse {
 		};
 		
 		private function buildClusters(e:Event):void 
-        { 
+    { 
 			var loaded:URLLoader = URLLoader(e.target);
     		var km:Object = JSON.decode(loaded.data);
 			//ExternalInterface.call("console.log", typeof km + " <-- should be Object! Decoded response: " + km)
@@ -285,7 +293,7 @@ package com.speedzinemedia.smt.mouse {
 			}
 			
 			// draw clustering (already filtered)
-            for (var i:int = 0, cLength:int = km.xclusters.length; i < cLength; ++i) {
+      for (var i:int = 0, cLength:int = km.xclusters.length; i < cLength; ++i) {
 				var clusterPt:Point = new Point(km.xclusters[i], km.yclusters[i]);
 				var clusterVar:Point = new Point(km.xvariances[i], km.yvariances[i]);
                  
@@ -324,10 +332,10 @@ package com.speedzinemedia.smt.mouse {
 		private function drawMousePointer(p:Point, type:String):void 
         {
             var cursor:Bitmap, color:uint; 
-            if (type == "entry") {
+            if (type == $cursorType.ENTRY) {
                 cursor = new Asset.cursorEntry();
                 color = 0x33FF33;
-            } else if (type == "exit") {
+            } else if (type == $cursorType.EXIT) {
                 cursor = new Asset.cursorExit();
                 color = 0xFF3333;
             }
@@ -380,19 +388,12 @@ package com.speedzinemedia.smt.mouse {
             $canvas[Layers.id.REGISTRATION].addChild(rp);
         };
 		  
-		private function drawMousePath(p:Point, q:Point, showArrowsOnMouseLines:Boolean = false):void
+		private function drawMousePath(p:Point, q:Point):void
         {
             var pathColor:uint = (_color) ? _color : Layers.getColor(Layers.id.PATH);
-            
             $canvas[Layers.id.PATH].graphics.lineStyle(_thick, pathColor);
             $canvas[Layers.id.PATH].graphics.moveTo(p.x, p.y);
             $canvas[Layers.id.PATH].graphics.lineTo(q.x, q.y);
-            /*
-            if (showArrowsOnMouseLines && Point.distance(p, q) > 8) {
-                var a:Arrow = new Arrow(p,q);
-                $canvas[Layers.id.PATH].addChild(a);
-            }
-            */
         };
 		  
 		private function drawHesitation(p:Point, size:int):void
@@ -416,20 +417,20 @@ package com.speedzinemedia.smt.mouse {
             DrawUtils.drawCircle(h, p, size/2, Layers.getColor(Layers.id.STOP), 0.5);
             //DrawUtils.drawCircleCenter(h, p, size);
             $tip.addItem(h);
-            
             $canvas[Layers.id.STOP].addChild(h);
-            
-            // now check previous drawn hesitations
-            $varCircles.push(size);
+            /*
+            $varCircles.push({circleSize: size, circleItem: h});
+            $varCircles.sortOn(['circleSize'], Array.DESCENDING | Array.NUMERIC);
+            // remove previously drawn hesitations and use right stack order
             for (var i:int = 0; i < $canvas[Layers.id.STOP].numChildren; ++i) {
-                // swap smaller circles with bigger ones
-                if ($varCircles.length > 1 && $varCircles[i] > $varCircles[i-1]) {
-                    $canvas[Layers.id.STOP].swapChildrenAt(i, i-1);    
-                }
+                $canvas[Layers.id.STOP].removeChildAt(i);
             }
+            // swap smaller circles with bigger ones
+            for (var j:int = 0; i < $varCircles.length; ++j) {
+                $canvas[Layers.id.STOP].addChild( $varCircles[j].circleItem );
+            }*/
         };
-		
-        /** @deprecated */
+
 		private function drawDistanceArrow(p:Point, angle:Number, distance:Number):void
         {
             // dvc: direction vector container
@@ -437,7 +438,7 @@ package com.speedzinemedia.smt.mouse {
             dvc.name = "distance: " + Maths.roundTo(distance,2) + "px";
 
             $tip.addItem(dvc);
-            
+
             // draw direction arrow
             var dirVect:Bitmap = new Asset.cursorDir();
             // rotate arrow and scale it
@@ -451,7 +452,7 @@ package com.speedzinemedia.smt.mouse {
             dvc.addChild(dirVect);
             $canvas[Layers.id.DISTANCE].addChild(dvc);
         };
-		  
+
 		private function drawCentroid(p:Point):void 
         {
             /*if (super.heatMap) {

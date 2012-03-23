@@ -18,16 +18,16 @@ package com.speedzinemedia.smt.mouse {
      
     public class MouseEventDispatcher extends Sprite
     {
-        private var $coords:Object, _cleans:Object, $clicks:Object, $numCoords:uint;
+        private var $coords:Object, _cleans:Object, $numCoords:uint;
         private var $freq:int;
         private var $intervalId:uint;
         private var _currPt:Point, $nextPt:Point, $iniClick:Point, $endClick:Point;
         private var _dr:Object;
         private var _count:int;
 		private var _varStopSize:int, _maxStopSize:int;
-        private var _paused:Boolean;
 		private var _realTime:Boolean = true; // for autoScrolling
-		private var _heatMap:Boolean = false;
+		private var _heatMap:Boolean;
+		private var _paused:Boolean;
         
         public function set paused(value:Boolean):void {
             _paused = value;
@@ -62,15 +62,11 @@ package com.speedzinemedia.smt.mouse {
         }
 		  
         public function MouseEventDispatcher(mouse:Object, screen:Object)
-        {   
+        {
             $coords = mouse.coords;
-            $clicks = mouse.clicks;
             $freq = Math.round(1000/mouse.fps);
             $numCoords = $coords.x.length;
             _dr = computeDiscrepances(screen);
-            
-            _count = 0;
-			_varStopSize = 1;
 			
 			preprocess();
         };
@@ -98,7 +94,7 @@ package com.speedzinemedia.smt.mouse {
             var stops:Array = [];
             var size:int = 1;
 				
-            for (var k:int = 0; k < $numCoords; ++k) 
+            for (var k:int = 0; k < $numCoords; ++k)
             {
                 if ($coords.x[k] == $coords.x[k+1] && $coords.y[k] == $coords.y[k+1]) {
                   ++size;
@@ -118,15 +114,15 @@ package com.speedzinemedia.smt.mouse {
             _maxStopSize = Maths.arrayMax(stops);
 		  };
 		  
-        public function init(realtime:Boolean = true, heatmap:Boolean = false):void
+        public function init(isRealtime:Boolean = true, isHeatmap:Boolean = false):void
         {   
 			_count = 0;
 			_varStopSize = 1;
 			_paused = false;
-			_realTime = realtime;
-			_heatMap = heatmap;
+			_realTime = isRealtime;
+			_heatMap = isHeatmap;
             	
-            if (realtime) {
+            if (isRealtime) {
                 start();
             } else {
                 finish();
@@ -159,12 +155,12 @@ package com.speedzinemedia.smt.mouse {
             if (_realTime && _paused) return;
             
             getPoints();
-            
+
             if (_count == 0) {
                 this.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_INI, _currPt));
             }
             
-            if (_count < $numCoords) 
+            if (_count < $numCoords)
             {
                 var mouseDist:Number = Point.distance(_currPt, $nextPt);
                 
@@ -215,11 +211,18 @@ package com.speedzinemedia.smt.mouse {
         
         private function getPoints():void 
         {
-            _currPt = new Point($coords.x[ _count     ] * _dr.x, $coords.y[ _count     ] * _dr.y);
-            $nextPt = new Point($coords.x[ _count + 1 ] * _dr.x, $coords.y[ _count + 1 ] * _dr.y);
+            _currPt  = new Point($coords.x[ _count     ] * _dr.x, $coords.y[ _count     ] * _dr.y);
+            $nextPt  = new Point($coords.x[ _count + 1 ] * _dr.x, $coords.y[ _count + 1 ] * _dr.y);
             
-            $iniClick = new Point($clicks.x[ _count     ] * _dr.x, $clicks.y[ _count     ] * _dr.y);
-            $endClick = new Point($clicks.x[ _count + 1 ] * _dr.x, $clicks.y[ _count + 1 ] * _dr.y);
+            var currClickType:int = $coords.type[ _count     ];
+            var nextClickType:int = $coords.type[ _count + 1 ];
+            var currClickX:int = currClickType > 0 ? $coords.x[ _count     ] : 0;
+            var nextClickX:int = nextClickType > 0 ? $coords.x[ _count + 1 ] : 0;
+            var currClickY:int = currClickType > 0 ? $coords.y[ _count     ] : 0;
+            var nextClickY:int = nextClickType > 0 ? $coords.y[ _count + 1 ] : 0;
+
+            $iniClick = new Point(currClickX * _dr.x, currClickY * _dr.y);
+            $endClick = new Point(nextClickX * _dr.x, nextClickY * _dr.y);
         };
         
         

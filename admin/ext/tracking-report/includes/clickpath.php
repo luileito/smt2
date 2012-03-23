@@ -39,7 +39,7 @@
         $title = $data["date"].' # '.$data["time"].'sec';
         // some cache logs could have been deleted... 
         if ($data["url"]) {
-          $title .= ' @ '.$data["url"];
+          $title .= ' @ '.htmlentities($data["url"]);
         }
         // check if we are browsing the current log
         $list .= (isset($id) && $data["id"] == $id) ? 

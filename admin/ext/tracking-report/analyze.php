@@ -13,11 +13,11 @@ include INC_DIR.'header.php';
 ?>
 
 
-<p>&larr; <a href="./">Back to tracking index</a></p>
+<p>&larr; <a href="./">Back to tracking report</a></p>
     
 <div id="rawlog">
     
-  <h1 class="heading center">Raw Log Data</h1>
+  <h1 class="heading center">Log Data Analysis</h1>
   <?php
   if (isset($_GET['id'])) 
   {
@@ -42,10 +42,14 @@ include INC_DIR.'header.php';
     $time[] = $log['sess_time'];
     $vpWidth[] = $log['vp_width'];
     $vpHeight[] = $log['vp_height'];
-    $coordsX[] = explode(",", $log['coords_x']);
-    $coordsY[] = explode(",", $log['coords_y']);
-    $clicksX[] = explode(",", $log['clicks_x']);
-  	$clicksY[] = explode(",", $log['clicks_y']);
+    $cX = explode(",", $log['coords_x']);
+    $cY = explode(",", $log['coords_y']);
+    $coordsX[] = $cX;
+    $coordsY[] = $cY;
+    /*$clickCoords = get_click_coordinates($cX,$cY,$log['clicks']);
+    $clicksX[] = $clickCoords['x'];
+    $clicksY[] = $clickCoords['y'];*/
+    $clicks[] = $log['clicks'];
     $hovered = $log['hovered'];
     $clicked = $log['clicked'];
     
@@ -99,10 +103,14 @@ include INC_DIR.'header.php';
       $time[] = $log['sess_time'];
       $vpWidth[] = $log['vp_width'];
       $vpHeight[] = $log['vp_height'];
-      $coordsX[] = explode(",", $log['coords_x']);
-      $coordsY[] = explode(",", $log['coords_y']);
-      $clicksX[] = explode(",", $log['clicks_x']);
-      $clicksY[] = explode(",", $log['clicks_y']);
+      $cX = explode(",", $log['coords_x']);
+      $cY = explode(",", $log['coords_y']);
+      $coordsX[] = $cX;
+      $coordsY[] = $cY;
+      /*$clickCoords = get_click_coordinates($cX,$cY,$log['clicks']);
+      $clicksX[] = $clickCoords['x'];
+      $clicksY[] = $clickCoords['y'];*/
+      $clicks[] = $log['clicks'];
       $hovered .= $log['hovered'];
       $clicked .= $log['clicked'];
     }

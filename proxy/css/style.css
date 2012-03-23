@@ -1,0 +1,12 @@
+body { font-family:arial, tahoma, sans-serif; padding:1em; }
+h1 { font-size:120%; color:#555; text-align:center; width:70%; margin:auto; border-bottom:1px dotted navy; }
+label { font-weight:bold; }
+fieldset { padding:3em; border:1px solid orange; -moz-border-radius:5px; }
+fieldset legend { font-weight:bold; color:cornflowerblue; }
+blockquote.connect-error { font-family:courier new, courier, monospace; font-size:0.8em; background:#FFFFC6; padding:4px; }
+/* added (smt) styles */
+form#track { text-align:center; }
+  #track fieldset * { vertical-align:middle; }
+input#url { font-size:150%; }
+input.button { font-size:110%; }
+.noborder { border:none; }

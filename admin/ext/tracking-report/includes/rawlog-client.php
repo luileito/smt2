@@ -14,7 +14,7 @@
   <tbody>
   <?php
   $list  = '<tr class="odd">'.PHP_EOL;
-  // log data
+  // log data  
   $list .= '<td>'.PHP_EOL;
   if ($log['url']) {
     $list .= '<a href="'.$log['url'].'" rel="external" title="'.$log['title'].'">'.trim_text($log['title']).'</a>';
@@ -39,8 +39,8 @@
   $list .= $log['fps'].' fps'.PHP_EOL;
   $list .= '</td>'.PHP_EOL;
   $list .= '</tr>'.PHP_EOL;
-
+    
   echo $list;
   ?>
-  </tbody>
+  </tbody>    
 </table>

@@ -1,8 +1,4 @@
 <?php
-// set dir name for saving backup files
-$BACKUPDIR = dirname(__FILE__).'/backups';
-
-
 // server settings are required - relative path to smt2 root dir
 require '../../../config.php';
 // protect extension from being browsed by anyone
@@ -12,6 +8,9 @@ require SYS_DIR.'logincheck.php';
 include INC_DIR.'header.php';
 // only root user can perform certain operations
 $ROOT = is_root();
+
+// load maintenance configuration
+require 'config.php';
 ?>
 
 <h1 id="orphanlogs">Orphan cache logs</h1>
@@ -99,24 +98,26 @@ else
 
 <?php
 // check dir
-if (!is_dir($BACKUPDIR)) 
+if (!is_dir(BACKUPDIR)) 
 {
-  if (!mkdir($BACKUPDIR)) {
+  if (!mkdir(BACKUPDIR)) {
     echo display_text($_displayType["ERROR"],
-                      $BACKUPDIR.' does not exist and it could not be created.
-                       You must create '.$BACKUPDIR.' dir or specify another directory to save database backups in <code>admin/ext/maintenance/index.php</code> file.'
+                      BACKUPDIR.' does not exist and it could not be created.
+                       You must create <strong>'.BACKUPDIR.'</strong> dir or specify another directory to save database backups in <code>admin/ext/maintenance/index.php</code> file.'
                      );
   }
 }
-// ensure full access to backup dir
-else if (!chmod($BACKUPDIR, 0777)) 
-{
-  echo display_text($_displayType["ERROR"],
-                    'Settings permissions to '.$BACKUPDIR.' failed.
-                     You must set write permissions to that directory manually.'
-                   );
+// ensure full access to backup dir (at least apache/IIS)
+if (!is_writeable(BACKUPDIR)) {
+  $perms = substr(decoct( fileperms(BACKUPDIR) ), 2);
+  if (($perms != "775" || $perms != "777") && !chmod(BACKUPDIR, 0775)) 
+  {
+    echo display_text($_displayType["ERROR"],
+                      'Settings permissions to <strong>'.BACKUPDIR.'</strong> failed.
+                       You must set write permissions to that directory manually.'
+                     );
+  }
 }
-
 if ($ROOT) {
 ?>
 <p>
@@ -126,17 +127,19 @@ if ($ROOT) {
 </p>
 <p>
   Note that in all cases the whole database will be dumped in SQL format.
+  If you only want to export the interactions logs from the <code><?=TBL_PREFIX.TBL_RECORDS?></code>,
+  please go to <a href="../tracking-report/">the tracking report</a> section instead.
 </p>
 <?php
 }
 
 // check previously saved logs
-if ($handle = opendir($BACKUPDIR))
+if ($handle = opendir(BACKUPDIR))
 {
   $files = array();
   while (false !== ($file = readdir($handle))) {
     // look for available module extensions
-    if ($file != "." && $file != ".." && is_file($BACKUPDIR.'/'.$file)) {
+    if ($file != "." && $file != ".." && is_file(BACKUPDIR.'/'.$file)) {
       $files[] = $file;
     }
   }
@@ -147,7 +150,7 @@ if ($handle = opendir($BACKUPDIR))
   if ($num > 0) {
     $rows = "";
     foreach ($files as $file) {
-      $rows .= '<li><a href="'.basename($BACKUPDIR).'/'.$file.'">'.$file.'</a></li>'.PHP_EOL;
+      $rows .= '<li><a href="'.basename(BACKUPDIR).'/'.$file.'">'.$file.'</a></li>'.PHP_EOL;
     }
 ?>
 

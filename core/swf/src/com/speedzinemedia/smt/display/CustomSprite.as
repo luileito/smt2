@@ -8,13 +8,9 @@ package com.speedzinemedia.smt.display {
 	
 	public class CustomSprite extends Sprite
     {
-        //private var _id:String;
         private var _color:uint;
         
-        public function CustomSprite()
-        {
-            //super();
-        };
+        public function CustomSprite(){};
         
         // getter/setters
 		public function set color(c:uint):void
@@ -26,17 +22,6 @@ package com.speedzinemedia.smt.display {
 		{
 			return _color;
 		};
-		/*
-		public function set id(str:String):void
-		{
-			_id = str;
-		};
-		
-		public function get id():String
-		{
-			return _id;
-		};
-        */
         
     } // end class
 }
