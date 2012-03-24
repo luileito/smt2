@@ -1,6 +1,6 @@
 <?php
 /** Installed (smt) version. */
-define ('SMT_VERSION',  "2.0.2");
+define ('SMT_VERSION',  "2.1.0");
 
 /** Title for CMS pages. */
 define ('CMS_TITLE',   "simple mouse tracking " . SMT_VERSION);
