@@ -83,9 +83,9 @@ $opts = array(
                 array(CMS_TYPE,   "maxSampleSize",      0, "Number of logs to replay/analyze simultaneously (0 means no limit). If your database has a lot of records for the same URL, you can take into account only a certain subset of logs."),
                 // disabled by default
                 array(CMS_CHOICE, "mergeCacheUrl",      0, "Merges all logs that have the same URL. Useful when grouping records by page ID, and one wants to analyze all common URLs."),
+                array(CMS_CHOICE, "refreshOnResize",    0, "Reload visualization page on resizing the browser window."),                
                 array(CMS_CHOICE, "displayWidgetInfo",  0, "Display hover and click frequency for each interacted DOM element."),
-                array(CMS_CHOICE, "refreshOnResize",    0, "Reload visualization page on resize window &ndash; <em>use with care</em>, as on some browsers the resize event will fire endlessly."),
-                array(CMS_CHOICE, "displayWidgetInfo",  0, "Display hover and click frequency for most interacted DOM elements."),
+                array(CMS_CHOICE, "displayGoogleMap",   0,  "If you typed a valid Google Maps key on your <em>config.php</em> file, the client location will be shown on a map when analyzing the logs."),
                 array(CMS_CHOICE, "enableDebugging",    0, "Turn on PHP strict mode and work with JS src files instead of minimized ones.")
              );
 // update CMS options table
