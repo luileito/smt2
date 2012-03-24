@@ -217,13 +217,13 @@ if (!$show) { $show = $defaultNumRecords; }
             
             <input id="tsv" type="radio" name="format" class="radio" value="tsv" />
             <label for="tsv"><abbr title="Tab Separated Values">TSV</abbr></label>
-
+<!--
             <input id="txt" type="radio" name="format" class="radio" value="txt" /> 
             <label for="txt"><abbr title="plain TeXT (each field is preceded by a newline char)">TXT</abbr></label>
 
             <input id="xml" type="radio" name="format" class="radio" value="xml" />
             <label for="xml"><abbr title="eXtensible Markup Language">XML</abbr></label>
-
+-->
             <input type="submit" class="button round" name="download" value="Download logs" />
             <?php
 					    /*if (!isset($_SESSION['filterquery'])) {
