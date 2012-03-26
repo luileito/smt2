@@ -1,3 +1,8 @@
+/*! 
+ * (smt)2 simple mouse tracking v2.1.0
+ * Copyleft (cc) 2006-2012 Luis Leiva
+ * http://smt2.googlecode.com & http://smt.speedzinemedia.com
+ */
 /** 
  * (smt)2 simple mouse tracking - record script (smt-record.js)
  * Copyleft (cc) 2006-2012 Luis Leiva
@@ -106,8 +111,7 @@
     paused:   false,                              // check active window
     clicked:  false,                              // no mouse click yet
     timestamp: null,                              // current date's timestamp
-    timer:    null,                               // session time
-    timeout:  smtOpt.fps * smtOpt.recTime,        // tracking timeout
+    timeout:  null,                               // tracking timeout
     xmlhttp:  aux.createXMLHTTPObject(),          // common XHR object
     firstTimeUser:  1,                            // assume a first time user initially
     
@@ -368,6 +372,8 @@
       smtRec.computeAvailableSpace();
       // get this location BEFORE making the AJAX request
       smtRec.url = escape(window.location.href);
+      // get user-defined recording timeout (if any)
+      smtRec.timeout = smtOpt.fps * smtOpt.recTime;
       // set main function: the (smt)2 recording interval
       var interval = Math.round(1000/smtOpt.fps);
       smtRec.rec   = setInterval(smtRec.recMouse, interval);
