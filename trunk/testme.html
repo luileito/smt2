@@ -1,0 +1,27 @@
+<DOCTYPE html>
+<!-- This page is a bulletproof example to test smt2 recording capabilities. -->
+<html>
+
+<head>
+
+  <title>My document title</title>
+
+  <script type="text/javascript" src="/smt2/core/js/smt-aux.min.js"></script>
+  <script type="text/javascript" src="/smt2/core/js/smt-record.min.js"></script>
+  <script type="text/javascript">
+  try {
+    smt2.record({ 
+      recTime: Number.MAX_VALUE,
+      disabled: false,
+      warn: false
+    });
+  } catch(err) {}
+  </script>
+
+</head>
+
+<body>
+Your page content goes here...
+</body>
+
+</html>
