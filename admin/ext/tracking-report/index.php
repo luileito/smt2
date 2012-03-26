@@ -40,7 +40,8 @@ if (!$show) { $show = $defaultNumRecords; }
           <th>location</th>
           <th>page ID</th>
           <th>date</th>
-          <th>aprox. time</th>
+          <th>browsing time</th>
+          <th>interaction time</th>
           <th># clicks</th>
           <!--<th>visualize</th>-->
           <th>action</th>
@@ -293,7 +294,7 @@ if (!$show) { $show = $defaultNumRecords; }
       // display nice table
       $(records).stripy().tablesorter({
           headers: {
-            6: { sorter: false }
+            7: { sorter: false }
           },
           cssHeader: "headerNormal"
       });

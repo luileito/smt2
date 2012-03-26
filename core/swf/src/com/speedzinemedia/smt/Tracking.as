@@ -87,7 +87,7 @@ package com.speedzinemedia.smt {
         {
             createLayers();
 			      // set stage frame rate from user data
-            stage.frameRate = $FPS;            
+            stage.frameRate = $FPS;
             // allow pausing the mouse visualization
             stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
             // listen to changes from other classess

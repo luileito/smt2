@@ -80,7 +80,7 @@ package com.speedzinemedia.smt.display {
             __stop.x = __play.x;
             __stop.visible = false;
             
-            __maxSeconds = Math.floor(prop.time*2); //Math.ceil(width/__scrubber.step);
+            __maxSeconds = Math.ceil(prop.time); //Math.ceil(width/__scrubber.step);
               
             // scrubber boundaries decoration
             scrubberContainer.graphics.lineStyle(0, 0xEEEEEE);

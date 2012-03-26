@@ -31,7 +31,7 @@ $where = (!empty($_SESSION['filterquery'])) ? $_SESSION['filterquery'] : "1"; //
 
 $records = db_select_all(
                           TBL_PREFIX.TBL_RECORDS,
-                          //"id,client_id,cache_id,os_id,browser_id,ftu,ip,sess_date,sess_time,coords_x,coords_y,clicks",
+                          //"id,client_id,cache_id,os_id,browser_id,ftu,ip,sess_date,sess_time,fps,coords_x,coords_y,clicks",
                           "*",
                           $where." ORDER BY sess_date DESC, client_id LIMIT $limit"
                         );
@@ -104,9 +104,10 @@ if ($records)
           break;
       }
       
-      $displayDate  = $GROUPED;
-      $time         = $GROUPED;
-      $numClicks    = $GROUPED;
+      $displayDate     = $GROUPED;
+      $browsingTime    = $GROUPED;
+      $interactionTime = $GROUPED;
+      $numClicks       = $GROUPED;
       
     } else {
       // display a start on first time visitors
@@ -115,7 +116,8 @@ if ($records)
       $displayDate = ($usePrettyDate) ? 
         '<abbr title="'.prettyDate::getStringResolved($r['sess_date']).'">'.$r['sess_date'].'</abbr>' : $r['sess_date'];
       
-      $time = $r['sess_time'];
+      $browsingTime = $r['sess_time'];
+      $interactionTime = round(count(explode(",", $r['coords_x']))/$r['fps'], 2);
       $IP = mask_client(md5($r['ip']));
       $displayId = 'id='.$r['id'];
       $pageId = $r['cache_id'];
@@ -131,7 +133,8 @@ if ($records)
     $tablerow .= ' <td>'.$IP.'</td>'.PHP_EOL;
     $tablerow .= ' <td>'.$pageId.'</td>'.PHP_EOL;
     $tablerow .= ' <td>'.$displayDate.'</td>'.PHP_EOL;
-    $tablerow .= ' <td>'.$time.'</td>'.PHP_EOL;
+    $tablerow .= ' <td>'.$browsingTime.'</td>'.PHP_EOL;
+    $tablerow .= ' <td>'.$interactionTime.'</td>'.PHP_EOL;    
     $tablerow .= ' <td>'.$numClicks.'</td>'.PHP_EOL;
     $tablerow .= ' <td>'.PHP_EOL;
     
