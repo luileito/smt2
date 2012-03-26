@@ -1,3 +1,8 @@
+/*! 
+ * (smt)2 simple mouse tracking v2.1.0
+ * Copyleft (cc) 2006-2012 Luis Leiva
+ * http://smt2.googlecode.com & http://smt.speedzinemedia.com
+ */
 /**
  * (smt)2 simple mouse tracking - auxiliary functions (smt-aux.js)
  * Copyleft (cc) 2006-2012 Luis Leiva
