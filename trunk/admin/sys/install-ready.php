@@ -38,7 +38,7 @@ $sql .= '`scr_height`   SMALLINT      unsigned  NOT NULL, ';
 $sql .= '`vp_width`     SMALLINT      unsigned  NOT NULL, ';                    // client viewport size
 $sql .= '`vp_height`    SMALLINT      unsigned  NOT NULL, ';
 $sql .= '`sess_date`    TIMESTAMP     default   CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, '; // session timestamp    
-$sql .= '`sess_time`    FLOAT(5,2)    unsigned  NOT NULL, ';                    // tracking session time
+$sql .= '`sess_time`    FLOAT(7,2)    unsigned  NOT NULL, ';                    // tracking session time
 $sql .= '`fps`          TINYINT       unsigned  NOT NULL, ';                    // registration accuracy
 $sql .= '`coords_x`     MEDIUMTEXT              NOT NULL, ';                    // mouse coordinates (max 16777215 chars in one mouse trail)
 $sql .= '`coords_y`     MEDIUMTEXT              NOT NULL, ';  
@@ -146,6 +146,7 @@ try_sql_query($sql);
 $exts = ext_available();
 foreach ($exts as $dir) 
 {
+
   if (!db_select(TBL_PREFIX.TBL_EXTS, "id", "dir = '".$dir."'")) {
     $sql  = "INSERT INTO ".TBL_PREFIX.TBL_EXTS." (dir) VALUES ('".$dir."')";
     db_query($sql);
