@@ -34,6 +34,9 @@ if (!mysql_num_rows($res)) {
   db_query($sql);
   $UPGRADED = true;
 }
+// in any case, allow recording more time
+$res = db_query("ALTER TABLE `".TBL_PREFIX.TBL_RECORDS."` MODIFY `sess_time` FLOAT(7,2) unsigned NOT NULL");
+
 // check if clicks should be updated
 $res = db_query("SHOW COLUMNS FROM ".TBL_PREFIX.TBL_RECORDS." LIKE 'clicks'");
 if (!mysql_num_rows($res)) {
