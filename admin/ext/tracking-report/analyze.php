@@ -22,7 +22,7 @@ include INC_DIR.'header.php';
   if (isset($_GET['id'])) 
   {
     // common var for other modules
-    $id = (int) $_GET['id']; 
+    $id = (int) $_GET['id'];
     // shorcuts to table names
     $r = TBL_PREFIX.TBL_RECORDS;
     $c = TBL_PREFIX.TBL_CACHE;
@@ -30,7 +30,7 @@ include INC_DIR.'header.php';
     $o = TBL_PREFIX.TBL_OS;
     // get log data
     $log = db_select($r." LEFT JOIN ".$c." ON ".$r.".cache_id = ".$c.".id LEFT JOIN ".$b." ON ".$r.".browser_id = ".$b.".id LEFT JOIN ".$o." ON ".$r.".os_id = ".$o.".id", 
-                     $r.".* AS record, ".$c.".* AS cache, ".$b.".name AS browser, ".$o.".name AS os", 
+                     $r.".*, ".$c.".*, ".$b.".name, ".$o.".name", 
                      TBL_PREFIX.TBL_RECORDS.".id = '".$id."'");
                      
     if (!$log) { 
