@@ -12,7 +12,7 @@ else if (isset($_GET['pid'])) $where = "id='". $_GET['pid'] ."'";
 else if (isset($_GET['cid'])) $where = "id='". $_GET['cid'] ."'";
 else $where = "1"; // default: download all logs
 
-$records = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", $where." ORDER BY sess_date, client_id");
+$records = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", $where." ORDER BY sess_date, client_id");var_dump($records);
 if (!$records) { die("No logs found matching your criteria!"); }
 
 $format = isset($_POST['format']) ? $_POST['format'] : "csv";
@@ -57,7 +57,7 @@ if (!$res) {
   die('Cannot open ZIP file.');
 }
 // add meta comments
-$comm = "Downloaded on ".date('l jS \of F Y h:i:s A')
+$comm = "Downloaded on ".date('l jS \of F Y h:i:s A');
 $zip->setArchiveComment($comm);
 $readme  = $comm.PHP_EOL;
 $readme .= "Each column's value is delimited either by a colon (CSV) or a tab (TSV).".PHP_EOL;
