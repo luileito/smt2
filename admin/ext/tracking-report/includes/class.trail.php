@@ -13,9 +13,9 @@ class UserTrail
   /** Number of trails (visited pages) */
   protected $num;
   
-  public function __construct($cliendId) 
+  public function __construct($clientId) 
   {
-    $this->cid = $cliendId;
+    $this->cid = $clientId;
     $this->query();
   }
 
@@ -24,7 +24,7 @@ class UserTrail
     $records = db_select_all(TBL_PREFIX.TBL_RECORDS, 
                              "id,cache_id,sess_date,DATE_FORMAT(sess_date,'%W %D %M %Y (%H:%i:%s)') as udate,sess_time", 
                              "client_id = '".$this->cid."' ORDER BY id ASC");
-    
+   
     $this->num = count($records);
     
 		$count = 0;

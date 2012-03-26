@@ -6,8 +6,9 @@ if (!empty($_GET['id']))
   // set log identifier (needed in 'user.php')
   $id  = (int) $_GET['id'];
   $log = db_select(TBL_PREFIX.TBL_RECORDS." LEFT JOIN ".TBL_PREFIX.TBL_CACHE." ON ".TBL_PREFIX.TBL_RECORDS.".cache_id = ".TBL_PREFIX.TBL_CACHE.".id", 
-                   TBL_PREFIX.TBL_RECORDS.".* AS record, ".TBL_PREFIX.TBL_CACHE.".* AS cache", 
+                   TBL_PREFIX.TBL_RECORDS.".*, ".TBL_PREFIX.TBL_CACHE.".*", 
                    TBL_PREFIX.TBL_RECORDS.".id = '".$id."'");
+
   // log fields
   $clientId       = $log['client_id'];
   $timestamp      = mask_client($clientId).'\n'.date("h:i A", strtotime($log['sess_date']));
