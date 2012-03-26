@@ -38,7 +38,7 @@ require REQUIRED.'/functions.url.php';
 //require_once realpath(REQUIRED.'/../../').'/core/functions.php';
 require_once BASE_PATH.'/core/functions.php';
 
-if (db_option(TBL_PREFIX.TBL_CMS, "enableDebugging")) {
+if (@db_option(TBL_PREFIX.TBL_CMS, "enableDebugging")) {
   error_reporting(E_ALL | E_STRICT);
 } else {
   error_reporting(E_ERROR);
