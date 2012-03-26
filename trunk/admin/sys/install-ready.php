@@ -18,7 +18,7 @@ echo 'Creating database <em>'.DB_NAME.'</em>: ';
 try_sql_query('CREATE DATABASE IF NOT EXISTS '.DB_NAME);
 
 // now enable default error reporting
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE);
 
 /* create records table ----------------------------------------------------- */
 echo 'Creating table <em>'.TBL_PREFIX.TBL_RECORDS.'</em>: ';

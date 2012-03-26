@@ -13,7 +13,7 @@ define ('SWF_PATH',      ABS_PATH."core/swf/");
 // check if debugging is active
 $jspath = ABS_PATH."core/js/";
 $jsext = ".min.js";
-if (db_option(TBL_PREFIX.TBL_CMS, "enableDebugging")) {
+if (@db_option(TBL_PREFIX.TBL_CMS, "enableDebugging")) {
   $jspath .= "src/";
   $jsext = ".js";
 }
