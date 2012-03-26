@@ -55,12 +55,12 @@ if ($isInstalled) {
       $logs = db_select_all(TBL_PREFIX.TBL_CACHE, "file", 1);
       foreach ($logs as $log) {
         if (is_file(CACHE_DIR.$log)) {
-          //unlink(CACHE_DIR.$log);
+          unlink(CACHE_DIR.$log);
         }
       }
       // then delete (smt) tables
       foreach ($_lookupTables as $table) {
-        //db_query("DROP TABLE ".TBL_PREFIX.$table);
+        db_query("DROP TABLE ".TBL_PREFIX.$table);
       }
       // notify
       $msgs[] = 'Tables were dropped.';
@@ -68,7 +68,7 @@ if ($isInstalled) {
     }
 
     if (isset($_POST['dropdb'])) {
-      //db_query("DROP DATABASE ".DB_NAME);
+      db_query("DROP DATABASE ".DB_NAME);
       $msgs[] = 'Database was dropped.';
     }
 ?>
@@ -96,7 +96,7 @@ if ($isInstalled) {
         {
           var cookie = cookies[i];
           if ( /smt-/i.test(cookie) ) {
-            //aux.cookies.deleteCookie(cookie);
+            aux.cookies.deleteCookie(cookie);
           }
         }
         // notify
