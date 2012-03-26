@@ -14,10 +14,10 @@ package com.speedzinemedia.smt.utils {
 	
 	public class ProgressTimer extends EventDispatcher
 	{
-        /** Amount of time to reach. */
-        public var maxTimeMs:int = 0;
+    /** Amount of time to reach. */
+    public var maxTimeMs:int = 0;
         
-        private var __startTime:int  = 0; // origin
+    private var __startTime:int  = 0; // origin
 		private var __targetTime:int = 0; // goal
 		private var __pauseTime:int  = 0; // helper flag
 		private var __interval:int   = 0; // clock
@@ -29,28 +29,28 @@ package com.speedzinemedia.smt.utils {
 			stop();
 			
 			__startTime  = getTimer();
-            __pauseTime  = __startTime;
+      __pauseTime  = __startTime;
 			__targetTime = __startTime + maxTimeMs;
 			__interval   = setInterval(update, 30);
 		};
 		
 		public function pause():void
 		{
-            __pauseTime = getTimer();
-        };
+      __pauseTime = getTimer();
+    };
 		
 		public function stop():void
 		{
-            clearInterval(__interval);
+      clearInterval(__interval);
 		};
                 		
 		private function update():void
 		{
-		    var p:Number = (getTimer() - __pauseTime) / (__targetTime - __startTime);
-            if (p >= 1) {
-    			p = 1;
-                stop();
-    		}
+		  var p:Number = (getTimer() - __pauseTime) / (__targetTime - __startTime);
+      if (p >= 1) {
+    	  p = 1;
+        stop();
+      }
 			dispatchEvent(new ProgressTimerEvent(ProgressTimerEvent.PROGRESS, p));
 		};
 		

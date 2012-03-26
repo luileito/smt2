@@ -52,7 +52,7 @@ package com.speedzinemedia.smt.display {
             __info = prop;
 
             __loop = new ProgressTimer();
-            __loop.maxTimeMs = prop.time*2 * 1000;
+            __loop.maxTimeMs = prop.time * 1000;
             __loop.addEventListener(ProgressTimerEvent.PROGRESS, progress);
             __loop.start();
         };
