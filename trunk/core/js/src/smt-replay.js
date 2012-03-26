@@ -106,7 +106,8 @@
   if (typeof JSON.parse !== 'function')   { throw("JSON parser not found");              }
   
   // when using the JS api, draw only the average path
-  var user, users = JSON.parse(unescape(smtData.users));
+  var user;
+  var users = JSON.parse(unescape(smtData.users));
   var numUsers = users.length;
   if (numUsers > 1) {
     for (var i = 0; i < numUsers; ++i) {
@@ -608,7 +609,10 @@
       aux.addEvent(document, "keyup",  smtRep.helpKeys);
       //aux.addEvent(window, "resize", smtRep.reset);
       //aux.addEvent(window, "resize", aux.reloadPage);
-      aux.onDOMload(aux.allowTrackingOnFlashObjects);
+      aux.onDOMload(function(){
+        // replay mouse track over Flash objects 
+        aux.allowTrackingOnFlashObjects(document);
+      });
       aux.addEvent(window, "load", smtRep.init);
       //aux.onDOMload(smtRep.init);
     }
