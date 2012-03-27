@@ -77,6 +77,12 @@
      * @type string
      */
     layoutType: "liquid",
+    /**
+     * Recording can stop/resume on blur/focus to save space in your DB. 
+     * Depending on your goals/experiment/etc., you may want to tweak this behavior.
+     * @type boolean
+     */
+    contRecording: true,
     /** 
      * Random user selection: if true, (smt)2 is not initialized.
      * Setting it to false (or 0) means that all the population will be tracked.
@@ -386,14 +392,16 @@
       aux.addEvent(document, "mousedown", smtRec.setClick);               // mouse is clicked
       aux.addEvent(document, "mouseup",   smtRec.releaseClick);           // mouse is released
       aux.addEvent(window,   "resize",    smtRec.computeAvailableSpace);  // update viewport space
-      // only record mouse when window is active
-      if (document.attachEvent) {
-        // see http://todepoint.com/blog/2008/02/18/windowonblur-strange-behavior-on-browsers/
-        aux.addEvent(document.body, "focusout", smtRec.pauseRecording);
-        aux.addEvent(document.body, "focusin",  smtRec.resumeRecording);
-      } else {
-        aux.addEvent(window,  "blur",  smtRec.pauseRecording);
-        aux.addEvent(window,  "focus", smtRec.resumeRecording);
+      if (!smtOpt.contRecording) {
+        // only record mouse when window is active
+        if (document.attachEvent) {
+          // see http://todepoint.com/blog/2008/02/18/windowonblur-strange-behavior-on-browsers/
+          aux.addEvent(document.body, "focusout", smtRec.pauseRecording);
+          aux.addEvent(document.body, "focusin",  smtRec.resumeRecording);
+        } else {
+          aux.addEvent(window,  "blur",  smtRec.pauseRecording);
+          aux.addEvent(window,  "focus", smtRec.resumeRecording);
+        }
       }
       // track also at the widget level (fine-grained mouse tracking)
       aux.addEvent(document, "mousedown", smtRec.findElement);        // elements clicked
