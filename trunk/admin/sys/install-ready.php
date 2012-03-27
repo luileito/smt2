@@ -107,7 +107,7 @@ $ADMINPASS = generate_password();
 // insert admin user
 if (!db_select(TBL_PREFIX.TBL_USERS, "id", "login = 'root'")) {
   $sql  = "INSERT INTO ".TBL_PREFIX.TBL_USERS." (role_id, login, pass, name, email, registered)";
-  $sql .= " VALUES (1, 'root', MD5('".$ADMINPASS."'), 'System Administrator', '".$EMAIL."', NOW())";
+  $sql .= " VALUES (1, 'root', MD5('".$ADMINPASS."'), 'System Administrator', '".$_POST['email']."', NOW())";
   db_query($sql);
 }
 
