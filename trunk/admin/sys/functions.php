@@ -392,7 +392,7 @@ function ext_available()
   {
     while (false !== ($file = readdir($handle))) {
       // look for available module extensions
-      if ($file != "." && $file != ".." && is_dir($dir.'/'.$file)) {
+      if (!str_startswith($file, ".") && is_dir($dir.'/'.$file)) {
         $ext[] = $file;
       }
     }
@@ -511,7 +511,7 @@ function count_dir_files($dir)
   $count = 0;
   if ($handle = opendir($dir)) {
     while (false !== ($file = readdir($handle))) {
-      if ($file != "." && $file != ".." && is_file($dir.'/'.$file)) {
+      if (!str_startswith($file, ".") && is_file($dir.'/'.$file)) {
         $count++;
       }
     }
@@ -647,6 +647,7 @@ function die_msg($text = "")
  * Pad with zeros a number.
  * @param int $num      input number
  * @param int $numZeros number of zeros
+ * @return string
  */
 function pad_number($num, $numZeros)
 {
@@ -685,7 +686,7 @@ function unregister_GLOBALS()
 
 /**
  * Gets a SQL-like string with all cache IDs that are related to the same URL.
- * @param   int     Log cache ID
+ * @param   int     $pageId   Log cache ID
  * @return  string  SQL query
  */
 function get_cache_common_url($pageId)
@@ -702,5 +703,16 @@ function get_cache_common_url($pageId)
   }
 
   return $merge;
+}
+
+/**
+ * Checks if a strnig starts with a certain prefix.
+ * @param   $string string  source string
+ * @param   $prefix string  prefix to find
+ * @return          boolean TRUE on success or FALSE on failure
+ */
+function str_startswith($str, $prefix) 
+{
+   return strncmp($str, $prefix, strlen($prefix)) == 0;
 }
 ?>
