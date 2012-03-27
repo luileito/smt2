@@ -81,6 +81,8 @@ warn: false,
 warnText: "We'd like to track your mouse activity\nin order to improve this website's usability.\nDo you agree?", 
 // Cookies lifetime (in days) to reset both first time users and agreed-to-track visitors
 cookieDays: 365,
+// Recording can stop/resume on blur/focus to save space in your DB
+contRecording: true,
 // Random user selection. Setting it to false (or 0) means that all the population will be tracked.      
 disabled: 0 //Math.round(Math.random()) // <-- random sampling is recommended!
 }}}
