@@ -223,7 +223,7 @@
         // store using the UNIPEN format
         smtRec.coords.x.push(smtRec.mouse.x);
         smtRec.coords.y.push(smtRec.mouse.y);
-        smtRec.coords.p.push(smtRec.clicked);
+        smtRec.coords.p.push(+smtRec.clicked);
     	} else {
     	  // timeout reached
     	  clearInterval(smtRec.rec);
