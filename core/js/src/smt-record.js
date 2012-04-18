@@ -63,7 +63,7 @@
      * You can split lines in the confirm dialog by typing the char \n.
      * @type string
      */
-    warnText: "We'd like to track your mouse activity" +"\n"+ "in order to improve this website's usability." +"\n"+ "Do you agree?",
+    warnText: "We'd like to study your mouse activity." +"\n"+ "Do you agree?",
     /**
      * Cookies lifetime (in days) to reset both first time users and agreed-to-track visitors.
      * @type int     
@@ -86,8 +86,10 @@
     /** 
      * Random user selection: if true, (smt)2 is not initialized.
      * Setting it to false (or 0) means that all the population will be tracked.
-     * You should use random sampling for accurate statistical analysis.     
-     * @type int           
+     * You should use random sampling for better statistical analysis,
+     * or your own sampling strategy; e.g. this would track users only on Mondays:
+     * disabled: (function(){ return (new Date().getDay() == 1); })()
+     * @type int
      */
     disabled: 0 //Math.round(Math.random()) // <-- random sampling
   };
@@ -104,22 +106,21 @@
    * This Object is private. Methods are cited but not documented.
    */
   var smtRec = {
-    i: 0,                                         // step counter
-    mouse:    { x:0, y:0 },                       // mouse position
-    page:     { width:0, height:0 },              // data normalization
-    discrepance: { x:1, y:1 },                    // discrepance ratios
-    coords:   { x:[], y:[], type:[] },            // position coords and mouse click state
-    elem:     { hovered:[], clicked:[] },         // clicked and hovered elements
-    url:      null,                               // document URL
-    rec:      null,                               // recording identifier
-    userId:   null,                               // user identifier
-    append:   null,                               // append data identifier
-    paused:   false,                              // check active window
-    clicked:  false,                              // no mouse click yet
-    timestamp: null,                              // current date's timestamp
-    timeout:  null,                               // tracking timeout
-    xmlhttp:  aux.createXMLHTTPObject(),          // common XHR object
-    firstTimeUser:  1,                            // assume a first time user initially
+    i: 0,                                  // step counter
+    mouse:     { x:0, y:0 },               // mouse position
+    page:      { width:0, height:0 },      // data normalization
+    coords:    { x:[], y:[], p:[] },       // position coords and mouse click state (~ pressure)
+    elem:      { hovered:[], clicked:[] }, // clicked and hovered elements
+    url:       null,                       // document URL
+    rec:       null,                       // recording identifier
+    userId:    null,                       // user identifier
+    append:    null,                       // append data identifier
+    paused:    false,                      // check active window
+    clicked:   false,                      // no mouse click yet
+    timestamp: null,                       // current date's timestamp
+    timeout:   null,                       // tracking timeout
+    xmlhttp:   aux.createXMLHTTPObject(),  // common XHR object
+    ftu:       1,                          // assume a first time user initially
     
     /** 
      * Pauses recording. 
@@ -137,46 +138,62 @@
       smtRec.paused = false;
     },
     /** 
-     * Normalizes data on window resizing.
-     * @deprecated since v2.0.2
-     */
-    normalizeData: function() 
-    { 
-      var doc = aux.getPageSize();
-      // compute new discrepace ratio
-      smtRec.discrepance.x = aux.roundTo(doc.width / smtRec.page.width);
-      smtRec.discrepance.y = aux.roundTo(doc.height / smtRec.page.height);
-    },
-    /** 
      * Cross-browser way to register the mouse position.
      * @autor Peter-Paul Koch (quirksmode.org)
      */
     getMousePos: function(e) 
-    { 
-      if (!e) { e = window.event; }
-      var o = e.currentTarget || e.srcElement; // for iframe compatibility
-      var doc = o.document || o;
+    {
+      if (!e) var e = window.event;
+      
       var x = 0, y = 0;
     	if (e.pageX || e.pageY) {
     		x = e.pageX;
     		y = e.pageY;
     	}	else if (e.clientX || e.clientY) {
-    		x = e.clientX + doc.body.scrollLeft + doc.documentElement.scrollLeft;
-    		y = e.clientY + doc.body.scrollTop  + doc.documentElement.scrollTop;
+    		x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+    		y = e.clientY + document.body.scrollTop  + document.documentElement.scrollTop;
     	}
-    	var frame = o.frameElement;
-      if (frame && frame.offsetParent) {
-        do {
-          x += frame.offsetLeft;
-          y += frame.offsetTop;
-        } while (frame = frame.offsetParent);
-      }
       // in certain situations the mouse coordinates could be negative values (e.g. Opera)
     	if (x < 0 || !x) x = 0;
     	if (y < 0 || !y) y = 0;
-                	
-    	smtRec.mouse.x = x;
-    	smtRec.mouse.y = y;
+    },
+    /** 
+     * Cross-browser way to register the mouse position inside an iframe.
+     */
+    getMousePosIFrame: function(e, frame) 
+    {
+      // we don't want to stop tracking when interacting on an iframe (a blur event is triggered)
+      smtRec.pause = false;
+      
+    	var x = e.pageX || e.clientX;
+    	var y = e.pageY || e.clientY;
+    	var d = frame.contentDocument || frame.contentWindow;
+      if (d.body) {
+        x -= d.body.scrollLeft;
+        y -= d.body.scrollTop;
+      }
+      if (d.documentElement) {
+        x -= d.documentElement.scrollLeft;
+        y -= d.documentElement.scrollTop;
+      }
+      var c = smtRec.getFrameOffsets(frame);
+      x += c.left;
+      y += c.top;
+    },
+    /** 
+     * Computes iframe offsets.
+     */
+    getFrameOffsets: function(frame)
+    {
+      var frm = (frame && frame.frameElement) ? frame.frameElement : frame;
+      var l = 0, t = 0;
+      if (frm && frm.offsetParent) {
+        do {
+          l += frm.offsetLeft;
+          t += frm.offsetTop;
+        } while (frm = frm.offsetParent);
+      }
+      return { left:l , top:t }
     },
     /** 
      * This method allows to register single clicks and drag and drop operations.
@@ -203,18 +220,10 @@
       if (smtRec.paused) { return; }
       // get mouse coords until timeout is reached 
       if (smtRec.i < smtRec.timeout) {
-        // get coords
-        var x = smtRec.mouse.x;
-        var y = smtRec.mouse.y;
-        
-        smtRec.coords.x.push(x);
-        smtRec.coords.y.push(y);
-        // track also mouse clicks (Motorola protocol)
-        if (!smtRec.clicked) {
-          smtRec.coords.type.push(0);
-        } else {
-          smtRec.coords.type.push(1);
-        }
+        // store using the UNIPEN format
+        smtRec.coords.x.push(smtRec.mouse.x);
+        smtRec.coords.y.push(smtRec.mouse.y);
+        smtRec.coords.p.push(smtRec.clicked);
     	} else {
     	  // timeout reached
     	  clearInterval(smtRec.rec);
@@ -240,10 +249,10 @@
           data += "&pageh="     + smtRec.page.height;
           data += "&time="      + smtRec.getTime();
           data += "&fps="       + smtOpt.fps;
-          data += "&ftu="       + smtRec.firstTimeUser;
+          data += "&ftu="       + smtRec.ftu;
           data += "&xcoords="   + smtRec.coords.x;
           data += "&ycoords="   + smtRec.coords.y;
-          data += "&clicks="    + smtRec.coords.type;
+          data += "&clicks="    + smtRec.coords.p;
           data += "&elhovered=" + smtRec.elem.hovered;
           data += "&elclicked=" + smtRec.elem.clicked;
           data += "&action="    + "store";
@@ -275,7 +284,7 @@
     /** Gets current time (in seconds). */
     getTime: function()
     {
-      var ms = (new Date()).getTime() - smtRec.timestamp; //aux.roundTo(smtRec.i/smtOpt.fps);
+      var ms = (new Date()).getTime() - smtRec.timestamp;
       
       return ms/1000; // use seconds
     },
@@ -294,7 +303,7 @@
           data += "&pageh="     + smtRec.page.height;
           data += "&xcoords="   + smtRec.coords.x;
           data += "&ycoords="   + smtRec.coords.y;
-          data += "&clicks="    + smtRec.coords.type;
+          data += "&clicks="    + smtRec.coords.p;
           data += "&elhovered=" + smtRec.elem.hovered;
           data += "&elclicked=" + smtRec.elem.clicked;
           data += "&action="    + "append";
@@ -316,7 +325,7 @@
     {
       smtRec.coords.x = [];
       smtRec.coords.y = [];
-      smtRec.coords.type = [];
+      smtRec.coords.p = [];
       smtRec.elem.hovered = [];
       smtRec.elem.clicked = [];
     },
@@ -328,9 +337,9 @@
       if (!e) { e = window.event; }
       // bind function to widget tracking object
       aux.widget.findDOMElement(e, function(name){
-        if (e.type == "mousedown") {
+        if (e.type == "mousedown" || e.type == "touchstart") {
           smtRec.elem.clicked.push(name);
-        } else if (e.type == "mousemove") {
+        } else if (e.type == "mousemove" || e.type == "touchmove") {
           smtRec.elem.hovered.push(name);
         }
       });
@@ -352,26 +361,67 @@
      */     
     trackIFrames: function(d)
     {
-      var iframes = d.getElementsByTagName('iframe');
+      var iframes = d.getElementsByTagName('iframe'), doc, newdoc, frame;
+      // set a common function for mobile clients
+      var onFrameLoaded = function(d) {
+        aux.addEvent(d, "mousedown", smtRec.setClick);
+        aux.addEvent(d, "mouseup",   smtRec.releaseClick);
+        aux.addEvent(d, "touchstart", smtRec.setClick);
+        aux.addEvent(d, "touchend",   smtRec.releaseClick); 
+      };
+      // grab iframes
       for (var i = 0, f = iframes.length; i < f; ++i) {
-        var doc = iframes[i].contentWindow || iframes[i].contentDocument;
-        aux.addEvent(doc, "load", function(e){
-          try {
-            var doc = e.target || e.srcElement;
-            aux.addEvent(doc.document, "mousemove", function(e){
-              smtRec.getMousePos(e);  // as usual
-              smtRec.pause = false;   // we don't want to stop tracking when interacting on an iframe
-            });            
-          } catch(err){} // we can access only the iframes on the same domain than the caller HTML
-          // recursive traversal
-          smtRec.trackIFrames(doc.document);
-          aux.allowTrackingOnFlashObjects(doc.document);
-        });
+        doc = (window.opera) ? iframes[i] : iframes[i].contentWindow || iframes[i].contentDocument;
+        //try { var localAccess = doc.domain; } catch(err) { continue; }
+        // we can access only the iframes on the same domain than the caller HTML
+        if (doc.attachEvent && !window.opera) {
+          // get mouse position for IE on iframe :'(
+          var cloned = iframes[i].cloneNode(true);
+          iframes[i].parentNode.replaceChild(cloned, iframes[i]);
+          // now add dynamically the load event
+          iframes[i].onreadystatechange = function(e) {
+            if (this.readyState === "complete") {
+              frame = this.contentWindow;
+              newdoc = frame.document;
+              aux.addEvent(newdoc, "mousemove", function(e){
+                smtRec.getMousePosIFrame(this.parentWindow.event, this.frames.frameElement);
+              });
+              aux.addEvent(newdoc, "touchmove", function(e){
+                smtRec.getMousePosIFrame(this.parentWindow.event, this.frames.frameElement);
+              });              
+              onFrameLoaded(newdoc);
+            }
+          };
+        } else {
+          // get mouse position for all other browsers :'(
+          if (doc.frameElement) doc = doc.frameElement;
+          aux.addEvent(doc, "load", function(e){
+            frame = e.target || e.srcElement;
+            newdoc = frame.contentDocument;
+            aux.addEvent(newdoc, "mousemove", function(e){
+              smtRec.getMousePosIFrame(e, frame);
+            });
+            aux.addEvent(newdoc, "touchmove", function(e){
+              smtRec.getMousePosIFrame(e, frame);
+            });              
+            onFrameLoaded(newdoc);
+          });
+        }
+        /*
+        // recursive traversal?
+        smtRec.trackIFrames(doc.document);
+        aux.allowTrackingOnFlashObjects(doc.document);
+        */
       }
-    }, 
+    },
+    /** 
+     * Not implemented, as it's not really needed (too much intrusion into user's privacy).
+     */
+    keyHandler: function(e) {
+    },
     /** 
      * System initialization.
-     * Assigns events and performs other initialization routines.     
+     * Assigns events and performs other initialization routines.
      */
     init: function() 
     {
@@ -387,25 +437,37 @@
       aux.allowTrackingOnFlashObjects(document);
       // get mouse coords also on iframes
       smtRec.trackIFrames(document);
-      // add unobtrusive events
-      aux.addEvent(document, "mousemove", smtRec.getMousePos);            // get mouse coords
-      aux.addEvent(document, "mousedown", smtRec.setClick);               // mouse is clicked
-      aux.addEvent(document, "mouseup",   smtRec.releaseClick);           // mouse is released
-      aux.addEvent(window,   "resize",    smtRec.computeAvailableSpace);  // update viewport space
+      // reuse these functions for mobile clients
+      var onMove = function(e) {
+        if (e.touches) { e = e.touches[0] || e.targetTouches[0]; }
+        smtRec.getMousePos(e);
+        smtRec.findElement(e); // elements hovered
+      };
+      var onPress = function(e) {
+        if (e.touches) { e = e.touches[0] || e.targetTouches[0]; }      
+        smtRec.setClick();
+        smtRec.findElement(e); // elements clicked
+      };
+      aux.addEvent(document, "mousedown",  onPress);
+      aux.addEvent(document, "mousemove",  onMove);
+      aux.addEvent(document, "mouseup",    smtRec.releaseClick);      
+      aux.addEvent(document, "touchstart", onPress);
+      aux.addEvent(document, "touchmove",  onMove);
+      aux.addEvent(document, "touchend",   smtRec.releaseClick);
+      aux.addEvent(window,   "resize",     smtRec.computeAvailableSpace);
+      //aux.addEvent(document, "keydown",    smtRec.keyHandler);
+      //aux.addEvent(document, "keyup",      smtRec.keyHandler);
+      // check if recording should persist when current tab/window is not active
       if (!smtOpt.contRecording) {
-        // only record mouse when window is active
-        if (document.attachEvent) {
+        if (document.attachEvent && !window.opera) {
           // see http://todepoint.com/blog/2008/02/18/windowonblur-strange-behavior-on-browsers/
           aux.addEvent(document.body, "focusout", smtRec.pauseRecording);
           aux.addEvent(document.body, "focusin",  smtRec.resumeRecording);
         } else {
-          aux.addEvent(window,  "blur",  smtRec.pauseRecording);
-          aux.addEvent(window,  "focus", smtRec.resumeRecording);
+          aux.addEvent(window, "blur",  smtRec.pauseRecording);
+          aux.addEvent(window, "focus", smtRec.resumeRecording);
         }
       }
-      // track also at the widget level (fine-grained mouse tracking)
-      aux.addEvent(document, "mousedown", smtRec.findElement);        // elements clicked
-      aux.addEvent(document, "mousemove", smtRec.findElement);        // elements hovered
       // flush mouse data when tracking ends
       if (typeof window.onbeforeunload == 'function') {
         // user closes the browser window
@@ -414,64 +476,57 @@
         // page is unloaded (for old browsers)
         aux.addEvent(window, "unload", smtRec.appendMouseData);
       }
-      // this is the fully-cross-browser method to store tracking data successfully
+      // this is the best cross-browser method to store tracking data successfully
       setTimeout(smtRec.initMouseData, smtOpt.postInterval*1000);
-      // log session time by date instead of dividing coords length by frame rate
+      // compute log session time by date instead of dividing coords length by frame rate
       smtRec.timestamp = (new Date()).getTime();
     }
   };
-    
+  
   // do not overwrite the smt2 namespace
   if (typeof window.smt2 !== 'undefined') { throw("smt2 namespace conflict"); }
   // else expose record method
   window.smt2 = {
-      // to begin recording, the tracking script must be called explicitly
-      record: function(opts) {
-          // load custom smtOpt, if set
-          if (typeof opts !== 'undefined') { aux.overrideTrackingOptions(smtOpt, opts); };
-          
-          // does user browse for the first time?
-          var previousUser = aux.cookies.checkCookie('smt-ftu');
-          // do not skip first time users when current visit is not sampled (in case of smt disabled)
-          if (smtOpt.disabled && previousUser) { return; }
-          
-          // store int numbers, not booleans
-          smtRec.firstTimeUser = (!previousUser | 0); // yes, it's a bitwise operation
-          aux.cookies.setCookie('smt-ftu', smtRec.firstTimeUser, smtOpt.cookieDays);
-          
-          // check if warning is enabled
-          if (smtOpt.warn) {
-            // did she agree for tracking before?
-            var prevAgreed = aux.cookies.checkCookie('smt-agreed');
-            // if user is adviced, she must agree
-            var agree = (prevAgreed) ? aux.cookies.getCookie('smt-agreed') : window.confirm(smtOpt.warnText);
-            if (agree > 0) {
-              aux.cookies.setCookie('smt-agreed', 1, smtOpt.cookieDays);
-            } else {
-              // will ask next day (instead of smtOpt.cookieDays value)
-              aux.cookies.setCookie('smt-agreed', 0, 1);
-              return false;
-            }
-          }
-          
-          // try to auto-detect smt2 path to tracking scripts                   
-          var scripts = document.getElementsByTagName('script');
-          for (var i = 0, s = scripts.length; i < s; ++i)
-          {
-            var filename = scripts[i].src;
-            if ( /smt-record/i.test(filename) ) 
-            {
-              var paths = filename.split("/");
-              var pos = aux.array.indexOf(paths, "smt2");
-              if (pos && smtOpt.trackingServer === null) {
-                smtOpt.trackingServer = paths.slice(0, pos + 1).join("/");
-              }
-            }
-          }
-          
-          // start recording when DOM is loaded
-          aux.onDOMload(smtRec.init);
+    // to begin recording, the tracking script must be called explicitly
+    record: function(opts) {
+      // load custom recording options, if any
+      if (typeof opts !== 'undefined') { aux.overrideTrackingOptions(smtOpt, opts); }
+      // does user browse for the first time?
+      var previousUser = aux.cookies.checkCookie('smt-ftu');
+      // do not skip first time users when current visit is not sampled
+      if (smtOpt.disabled && previousUser) { return; }
+      // store int numbers, not booleans (since it's casted to string for cookie storage)
+      smtRec.ftu = (!previousUser | 0); // yes, it's a bitwise operation
+      aux.cookies.setCookie('smt-ftu', smtRec.ftu, smtOpt.cookieDays);
+      // check if warning is enabled
+      if (smtOpt.warn) {
+        // did she agree for tracking before?
+        var prevAgreed = aux.cookies.checkCookie('smt-agreed');
+        // if user is adviced, she must agree
+        var agree = (prevAgreed) ? aux.cookies.getCookie('smt-agreed') : window.confirm(smtOpt.warnText);
+        if (agree) {
+          aux.cookies.setCookie('smt-agreed', 1, smtOpt.cookieDays);
+        } else {
+          // will ask next day (instead of smtOpt.cookieDays value)
+          aux.cookies.setCookie('smt-agreed', 0, 1);
+          return false;
+        }
       }
-  };
+      // try to auto-detect smt2 path to tracking scripts                   
+      var scripts = document.getElementsByTagName('script');
+      for (var i = 0, s = scripts.length; i < s; ++i) {
+        var filename = scripts[i].src;
+        if (/smt-record/i.test(filename)) {
+          var paths = filename.split("/");
+          var pos = aux.array.indexOf(paths, "smt2");
+          if (pos && smtOpt.trackingServer === null) {
+            smtOpt.trackingServer = paths.slice(0, pos + 1).join("/");
+          }
+        }
+      }
+      // start recording when DOM is loaded
+      aux.onDOMload(smtRec.init);
+    } // end record
+  }; // end expose
   
 })();

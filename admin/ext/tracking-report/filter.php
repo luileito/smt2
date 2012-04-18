@@ -94,6 +94,8 @@ $sql .= " AND (sess_time BETWEEN ".$mintime." AND ".$maxtime.")";
 // grouping
 if (!empty($groupby)) {
   $sql .= " GROUP BY ".$groupby;
+} else {
+  unset($_SESSION['groupby']);
 }
 
 // save or delete previous queries

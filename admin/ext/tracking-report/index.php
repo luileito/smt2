@@ -324,15 +324,16 @@ if (!$show) { $show = $defaultNumRecords; }
       $maxTime = ceil( $time['max'] );
       if (!isset($_SESSION['filterquery'])) {
       ?>
-      // set time range (a log-normal mapping function should be used here...)
-      minInput.val( Math.ceil(<?=$maxTime/2 - $maxTime/4?>) );
-      maxInput.val( Math.floor(<?=$maxTime/2 + $maxTime/4?>) );
+      // set time range
+      minInput.val(0);
+      maxInput.val(<?=$maxTime?>);
       <?php
       }
       ?>
       // hide regular input fields
       sliderElem.find("input,label").hide();
-      
+      // a silly check before configuring the time slider
+      if (maxInput.val() == 0) { maxInput.val(<?=$maxTime?>); }
       sliderElem.slider({
     			range: true,
     			min: 0,

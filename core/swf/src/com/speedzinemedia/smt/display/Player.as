@@ -65,7 +65,7 @@ package com.speedzinemedia.smt.display {
             __timeEnd = createTimeTextField();
             
             // scrubber itself
-            __scrubber = new Scrubber({time:prop.time, width:scrubberContainerWidth, height:scrubberContainerHeight});
+            __scrubber = new Scrubber({time:prop.time, fps:prop.fps, width:scrubberContainerWidth, height:scrubberContainerHeight});
             __scrubber.x = __timeStart.x * 1.2 + __timeStart.width;
             __scrubber.y = height/4 - __timeStart.height/4;
             __timeEnd.x = __scrubber.x * 1.2 + __scrubber.width;
@@ -80,7 +80,7 @@ package com.speedzinemedia.smt.display {
             __stop.x = __play.x;
             __stop.visible = false;
             
-            __maxSeconds = Math.ceil(prop.time); //Math.ceil(width/__scrubber.step);
+            __maxSeconds = prop.time;
               
             // scrubber boundaries decoration
             scrubberContainer.graphics.lineStyle(0, 0xEEEEEE);
@@ -122,7 +122,7 @@ package com.speedzinemedia.smt.display {
         
         private function onAddedToStage(e:Event):void
         {
-            __player.x = (stage.stageWidth + __player.width)/2;
+            __player.x = 50; //(stage.stageWidth + __player.width)/2;
             __player.y = 50;
 
             __timeout = new Timer(3000, 1);
@@ -259,6 +259,8 @@ package com.speedzinemedia.smt.display {
         
         private function updateTime():void
         {
+            if (__seconds > __maxSeconds) return;
+            
             __timeStart.text = TimeUtils.timeToSMPTE(__seconds * 1000); // __timeLoop.delay is 1000, so refresh clock each second
             __timeEnd.text = TimeUtils.timeToSMPTE( (__maxSeconds - __seconds)*1000 );
         };

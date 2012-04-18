@@ -10,6 +10,7 @@ package com.speedzinemedia.smt.display {
     import com.speedzinemedia.smt.utils.ProgressTimer;
     import com.speedzinemedia.smt.events.ProgressTimerEvent;
     import flash.external.ExternalInterface;
+    
     public class Scrubber extends Sprite implements ITimelineControls
     {
         private var __scrub:Sprite;
@@ -44,21 +45,23 @@ package com.speedzinemedia.smt.display {
             __scrub.graphics.beginFill(color);     
             __scrub.graphics.drawRect(0,0, prop.width, vSize);
             __scrub.graphics.endFill();
+            __scrub.scaleX = 0.0;
             this.addChild(__scrub);
             
             // normalize time step
-            __step = Math.round(prop.width/prop.time);
+            __step = Math.floor(prop.width/prop.time);
             // save properties for later referencing
             __info = prop;
 
             __loop = new ProgressTimer();
             __loop.maxTimeMs = prop.time * 1000;
+            __loop.frameRate = prop.fps;
             __loop.addEventListener(ProgressTimerEvent.PROGRESS, progress);
             __loop.start();
         };
 
         private function progress(e:ProgressTimerEvent):void
-        {       
+        {
             if (__paused) {
                 __prevScaleX = __scrub.scaleX;
                 return;
@@ -80,8 +83,8 @@ package com.speedzinemedia.smt.display {
         /** Finishes scrubber animation. */
         public function finish():void
         {
-            __scrub.scaleX = 1;
-            __prevScaleX = 0;
+            __scrub.scaleX = 1.0;
+            __prevScaleX = 0.0;
             
             __paused = true;
             __finished = true;
@@ -91,8 +94,8 @@ package com.speedzinemedia.smt.display {
         /** Restarts scrubber animation. */
         public function restart():void
         {
-            __scrub.scaleX = 0;
-            __prevScaleX = 0;
+            __scrub.scaleX = 0.0;
+            __prevScaleX = 0.0;
                        
             __paused = false;
             __finished = false;
