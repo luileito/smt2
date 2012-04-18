@@ -76,7 +76,7 @@ var smt2fn = {
   log: function()
   {
     // check if console is available
-    if (!window.console) { return false; }
+    if (!window.console && !window.console.log) { return false; }
     // display messages in the console
     console.log(arguments);
   },

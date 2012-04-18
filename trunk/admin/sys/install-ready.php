@@ -178,7 +178,7 @@ $opts = array(
                 array(CMS_CHOICE, "refreshOnResize",    0,  "Reload visualization page on resizing the browser window."),
                 array(CMS_CHOICE, "displayWidgetInfo",  0,  "Display hover and click frequency for each interacted DOM element."),
                 array(CMS_CHOICE, "displayGoogleMap",   0,  "If you typed a valid Google Maps key on your <em>config.php</em> file, the client location will be shown on a map when analyzing the logs."),
-                array(CMS_CHOICE, "enableDebugging",    0,  "Turn on PHP strict mode and work with JS src files instead of minimized ones.")
+                array(CMS_CHOICE, "enableDebugging",    0,  "Turn on PHP strict mode and work with JS source files instead of minimized ones.")
              );
 foreach ($opts as $arrValue) 
 {

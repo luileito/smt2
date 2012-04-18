@@ -199,8 +199,8 @@ package com.speedzinemedia.smt.display {
             ];
 
             if ($savedSettings.data.remember) {
-                custObj.push({ id: ID.SEL.SAVED, label: "my selection" });
-			}
+              custObj.push({ id: ID.SEL.SAVED, label: "my selection" });
+			      }
 				
             for (var i:int = 0; i < custObj.length; ++i) {
                 var pb1:PushButton = new PushButton($panel.content, label2.x + MARGIN, YPOS, custObj[i].label, loadCustomSelection);
@@ -216,7 +216,7 @@ package com.speedzinemedia.smt.display {
                 { id: ID.TIME.Y, label: "Y coords vs. time" }
             ];
 			
-			YPOS = 25;
+			      YPOS = 25;
             for (var j:int = 0; j < timeObj.length; ++j) {
                 var pb2:PushButton = new PushButton($panel.content, label3.x + MARGIN, label3.y + YPOS, timeObj[j].label, showTimeChart);
                 pb2.name = timeObj[j].id;
@@ -332,8 +332,8 @@ package com.speedzinemedia.smt.display {
         {
             if ($info.length > 1) return;
             
-			// set this item under "remember settings"
-			var cbRef:CheckBox = $panel.content.getChildByName(ID.OUT.REMEMBER) as CheckBox;
+			      // set this item under "remember settings"
+			      var cbRef:CheckBox = $panel.content.getChildByName(ID.OUT.REMEMBER) as CheckBox;
 			
             createPanelOption(CheckBox, { x: cbRef.x, y: cbRef.y + 20, id: ID.OUT.LOADTRAIL, label: "Autoplay trails", callback: loadTrails });
             // check state (reset when toggling realtime mode)

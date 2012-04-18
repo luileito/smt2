@@ -16,7 +16,8 @@ package com.speedzinemedia.smt.utils {
 	{
     /** Amount of time to reach. */
     public var maxTimeMs:int = 0;
-        
+    public var frameRate:int = 24;
+    
     private var __startTime:int  = 0; // origin
 		private var __targetTime:int = 0; // goal
 		private var __pauseTime:int  = 0; // helper flag
@@ -31,7 +32,7 @@ package com.speedzinemedia.smt.utils {
 			__startTime  = getTimer();
       __pauseTime  = __startTime;
 			__targetTime = __startTime + maxTimeMs;
-			__interval   = setInterval(update, 30);
+			__interval   = setInterval(update, frameRate);
 		};
 		
 		public function pause():void

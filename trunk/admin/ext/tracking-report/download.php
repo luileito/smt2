@@ -12,7 +12,7 @@ else if (isset($_GET['pid'])) $where = "id='". $_GET['pid'] ."'";
 else if (isset($_GET['cid'])) $where = "id='". $_GET['cid'] ."'";
 else $where = "1"; // default: download all logs
 
-$records = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", $where." ORDER BY sess_date, client_id");var_dump($records);
+$records = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", $where." ORDER BY sess_date, client_id");
 if (!$records) { die("No logs found matching your criteria!"); }
 
 $format = isset($_POST['format']) ? $_POST['format'] : "csv";

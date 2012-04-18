@@ -158,7 +158,8 @@ package com.speedzinemedia.smt {
 					
                     $player = new Player(this, {
                         width:  $stageWidth,
-                        time:   user[i].xcoords.length / $FPS,
+                        time:   Math.ceil(user[i].xcoords.length / $FPS),
+                        fps:    $FPS,
                         color:  0xFFCC33
                     });
                     /*
@@ -243,7 +244,7 @@ package com.speedzinemedia.smt {
                     drawMask(layer);
                 }
             }
-            
+
             // reset mouse manager
             var useHeatMap:Boolean = (e) ? e.data.heatMap : $savedSettings.data.heatMap;
             
