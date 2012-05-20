@@ -156,6 +156,9 @@
       // in certain situations the mouse coordinates could be negative values (e.g. Opera)
     	if (x < 0 || !x) x = 0;
     	if (y < 0 || !y) y = 0;
+    	
+      smtRec.mouse.x = x;
+      smtRec.mouse.y = y;
     },
     /** 
      * Cross-browser way to register the mouse position inside an iframe.
@@ -179,6 +182,9 @@
       var c = smtRec.getFrameOffsets(frame);
       x += c.left;
       y += c.top;
+      
+      smtRec.mouse.x = x;
+      smtRec.mouse.y = y;
     },
     /** 
      * Computes iframe offsets.
