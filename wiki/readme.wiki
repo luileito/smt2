@@ -8,7 +8,7 @@ Your Web server needs a *MySQL 5* database and *PHP 5* installed with the librar
 
 = Download =
 
-You can download all the project files (production, sources, documentation, etc.) from  [http://code.google.com/p/smt2/downloads/list GoogleCode SVN].
+You can download all the project files from  [http://code.google.com/p/smt2/source/checkout GoogleCode SVN].
 
 Until 2011, downloads were also available as ZIP files. However it was cumbersome to keep them updated, so now you need an SVN client to grab the code.
 
