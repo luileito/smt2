@@ -13,13 +13,14 @@ You can download all the project files (production, sources, documentation, etc.
 Until 2011, downloads were also available as ZIP files. However it was cumbersome to keep them updated, so now you need an SVN client to grab the code.
 
 The project contains the following items:
- * The production version, ready for using on your webserver.
- * The sources and API documentation. They are located in: 
+ * The mouse tracking files (production version), both for recording and visualization, ready for using on your webserver.
+ * The sources ~~and API documentation~~. They are located in: 
   # `core/js/src`
   # `core/swf/src`
-  # `admin/ext/documentation`
+  # ~~`admin/ext/documentation`~~
+ * The admin area (CMS), to manage logs and so on.
 
-You may want to avoid uploading the sources to your server, as they are not needed in production and therefore you will save disk space (like 4 MB or so).
+*Update*: the technical documentation files are around 4 MB, and they are not needed in production. Therefore, they were removed from trunk, to save thus disk space in a production server. These files will be available soon in another SVN branch.
 
 
 = Installing =
