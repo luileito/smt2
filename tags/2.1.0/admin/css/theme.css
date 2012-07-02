@@ -1,0 +1,69 @@
+/** 
+ * Admin theme styles.
+ * Here you can customize/override the styles set in 'admin.css'  
+ */
+ 
+body { background-color:#888; }
+#global { background-color:#FFF; padding:2em; }
+
+/* table row visuals */
+table.cms { background-color:#FFF; }
+/* table styles can be overriden when using the jquery.stripy plugin */
+table.cms tr:hover { background-color:#FFC; }
+th { background-color:#888; color:#FFF; }
+tr { background-color:#FFF; }
+tr.even { background-color:#DDD; }
+tr.odd { background-color:#EEE; }
+.deleted { background-color:#F66 !important; }
+.dummy { background-color:#FFF; }
+/* deprecated:used to alternate rows by client ID */
+.row0 { background-color:#EEE; }
+.row1 { background-color:#DDD; }
+
+/* 'mine results' section */
+#filter fieldset { background-color:#FFF; }
+#filter fieldset:hover { background-color:#FFC; }
+  #filter fieldset legend:hover { background-color:#06C; }
+  #filter select { margin-bottom:.3em; vertical-align:middle; }
+  #filter input { vertical-align:middle; }
+/* defeat IE bug (http://www.mattheerema.com/web-design/2006/04/getting-fieldset-backgrounds-and-legends-to-behave-in-ie/) */
+/* see also http://paulirish.com/2009/browser-specific-css-hacks/ */
+#filter fieldset { *position:relative; }
+#filter legend { *position:absolute; *top:-0.5em; *left:.5em; }
+#filter fieldset { *position:relative; *margin-top:1em; *padding-top:.75em; }
+
+/* logout button */
+a#logout { color:#FFF; background-color:#C33; text-decoration:none; padding:.2em .4em; font:bold 100% sans-serif; }
+  a#logout:hover { background-color:#F33; }
+
+/* forms */
+.button { color:#36F; border:1px solid #CCC; background:#EEE url('button-default-off.jpg') repeat-x left top; }
+.button:hover, .button:focus { color:#000; border:1px solid #36F; background:#F5F5F5 url('button-default-on.jpg') repeat-x left bottom; }
+
+.wrapper { border:1px solid #CCC; overflow:hidden; padding-bottom:0.5em; margin-bottom:1em; }
+.wrapper:hover { border:1px solid #036; background-color:#FFC; }
+
+/* login */
+.loginwrap { margin-top:10%; }
+  .title { font-size:300%; color:#FFF; font-weight:normal; margin-bottom:0; }
+  .loginwrap h2 { color:#CCC; margin-top:0; }
+    #loginform { border:1px solid #777; background-color:#FFF; font:90% sans-serif; }
+      #loginform label { color:#555; font:90% Georgia,serif; vertical-align:middle; }
+      #loginform input.text { border:1px solid #CCC; background-color:#FBFBFB; }
+
+/* footer and header */
+.foothead { color:#FFF; font-size:85%; } 
+  .foothead a { color:#DDD; }
+    .foothead a:hover { color:#FFF; }
+#footer { border-top:2px solid #000; font-size:80%; }
+
+a#wishlist { background-color:#06C; }
+  a#wishlist:hover { background-color:#09C; }
+a#bugreport { background-color:#036; }
+  a#bugreport:hover { background-color:#03C; }
+  
+/* other */
+.notfound { font-family:Georgia,serif; font-style:italic; color:#AAA; }
+.del { color:#C00; }
+.delete { color:#FFF; background:#C00 url('button-delete-off.jpg') repeat-x left top; }
+.delete:hover, .delete:focus { color:#FFF; border:1px solid red !important; background:#F66 url('button-delete-on.jpg') repeat-x left bottom; }

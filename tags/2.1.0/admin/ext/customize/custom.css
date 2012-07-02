@@ -1,0 +1,19 @@
+/* custom CSS for 'customize' section */
+.vspace { margin-top:2em; }
+
+.customize-wrap { width:300px; margin-bottom:1.5em; padding:.1em; overflow:auto; /* Linux enhancement -> */ padding-right:.3em; overflow-x:hidden; } 
+  legend { font-style:italic; }
+  .customize { margin:.2em auto; display:block; }
+    .customize label { float:left; }
+    .customize .input-wrap { float:right; width:100px; text-align:center; }
+
+/* sortables */   
+.groupWrapper { width:150px; }
+  .groupItem { margin-bottom:.5em; }
+  .groupItem .itemHeader { background-color:#DDD; border-top:2px solid #999; padding:.3em 2em;
+  	                       cursor:move; font:bold 80% sans-serif; text-align:center; }
+  .sortHelper { background-color:#EEE; border:1px dashed #666; width:auto !important; }
+  .serializer { clear:both; }
+  
+#cms-sortables { display:none; float:right; margin-left:2em; border:1px solid #DDD; padding:1em; }
+#cms-options { }
