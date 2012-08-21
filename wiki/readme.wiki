@@ -93,8 +93,18 @@ To override these defaults you do not need to edit manually the record script, j
 === Important new feature: cross-domain POSTs ===
 In version 2.0.2 two variables were introduced to customize the recording script: `trackingServer` and `storageServer`. 
 In this way one can record mouse activity in domain A, and post data to a domain B. 
-To achieving that goal, just type in `storageServer` the URL of the server where both the CMS and the database are installed (following the previous naming convention, it would be server B), and put the `core` dir in the domain that you wish to track (server A). 
+To achieving that goal, just type in `storageServer` the *absolute URL* of the server where both the CMS and the database are installed (following the previous naming convention, it would be server B), and put the `core` dir in the domain that you wish to track (server A). 
 So, one can have only one domain (server B) for storing and managing logs/users/etc., and multiple domains to be tracked.
+
+==== Example ====
+{{{
+  trackingServer: "/smt2/",
+  storageServer:  "http://www.othersite.com/smt2/",
+}}}
+
+You don't need to write `/smt2/core/` in any case in the tracking options, because that is handled internally. 
+
+For the local server, just create an `smt2` dir an put inside the `core` folder only. For the remote server, upload the full `smt2` dir. In both cases, you'll need to edit `config.php` accordingly. 
 
 Please notice that in previous 2.x versions neither `trackingServer` nor `storageServer` options are available. 
 More specifically, in versions prior to 2.0.2 you only could set the recording option `dirPath`, to specify the path where you put smt2 (although the system will try to detect it automatically).
