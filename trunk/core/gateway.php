@@ -11,7 +11,7 @@ if (!empty($_POST['remote']))
 {
   // forward request to smt2 server
   $request = get_remote_webpage(
-                                  $_POST['remote'].$file,
+                                  $_POST['remote'].'/core/'.$file,
                                   array( 
                                           CURLOPT_COOKIE => $_POST['cookies'],
                                           CURLOPT_POST => true,
