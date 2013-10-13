@@ -5,7 +5,6 @@
 package com.speedzinemedia.smt.charts {
     
     import flash.display.DisplayObjectContainer;
-	
     import com.speedzinemedia.smt.charts.TimeChart;
     import com.speedzinemedia.smt.modal.ModalWindow;
     import com.speedzinemedia.smt.text.DebugText;
@@ -15,9 +14,7 @@ package com.speedzinemedia.smt.charts {
         public function DrawChart(parent:DisplayObjectContainer, settings:Object) 
         {                        
             var chart:TimeChart = new TimeChart(settings);
-            
             super.addChild(chart);
-
             super.show(parent, this);  
         };
         

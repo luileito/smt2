@@ -4,7 +4,7 @@ var SetupCMS = {
     deleteTrackingButtons: function()
     {
         // delete records link
-        $('a.del').click(function(e){
+        $('a.del').one("click", function(e){
           var self = $(this);
           var deleteLink = self.attr("href");
           var content = self.parent();
@@ -75,7 +75,7 @@ var SetupCMS = {
     all: function()
     {
         this.deleteTrackingButtons();
-        this.viewTrackingButtons();
+        //this.viewTrackingButtons(); // now using Flash API always
         this.externalLinks();
         this.confirmActions();
         this.inpuTexts();

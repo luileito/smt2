@@ -106,7 +106,7 @@ class Cluster
      * Thus, in order to obtain an unbiased estimator for sigma^2, 
      * it is necessary to instead define a "bias-corrected sample variance".
      */ 
-    $bias = ($count - 1 > 0) ? $count - 1 : $count;
+    $bias = ($count > 1) ? $count - 1 : $count;
     $this->variance->x = $xsum2 / $bias;
     $this->variance->y = $ysum2 / $bias;
   }

@@ -115,8 +115,8 @@ package com.speedzinemedia.smt.charts {
 
     private function drawPlot(info:Object):void
     {
-      var coordsX:Array = info.activity.coords.x;
-      var coordsY:Array = info.activity.coords.y;
+      var coordsX:Vector.<int> = info.activity.coords.x;
+      var coordsY:Vector.<int> = info.activity.coords.y;
 
       var num:Number = coordsX.length - 1;
       var count:Number = 0;

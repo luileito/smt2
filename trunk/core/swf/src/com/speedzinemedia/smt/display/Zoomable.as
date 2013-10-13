@@ -1,6 +1,6 @@
 package com.speedzinemedia.smt.display {
 
-    import flash.display.Sprite;
+  import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
 	import com.earthbrowser.ebutils.MacMouseWheelHandler;
@@ -11,19 +11,19 @@ package com.speedzinemedia.smt.display {
 	 * @autor Luis Leiva
 	 * @date 14-Ene-2010
 	 */
-    public class Zoomable extends Control
+  public class Zoomable extends Control
+  {
+    public function Zoomable(obj:Sprite)
     {
-        public function Zoomable(obj:Sprite)
-        {
-            super(obj);
+      super(obj);
 			
-			// fix mouse wheel support on Mac (http://bugs.adobe.com/jira/browse/FP-503)
-			if ( PlayerInfo.isMac() ) {
-				MacMouseWheelHandler.init(target.stage);
-			}
+      // fix mouse wheel support on Mac (http://bugs.adobe.com/jira/browse/FP-503)
+      if ( PlayerInfo.isMac() ) {
+        MacMouseWheelHandler.init(target.stage);
+      }
 			
-			target.addEventListener(MouseEvent.MOUSE_WHEEL, zoom);
-        };
+      target.addEventListener(MouseEvent.MOUSE_WHEEL, zoom);
+    };
 		
 		private function zoom(e:MouseEvent):void 
 		{
@@ -45,6 +45,6 @@ package com.speedzinemedia.smt.display {
 			target.x = ((2 * target.stage.mouseX) - (2 * (e.localX * target.scaleX))) / 2;
 			target.y = ((2 * target.stage.mouseY) - (2 * (e.localY * target.scaleY))) / 2;
 		};
-			
+
 	} // end class
 }

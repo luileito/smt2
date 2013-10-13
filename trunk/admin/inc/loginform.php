@@ -2,7 +2,12 @@
 // supress MySQL error if there are no database tables yet
 $isInstalled = @db_query("DESCRIBE ".TBL_PREFIX.TBL_RECORDS);
 if (!$isInstalled) {
-  echo '<p class="center error">Database not found or misconfigured!</p>';
+  $msg  = '<p class="center error">';
+  $msg .= 'Database not found or misconfigured!';
+  $msg .= '<br/>';
+  $msg .= 'Go and <a href="'.SYS_DIR.'install.php">install (smt)</a>.';
+  $msg .= '</p>';
+  echo $msg;
 }
 ?>
 <div class="loginwrap">
@@ -35,7 +40,7 @@ if (!$isInstalled) {
           echo '<p>The login name that you requested does not exist.</p>';
           break;
         case "MAIL_SENT":
-          echo '<p>Check your mailbox for instructions. Just in case you should check also your SPAM folder.</p>';
+          echo '<p>Check your mailbox for instructions. Just in case, you should check also your SPAM folder.</p>';
           break;
         case "MAIL_ERROR":
           echo '<p class="error">Could not send email.</p>';

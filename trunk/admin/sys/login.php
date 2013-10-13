@@ -20,12 +20,14 @@ switch ($_POST['action'])
       // user can proceed
       $_SESSION['login'] = $login;
       
+      $expires = time() + 2592000; // 30 days: 60 * 60 * 24 * 30 = 2592000      
       // if remember is checked, set login cookie
-      if (isset($_POST['remember'])) 
-      {
-        $expires = time() + 60 * 60 * 24 * 30; // 30 days
+      if (isset($_POST['remember'])) {
         setcookie('smt-login', $login, $expires, "/");
       }
+      // in any case, flag *all* registered users to not being recorded
+      setcookie('smt-usr', 1, $expires, "/");
+      
       // check redirection (if any) or go to Dashboard
       $goto = (isset($_POST['redirect'])) ? urldecode($_POST['redirect']) : ADMIN_PATH;
       header("Location: ".$goto);
@@ -35,7 +37,7 @@ switch ($_POST['action'])
     {
       $_SESSION['error'] = "AUTH_FAILED";
     }
-  break;
+    break;
     
   case 'lostpass':
     $user = db_select(TBL_PREFIX.TBL_USERS, "id,email", "login='".$login."'");
@@ -59,17 +61,17 @@ switch ($_POST['action'])
     $mail->FromName  = "smt2";
     $mail->From      = "no-reply@".$_SERVER['HTTP_HOST'];
     $mail->CharSet   = "utf-8";
-    $mail->Subject   = "smt2 - Requested password for ".$login;
+    $mail->Subject   = "smt2 - Password requested for ".$login;
     $mail->Body      = $msg;
     $mail->AddAddress($user['email']);
     // send
     $_SESSION['error'] = $mail->Send() ? "MAIL_SENT" : "MAIL_ERROR";
-  break;
+    break;
     
   default:
     // otherwise, require authentication
     $_SESSION['error'] = "AUTH_FAILED";
-  break;
+    break;
 }
 
 // by default, redirect to login page

@@ -7,16 +7,16 @@ package com.speedzinemedia.smt.events {
 	import com.speedzinemedia.smt.events.BaseEvent;
 	
 	public class ModalEvent extends BaseEvent
+  {
+    // notify from Modal Alert / Confirm
+    public static const MODAL_ACCEPT:String = "ACCEPT";
+    // notify from Modal Confirm
+    public static const MODAL_CANCEL:String = "CANCEL";
+        
+    public function ModalEvent(type:String, obj:Object = null)
     {
-        // notify from Modal Alert / Confirm
-        public static const MODAL_ACCEPT:String = "ACCEPT";
-        // notify from Modal Confirm
-        public static const MODAL_CANCEL:String = "CANCEL";
+      super(type, obj);
+    };
         
-        public function ModalEvent(type:String, obj:Object = null)
-        {
-            super(type, obj);
-        };
-        
-    } // end class
+  } // end class
 }

@@ -8,28 +8,34 @@ package com.speedzinemedia.smt.display {
     {
         
         [Embed(source="assets/cursor-entry.gif")]
-        public static const cursorEntry:Class;
+        public static const CURSOR_ENTRY:Class;
         
         [Embed(source="assets/cursor-exit.gif")]
-        public static const cursorExit:Class;
+        public static const CURSOR_EXIT:Class;
         
         [Embed(source="assets/cursor-normal.gif")]
-        public static const cursorNormal:Class;
+        public static const CURSOR_NORMAL:Class;
         
         [Embed(source="assets/cursor-direction.gif")]
-        public static const cursorDir:Class;
+        public static const CURSOR_DIRECTION:Class;
         
         [Embed(source="assets/cursor-move.gif")]
-        public static const cursorMove:Class;
+        public static const CURSOR_MOVE:Class;
         
         [Embed(source="assets/cursor-wait.gif")]
-        public static const cursorWait:Class;
+        public static const CURSOR_WAIT:Class;
         
         [Embed(source="assets/play.svg")]
-        public static const iconPlay:Class;
+        public static const ICON_PLAY:Class;
         
         [Embed(source="assets/pause.svg")]
-        public static const iconPause:Class;
+        public static const ICON_PAUSE:Class;
+
+        [Embed(source="assets/reload.svg")]
+        public static const ICON_RELOAD:Class;
         
+        [Embed(source="assets/note.gif")]
+        public static const ICON_NOTE:Class;
+                
     } // end class
 }

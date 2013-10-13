@@ -12,52 +12,42 @@ package com.speedzinemedia.smt.mouse {
     import flash.utils.setInterval;
         
     import com.speedzinemedia.smt.display.Asset;
+    import com.speedzinemedia.smt.draw.LayoutType;
     import com.speedzinemedia.smt.utils.Utils;
     import com.speedzinemedia.smt.utils.Maths;
     import com.speedzinemedia.smt.events.TrackingEvent;
+    
      
     public class MouseEventDispatcher extends Sprite
     {
-        private var $coords:Object, _cleans:Object, $numCoords:uint;
-        private var $freq:int;
-        private var $intervalId:uint;
+        public var paused:Boolean;        
+		    public var config:Object = {
+		      realtime: true,  // realtime replay
+		      heatmaps: false, // use heatmaps (shadowmaps, actually)
+		      nopauses: false  // skip dwell times while replaying
+		    };
+		            
+        private var $freq:int, $coords:Object, $numCoords:uint, _screen:Object, _cleans:Object, $intervalId:uint;
         private var _currPt:Point, $nextPt:Point, $iniClick:Point, $endClick:Point;
-        private var _dr:Object;
-        private var _count:int;
-		private var _varStopSize:int, _maxStopSize:int;
-		private var _realTime:Boolean = true; // for autoScrolling
-		private var _heatMap:Boolean;
-		private var _paused:Boolean;
+        private var _count:int, _stopSizes:Vector.<Number>, _varStopSize:int, _maxStopSize:int;
         
-        public function set paused(value:Boolean):void {
-            _paused = value;
-        }
-		  
-		public function get realTime():Boolean {
-            return _realTime;
-        }
-        public function get heatMap():Boolean {
-            return _heatMap;
-        }
-        public function get paused():Boolean {
-            return _paused;
-        }
+        // read-only
         public function get count():int {
             return _count;
         }
         public function get position():Point {
             return _currPt;
         }
-        public function get discrepance():Object {
-            return _dr;
-        }
-		public function get cleans():Object {
+		    public function get cleans():Object {
             return _cleans;
         }
-		public function get maxStopSize():int {
+		    public function get screen():Object {
+            return _screen;
+        }        
+		    public function get maxStopSize():int {
             return _maxStopSize;
         }
-		public function get varStopSize():int {
+		    public function get varStopSize():int {
             return _varStopSize;
         }
 		  
@@ -66,63 +56,80 @@ package com.speedzinemedia.smt.mouse {
             $coords = mouse.coords;
             $freq = Math.round(1000/mouse.fps);
             $numCoords = $coords.x.length;
-            _dr = computeDiscrepances(screen);
+            _screen = screen;
 			
-			preprocess();
+			      preprocess();
         };
         
-        private function computeDiscrepances(dim:Object):Object
+        protected function normalizeCoords(p:Point):Point
         {
-            var w:Number, h:Number;
-            try {
-                w = dim.currWindow.width / dim.prevWindow.width;
-                h = dim.currWindow.height / dim.prevWindow.height;
-            } catch(e:Error) {
-                w = 1;
-                h = 1;
+            var px:Number = p.x, py:Number = p.y;
+            
+            switch(_screen.layoutType) {
+              case LayoutType.LEFT:
+                // do nothing, as content is ragged left
+                break;            
+              case LayoutType.CENTER:
+                // in this case, only horizontal coordinates should be updated
+                px += _screen.currWindow.width / _screen.prevWindow.width;
+                break;
+              case LayoutType.RIGHT:
+                px += _screen.currWindow.width - _screen.prevWindow.width;              
+                break;
+              case LayoutType.LIQUID:
+              default:
+                px *= _screen.currWindow.width / _screen.prevWindow.width;
+                py *= _screen.currWindow.height / _screen.prevWindow.height;
+                break;                
             }
             
-            return {x:w, y:h}
+            return new Point(px,py);
         };
         
-		private function preprocess():void 
-		{
-			var xclean:Array = [];
-			var yclean:Array = [];
-			
-			// user stops & clean coords: useful for time-depending circles and path centroid
-            var stops:Array = [];
-            var size:int = 1;
-				
-            for (var k:int = 0; k < $numCoords; ++k)
+		    private function preprocess():void 
+		    {
+			      var xclean:Vector.<int> = new Vector.<int>();
+			      var yclean:Vector.<int> = new Vector.<int>();
+			      // user stops & clean coords: useful for time-depending circles (dwell times) and path centroid
+            _stopSizes = new Vector.<Number>($numCoords, true);
+            var size:int = 0;
+            var stops:Vector.<Number> = new Vector.<Number>();
+            
+            for (var k:int = 0; k < $numCoords - 1; ++k)
             {
-                if ($coords.x[k] == $coords.x[k+1] && $coords.y[k] == $coords.y[k+1]) {
-                  ++size;
-                } else {
-                  // store all user stops (time) for drawing variable circles later
-                  if (size > 1) { stops.push(size); }
-                  // reset size
-                  size = 1;
-                  // store clean mouse coordinates
-                  xclean.push($coords.x[k]);
-                  yclean.push($coords.y[k]);
-                }
+              if ($coords.x[k] == $coords.x[k+1] && $coords.y[k] == $coords.y[k+1]) {
+                ++size;
+              } else {
+                // store all user stops (time) for drawing variable circles later
+                if (size > 0) { stops.push(size); }
+                // reset size
+                size = 0;
+                // store clean mouse coordinates
+                xclean.push($coords.x[k]);
+                yclean.push($coords.y[k]);
+              }
+              _stopSizes[k] = size;
             }
-			// save clean object (useful for clustering and centroid)
-			_cleans = { x: xclean, y: yclean };
+			      // save clean object (useful for clustering and centroid)
+			      _cleans = { x: xclean, y: yclean };
             // set max size for variable circles (for later normalization)
             _maxStopSize = Maths.arrayMax(stops);
-		  };
+            //ExternalInterface.call('console.log', _stopSizes.length, xclean.length);
+		    };
 		  
-        public function init(isRealtime:Boolean = true, isHeatmap:Boolean = false):void
+        public function init(conf:Object):void
         {   
-			_count = 0;
-			_varStopSize = 1;
-			_paused = false;
-			_realTime = isRealtime;
-			_heatMap = isHeatmap;
-            	
-            if (isRealtime) {
+            for (var prop:String in conf) {
+              if (config.hasOwnProperty(prop) && typeof conf[prop] !== null) {
+                config[prop] = conf[prop];
+              }
+            }
+            
+			      paused = false;			      
+			      _count = 0;
+  			    _varStopSize = 0;
+			                	
+            if (config.realtime) {
                 start();
             } else {
                 finish();
@@ -131,55 +138,92 @@ package com.speedzinemedia.smt.mouse {
 		  
         public function start():void
         {
-            if ($intervalId) {
-                clearInterval($intervalId);
-            }
-            
+            if ($intervalId) clearInterval($intervalId);
             $intervalId = setInterval(loop, $freq);
         };
         
         public function finish():void
         {
-			_realTime = false;
-			
-            for (var n:int = _count; n <= $numCoords; ++n) { loop(); }
+			      config.realtime = false;
+            for (var n:int = _count; n < $numCoords; ++n) { loop(); }
         };
         
-		public function pause():void
+		    public function pause():void
         {
-			_paused = !_paused;
+			      paused = !paused;
         };
-		  
+
+		    public function stop():void
+        {
+			      paused = true;
+        };
+
+		    public function resume():void
+        {
+			      paused = false;
+        };
+                		    
+		    public function seekTo(perc:Number):void
+        {
+            var t:int = Math.floor($numCoords * perc);
+            // draw skipped points
+			      for (var n:int = _count; n <= t; ++n) { nextFrame(); }
+            //_count = t;
+        };
+                		  
         protected function loop():void 
         {
-            if (_realTime && _paused) return;
+            if (config.realtime && paused) { return; }
             
+            if (config.realtime && config.nopauses) {
+              // move when there is no pause
+              if (_stopSizes[_count + 1] == _stopSizes[_count]) {
+                nextFrame();
+              } else {
+                // find next index where there is no pause
+                for (var n:int = _count; n < $numCoords - 1; ++n) {
+                  if (_stopSizes[n + 1] < _stopSizes[n]) {
+                    break;
+                  }
+                }
+                // and draw skipped points
+                for (var i:int = _count; i <= n; ++i) { nextFrame(); }
+                parent.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_ADVANCE, n/$numCoords));
+                if (_count == $numCoords - 1) finish();
+              }
+            } else {
+              // otherwise, replay as ususal
+              nextFrame();
+            }
+        };
+        
+        protected function nextFrame():void 
+        {
             getPoints();
 
             if (_count == 0) {
                 this.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_INI, _currPt));
             }
             
-            if (_count < $numCoords)
+            if (_count < $numCoords) 
             {
                 var mouseDist:Number = Point.distance(_currPt, $nextPt);
-                
-                var o:Object = {ini:_currPt, end:$nextPt, distance:mouseDist, count:_count, steps:$numCoords - 2};
+                var o:Object = {ini:_currPt, end:$nextPt, distance:mouseDist};
                 //this.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_LOOP, o));
-                
-                // dispatch movements and hesitations
+                                
+                // dispatch movements and hesitations (pauses)
                 if (mouseDist > 0)
                 {
                     this.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_MOVE, o));
-					if (_varStopSize) {
-					   this.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_RESUME, _currPt));
-					}
-					_varStopSize = 1;
+					          if (_varStopSize > 0) {
+					             this.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_RESUME, _currPt));
+					          }
+					          _varStopSize = 0;
                 }
                 else
                 {
                     this.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_STOP, _currPt));
-					++_varStopSize;
+					          ++_varStopSize;
                 }
                 
                 // dispatch click events
@@ -195,25 +239,23 @@ package com.speedzinemedia.smt.mouse {
                         this.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_DRAG, _currPt));
                     }
                 }
-                
-                ++_count;
             } 
             else
             {
                 clearInterval($intervalId);
-                // rewind one step to get the last coordinate
-                --_count;
-                getPoints();
-                
                 this.dispatchEvent(new TrackingEvent(TrackingEvent.MOUSE_END, _currPt));
             }
+            
+            ++_count;
         };
-        
+                
         private function getPoints():void 
         {
-            _currPt  = new Point($coords.x[ _count     ] * _dr.x, $coords.y[ _count     ] * _dr.y);
-            $nextPt  = new Point($coords.x[ _count + 1 ] * _dr.x, $coords.y[ _count + 1 ] * _dr.y);
+            if (_count >= $numCoords - 1) return;
             
+            _currPt  = normalizeCoords(new Point($coords.x[_count], $coords.y[_count]));
+            $nextPt  = normalizeCoords(new Point($coords.x[_count + 1], $coords.y[_count + 1]));
+
             var currClickType:int = $coords.type[ _count     ];
             var nextClickType:int = $coords.type[ _count + 1 ];
             var currClickX:int = currClickType > 0 ? $coords.x[ _count     ] : 0;
@@ -221,8 +263,8 @@ package com.speedzinemedia.smt.mouse {
             var currClickY:int = currClickType > 0 ? $coords.y[ _count     ] : 0;
             var nextClickY:int = nextClickType > 0 ? $coords.y[ _count + 1 ] : 0;
 
-            $iniClick = new Point(currClickX * _dr.x, currClickY * _dr.y);
-            $endClick = new Point(nextClickX * _dr.x, nextClickY * _dr.y);
+            $iniClick = normalizeCoords(new Point(currClickX, currClickY));
+            $endClick = normalizeCoords(new Point(nextClickX, nextClickY));
         };
         
         

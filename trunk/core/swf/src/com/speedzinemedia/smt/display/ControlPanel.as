@@ -32,8 +32,10 @@ package com.speedzinemedia.smt.display {
     import com.speedzinemedia.smt.draw.DrawUtils;
     import com.speedzinemedia.smt.modal.ModalConfirm;
     import com.speedzinemedia.smt.modal.ModalAlert;
-    import com.speedzinemedia.smt.utils.*;
+	  import com.speedzinemedia.smt.text.Hypernote;  
+    import com.speedzinemedia.smt.utils.*;	    
     import com.speedzinemedia.smt.Tracking;
+    
     /**
      *  (smt) Control Panel
      *  @autor      Luis Leiva
@@ -58,7 +60,6 @@ package com.speedzinemedia.smt.display {
         private var $trails:Array;                   // user trail (visited pages)
         private var $currTrailId:int;                // current user trail id
         private var $currTrailPos:int;               // current user trail index position
-        private var $trailUrl:String;                // full path to track PHP file
         private var $isNextTrailAvailable:Boolean;   // flag to load next user trail 
         
         private var MARGIN:int = 10;                 // panel margins
@@ -76,11 +77,17 @@ package com.speedzinemedia.smt.display {
                 DEFAULT: "default"
             },
             OUT: {
-                REPLAYRT:  "replayRT",
-                TOGGLEHQ:  "toggleHQ",
-                LOADTRAIL: "loadTrail",
-                HEATMAP:   "heatMap",
-                REMEMBER:  "remember"
+                REPLAYRT:    "replayRT",
+                NOPAUSES:    "noPauses",                
+                TOGGLEHQ:    "toggleHQ",
+                LOADTRAIL:   "loadTrail",
+                HEATMAP:     "heatMap",
+                REMEMBER:    "remember"
+            },
+            NOTES: {
+                TOGGLEHYPER: "toggleHyper",
+                CREATEHYPER: "createHyper",
+                DELETEHYPER: "deleteHyper"
             },
             TIME: {
                 X: "timeX",
@@ -108,18 +115,18 @@ package com.speedzinemedia.smt.display {
             // update panel if needed
             checkSavedSettings();
             // on finish the mouse replay, check for more user trails
-            addEventListener(ControlPanelEvent.REPLAY_COMPLETE, replayIsCompleted);
+            addEventListener(ControlPanelEvent.REPLAY_COMPLETE, replayCompleted);
+            // listen to video position changes
+            addEventListener(ControlPanelEvent.UPDATED_CUEPOINT, cuepointReceived);
         };
         
         private function getUserTrails():void
         {
             var p:Object = parent.loaderInfo.parameters;
-            $trailUrl = Utils.getFlashVar(p.trailurl, "string");
-
-            if ($info.length > 1 || !$trailUrl) return;
+            if ($info.length > 1) return;
             
             // cast all trails ids to real number array
-            $trails = Maths.arrayCastNumbers(Utils.getFlashVar(p.trails, "array"));
+            $trails = Utils.getFlashVar(p.trails, "array");
             $currTrailId = Utils.getFlashVar(p.currtrail, "int");
             $currTrailPos = $trails.indexOf($currTrailId);
             $isNextTrailAvailable = ($currTrailPos < $trails.length - 1);
@@ -127,8 +134,8 @@ package com.speedzinemedia.smt.display {
                 
         private function setPanelDimensions():void 
         {
-            // compute panel height, assuming 23px of average height for each checkbox/radio button
-            for (var c:int = 0, sum:int = 0; c < Layers.collectionLength; ++c, sum += 23) {}
+            // compute panel height, assuming 22px of average height for each checkbox/radio button
+            for (var c:int = 0, sum:int = 0; c < Layers.collectionLength; ++c, sum += 22) {}
             PANEL_HEIGHT = sum + MARGIN * 2;
             PANEL_WIDTH  = COLUMN_WIDTH * COLUMNS + MARGIN * 2;  // panel width: column width * number of columns + margins
         };
@@ -144,6 +151,7 @@ package com.speedzinemedia.smt.display {
                 createColorsColumn(); // changing colors is available for single user replays
             //}
             createVisualizationColumn();
+            createHypernotesColumn();
         };
         
         private function createBasePanel():void 
@@ -178,7 +186,7 @@ package com.speedzinemedia.smt.display {
         
         private function createLayersColumn():void 
         {
-            var label1:Label = new Label($panel.content, XPOS, MARGIN, "LAYERS");
+            var label1:Label = new Label($panel.content, XPOS, MARGIN, "[LAYERS]");
             for (var i:int = 0; i < Layers.collectionLength; ++i) {
                 var cb:CheckBox = new CheckBox($panel.content, label1.x + MARGIN, YPOS, Layers.collection[i].label, toggleVisualizationLayer);
                 cb.name = Layers.collection[i].id;
@@ -191,15 +199,15 @@ package com.speedzinemedia.smt.display {
 
         private function createSelectionsColumn():void 
         {
-            var label2:Label = new Label($panel.content, XPOS, MARGIN, "CUSTOM SELECTIONS");
+            var label2:Label = new Label($panel.content, XPOS, MARGIN, "[CUSTOM SELECTIONS]");
             var custObj:Array = [
-                { id: ID.SEL.INVERT,  label: "invert layers"     },
-                { id: ID.SEL.TOGGLE,  label: "toggle all/none"   },
-                { id: ID.SEL.DEFAULT, label: "default selection" }
+                { id: ID.SEL.INVERT,  label: "Invert layers"     },
+                { id: ID.SEL.TOGGLE,  label: "Toggle all/none"   },
+                { id: ID.SEL.DEFAULT, label: "Default selection" }
             ];
 
             if ($savedSettings.data.remember) {
-              custObj.push({ id: ID.SEL.SAVED, label: "my selection" });
+              custObj.push({ id: ID.SEL.SAVED, label: "My selection" });
 			      }
 				
             for (var i:int = 0; i < custObj.length; ++i) {
@@ -207,10 +215,10 @@ package com.speedzinemedia.smt.display {
                 pb1.name = custObj[i].id;
                 setTabIndex(pb1);
                 YPOS += 25;
-            }   
+            }
             
-            var label3:Label = new Label($panel.content, XPOS, YPOS, "TIME CHARTS");
-            
+            YPOS += 10;
+            var label3:Label = new Label($panel.content, XPOS, YPOS, "[TIME CHARTS]");
             var timeObj:Array = [
                 { id: ID.TIME.X, label: "X coords vs. time" },
                 { id: ID.TIME.Y, label: "Y coords vs. time" }
@@ -223,14 +231,15 @@ package com.speedzinemedia.smt.display {
                 setTabIndex(pb2);
                 YPOS += 25;
             }
-            var pb3:PushButton = new PushButton($panel.content, label3.x + MARGIN, label3.y + YPOS, "3D (experimental)", show3D);
+            var pb3:PushButton = new PushButton($panel.content, label3.x + MARGIN, label3.y + YPOS, "3D timechart", show3D);
+            setTabIndex(pb3);
             
             updateColumnHelpers();    
         };
         
         private function createColorsColumn():void 
         {
-            var label3:Label = new Label($panel.content, XPOS, MARGIN, "COLORS");
+            var label3:Label = new Label($panel.content, XPOS, MARGIN, "[COLORS]");
             for (var k:int = 0; k < Layers.collectionLength; ++k)
             {
                 // color of interacted areas cannot be changed due to blend mode
@@ -272,13 +281,14 @@ package com.speedzinemedia.smt.display {
         
         private function createVisualizationColumn():void 
         {
-            var label4:Label = new Label($panel.content, XPOS, MARGIN, "VISUALIZATION");
+            var label1:Label = new Label($panel.content, XPOS, MARGIN, "[VISUALIZATION]");
             var outObj:Array = [
-                { id: ID.OUT.REPLAYRT,  label: "Replay in real time",  callback: toggleReplayMode  },
-                { id: ID.OUT.HEATMAP,   label: "Use heatmaps",         callback: toggleHeatMap     },
-                { id: ID.OUT.TOGGLEHQ,  label: "Toggle High Quality",  callback: toggleQuality     },
-                { id: ID.OUT.REMEMBER,  label: "Remember settings",    callback: rememberSettings  }
-                //{ id: ID.OUT.LOADTRAIL, label: "Autoplay next trail",  callback: loadTrails        }
+                { id: ID.OUT.REPLAYRT,  label: "Replay in real time",   callback: toggleReplayMode  },
+                { id: ID.OUT.NOPAUSES,  label: "Skip pauses",           callback: toggleNoPauses    },
+                { id: ID.OUT.HEATMAP,   label: "Use shadowmaps",        callback: toggleHeatMap     },
+                { id: ID.OUT.TOGGLEHQ,  label: "Toggle High Quality",   callback: toggleQuality     },
+                { id: ID.OUT.REMEMBER,  label: "Remember settings",     callback: rememberSettings  }
+                //{ id: ID.OUT.LOADTRAIL, label: "Autoplay next trail",   callback: loadTrails        }
             ];
 
             // add CheckBoxes
@@ -288,8 +298,30 @@ package com.speedzinemedia.smt.display {
                 setTabIndex(out);
                 YPOS += 20;
             }
+        };
+        
+        private function createHypernotesColumn():void 
+        {
+            YPOS += 25;      
+            var label:Label = new Label($panel.content, XPOS, YPOS, "[HYPERNOTES]");
             
-			updateColumnHelpers();
+            var cb:CheckBox = new CheckBox($panel.content, XPOS + MARGIN, label.y + 25, "Display hypernotes", toggleHypernotes);
+            cb.name = ID.NOTES.TOGGLEHYPER;
+            setTabIndex(cb);
+            /*
+            var pb1:PushButton = new PushButton($panel.content, XPOS + MARGIN, cb.y + 20, "Add hypernote", addHypernote);
+            pb1.name = ID.NOTES.CREATEHYPER;
+            setTabIndex(pb1);
+
+            var pb2:PushButton = new PushButton($panel.content, XPOS + MARGIN, pb1.y + 25, "Delete hypernote", delHypernote);
+            pb2.name = ID.NOTES.DELETEHYPER;
+            setTabIndex(pb2);
+            */
+            var pb1:PushButton = new PushButton($panel.content, XPOS + MARGIN, cb.y + 20, "Manage hypernotes", listHypernotes);
+            pb1.name = ID.NOTES.CREATEHYPER;
+            setTabIndex(pb1);
+                                    
+			      updateColumnHelpers();        
         };
         
         private function updateColumnHelpers():void 
@@ -304,15 +336,17 @@ package com.speedzinemedia.smt.display {
             if ($savedSettings.size > 0)
             {
                 setCheckBoxState(ID.OUT.REPLAYRT,  $savedSettings.data.replayRT);
+                setCheckBoxState(ID.OUT.NOPAUSES,  $savedSettings.data.noPauses);
                 setCheckBoxState(ID.OUT.TOGGLEHQ,  $savedSettings.data.toggleHQ);
                 setCheckBoxState(ID.OUT.HEATMAP,   $savedSettings.data.heatMap);
                 //setCheckBoxState(ID.OUT.LOADTRAIL, $savedSettings.data.loadTrail); // create it later
                 setCheckBoxState(ID.OUT.REMEMBER,  true); // obviously ;)
-            }
-            else {
-                // by default, if no saved settings, start in real-time mode
+                setCheckBoxState(ID.NOTES.TOGGLEHYPER,  $savedSettings.data.toggleHyper);                
+            } else {
+                // by default, if no saved settings, start in real-time mode, HQ, and display hypernotes
                 setCheckBoxState(ID.OUT.REPLAYRT, true);
                 setCheckBoxState(ID.OUT.TOGGLEHQ, true);
+                setCheckBoxState(ID.NOTES.TOGGLEHYPER, true);                
             }
             
             // loading next user trail is only available when replaying in real time
@@ -327,8 +361,10 @@ package com.speedzinemedia.smt.display {
             // finally check stage quality
             toggleQuality();
         };
-        
+                
         private function createNextTrailOption():void 
+
+
         {
             if ($info.length > 1) return;
             
@@ -365,7 +401,7 @@ package com.speedzinemedia.smt.display {
             }
         };
         
-        private function replayIsCompleted(e:ControlPanelEvent):void
+        private function replayCompleted(e:ControlPanelEvent):void
         {
             if ($isReplayFinished || !getCheckBoxState(ID.OUT.REPLAYRT)) { return; }
 
@@ -493,30 +529,36 @@ package com.speedzinemedia.smt.display {
                 rememberSettings();
             }
         };
-
+                
         private function toggleReplayMode(e:MouseEvent):void
         {
             var rt:Boolean = e.currentTarget.selected;
-            // check also heatMap state
             var hm:Boolean = getCheckBoxState(ID.OUT.HEATMAP);
+            var np:Boolean = getCheckBoxState(ID.OUT.NOPAUSES);
             // notify parent container
-            parent.dispatchEvent( new ControlPanelEvent(ControlPanelEvent.TOGGLE_REPLAY_MODE, {realTime: rt, heatMap: hm}) );
+            parent.dispatchEvent( new ControlPanelEvent(ControlPanelEvent.TOGGLE_REPLAY_MODE, {realTime: rt, heatMap: hm, noPauses: np}) );
 
             toggleVisiblePanelOption(Layers.id.MASK);
             //toggleVisiblePanelOption(ID.OUT.LOADTRAIL);
-            if (rt)
-            {
+            if (rt) {
                 createNextTrailOption(); 
-            }
-            else
-            {
-                try {
-                    destroyPanelOption(ID.OUT.LOADTRAIL);
-                } catch(e:Error) {} // ... this checkbox wasn't created
-            }
+            } else try {
+                destroyPanelOption(ID.OUT.LOADTRAIL);
+            } catch(e:Error) {} // ... this checkbox wasn't created
             rememberSettings();
         };
-        
+
+        private function toggleNoPauses(e:MouseEvent):void
+        {
+            var np:Boolean = e.currentTarget.selected;
+            var rt:Boolean = getCheckBoxState(ID.OUT.REPLAYRT);
+            var hm:Boolean = getCheckBoxState(ID.OUT.HEATMAP);
+            // notify parent container
+            parent.dispatchEvent( new ControlPanelEvent(ControlPanelEvent.TOGGLE_REPLAY_MODE, {realTime: rt, heatMap: hm, noPauses: np}) );
+            
+            rememberSettings();
+        };
+                
         /* can be called on init */
         private function toggleQuality(e:MouseEvent = null):void
         {
@@ -529,10 +571,10 @@ package com.speedzinemedia.smt.display {
         private function toggleHeatMap(e:MouseEvent):void
         {
             var hm:Boolean = e.currentTarget.selected;
-            // check also realTime state
             var rt:Boolean = getCheckBoxState(ID.OUT.REPLAYRT);
+            var np:Boolean = getCheckBoxState(ID.OUT.NOPAUSES);
             // notify parent container
-            parent.dispatchEvent(new ControlPanelEvent(ControlPanelEvent.TOGGLE_REPLAY_MODE, {realTime: rt, heatMap: hm}));
+            parent.dispatchEvent( new ControlPanelEvent(ControlPanelEvent.TOGGLE_REPLAY_MODE, {realTime: rt, heatMap: hm, noPauses: np}) );
             
             rememberSettings();
         };
@@ -553,7 +595,7 @@ package com.speedzinemedia.smt.display {
             
             var settings:Object = {
                 api:        "swf", 
-                trailurl:   $trailUrl, 
+                trailurl:   ExternalInterface.call("window.smt2fn.getCanonicalURL"),
                 trails:     $trails, 
                 currtrail:  $currTrailId, 
                 autoload:   getCheckBoxState(ID.OUT.LOADTRAIL)
@@ -578,7 +620,46 @@ package com.speedzinemedia.smt.display {
             }
             */
         };
+
+        private function toggleHypernotes(e:MouseEvent):void 
+        {
+            var status:Boolean = getCheckBoxState(ID.NOTES.TOGGLEHYPER);
+            // notify parent container
+            parent.dispatchEvent(new ControlPanelEvent(ControlPanelEvent.TOGGLE_HYPERNOTE, status));
+            
+            rememberSettings();
+        };
         
+        private function addHypernote(e:MouseEvent):void 
+        {
+            parent.dispatchEvent(new ControlPanelEvent(ControlPanelEvent.REQUEST_CUEPOINT));
+        };
+        
+        private function cuepointReceived(e:ControlPanelEvent):void 
+        {
+            var p:Object = parent.loaderInfo.parameters;
+            Hypernote.create(
+              Utils.getFlashVar(p.currtrail, "int"),
+              Utils.getFlashVar(p.login, "string"),
+              String(e.data)
+            );
+        };
+        
+        private function delHypernote(e:MouseEvent):void 
+        {
+            // better use list.php to handle hypernotes
+            listHypernotes(e);
+        };
+        
+        private function listHypernotes(e:MouseEvent):void 
+        {
+            var p:Object = parent.loaderInfo.parameters;
+            Hypernote.manage(
+              Utils.getFlashVar(p.currtrail, "int"),
+              Utils.getFlashVar(p.login, "string")              
+            );
+        };
+                
         private function selectCurrentColor(e:MouseEvent):void
         {
             $radioButtonId = e.currentTarget.name;
@@ -628,21 +709,21 @@ package com.speedzinemedia.smt.display {
         {
             var remember:CheckBox = $panel.content.getChildByName(ID.OUT.REMEMBER) as CheckBox;
             if (remember.selected) {
-                // save layers state
-                var layers:Array = []; 
+                // save layers status
+                var layers:Array = [];
                 for (var i:int = 0; i < Layers.collectionLength; ++i) {
                     var layer:CustomSprite = parent.getChildByName(Layers.collection[i].id) as CustomSprite;
                     layers.push({ id: layer.name, color: layer.color, visible: layer.visible }); 
                 }
-                // save visualization states
-                $savedSettings.data.replayRT = getCheckBoxState(ID.OUT.REPLAYRT);
-                $savedSettings.data.toggleHQ = getCheckBoxState(ID.OUT.TOGGLEHQ);
-                $savedSettings.data.heatMap = getCheckBoxState(ID.OUT.HEATMAP);
-                $savedSettings.data.loadTrail = getCheckBoxState(ID.OUT.LOADTRAIL);
+                $savedSettings.data.layers           = layers;
+                $savedSettings.data.replayRT         = getCheckBoxState(ID.OUT.REPLAYRT);
+                $savedSettings.data.noPauses         = getCheckBoxState(ID.OUT.NOPAUSES);
+                $savedSettings.data.toggleHQ         = getCheckBoxState(ID.OUT.TOGGLEHQ);
+                $savedSettings.data.heatMap          = getCheckBoxState(ID.OUT.HEATMAP);
+                $savedSettings.data.loadTrail        = getCheckBoxState(ID.OUT.LOADTRAIL);
+                $savedSettings.data.toggleHyper      = getCheckBoxState(ID.NOTES.TOGGLEHYPER);                
                 $savedSettings.data.showControlPanel = $panel.visible;
-                $savedSettings.data.remember = true;
-                // store saved layers (ant their states)
-                $savedSettings.data.layers = layers;
+                $savedSettings.data.remember         = true;
                 $savedSettings.flush();
                 //ExternalInterface.call("console.log", "saved data:" + $savedSettings.size + " bytes");
             } else if ($savedSettings.size > 0) {

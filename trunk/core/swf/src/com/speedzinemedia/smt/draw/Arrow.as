@@ -12,9 +12,8 @@ package com.speedzinemedia.smt.draw {
 
     public class Arrow extends Shape 
     {
-    
-        public function Arrow(ini:Point, end:Point,
-                              filled:Boolean = false, lineSytle:int = 0, head:int = 5, color:uint = 0x000000) 
+
+        public function Arrow(ini:Point, end:Point, filled:Boolean = false, lineSytle:int = 0, head:int = 5, color:uint = 0x000000) 
         {
             // draw arrow first
             if (filled) { 

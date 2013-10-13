@@ -1,6 +1,7 @@
 <?php
-// check data first
-if (empty($_POST)) exit;
+// check data first (exclude registered users)
+if (empty($_POST) || isset($_COOKIE['smt-usr'])) die(":(");
+
 require_once '../config.php';
 
 $URL = $_POST['url'];
@@ -18,7 +19,8 @@ $request = get_remote_webpage(
                                 array( CURLOPT_COOKIE => $_POST['cookies'] )
                              );
 
-$webpage = $request['content'];
+$webpage = utf8_encode($request['content']);
+
 // check request status
 if ($request['errnum'] != CURLE_OK || $request['http_code'] != 200)
 {
@@ -36,7 +38,7 @@ else
     // check if url exists on cache, and if it should be stored (again) on cache
     if ($cachelog && (time() - $cachelog['savetime'] < $cachedays * 86400)) {
       // get HTML log id
-      $logid = $cachelog['id'];
+      $cache_id = $cachelog['id'];
       $parse = false;
     } else {
       // cache days expired
@@ -46,48 +48,33 @@ else
     // cache is disabled
     $parse = true;
   }
-  
-  /* parse webpage ---------------------------------------------------------- */
-  if ($parse) 
-  {
+}
+
+/* parse webpage ---------------------------------------------------------- */
+if ($parse) 
+{
     // use the DOM to parse webpage contents
     $dom = new DOMDocument();
     $dom->formatOutput = true;
     $dom->preserveWhiteSpace = false;
     // hide warnings when parsing non valid (X)HTML pages
     @$dom->loadHTML($webpage);
-    // by removing (smt)2 scripts, a fresh copy of the original HTML page is created
-    $scripts = $dom->getElementsByTagName("script");
-    $scriptsToRemove = array();
-    // mark
-    foreach ($scripts as $script) 
-    {
-      $src = $script->getAttribute("src");
-      // use hardcoded strings instead of defined constants since file versions will change
-      if (strstr($src, "smt-record") || strstr($src, "smt-aux")) {
-        $scriptsToRemove[] = $script;
-      }
-    }
-    // sweep
-    foreach ($scriptsToRemove as $script) {
-      $script->parentNode->removeChild($script);
-    }
+    remove_smt_scripts($dom);
     // set HTML log name
     $date = date("Ymd-His");
     $ext = ".html";
     // "March 10th 2006 @ 15h 16m 08s" should create the log file "20060310-151608.html" 
-    $htmlfile  = (!is_file(CACHE_DIR.$date.$ext)) ?
-                  $date.$ext :
-                  $date.'-'.mt_rand().$ext; // random seed to avoid duplicated files
+    $htmlfile = (!is_file(CACHE_DIR.$date.$ext)) ? $date.$ext : $date.'-'.mt_rand().$ext;
     // store (UTF-8 encoded) log
-    $dom->saveHTMLFile( utf8_encode(CACHE_DIR.$htmlfile) );
+    $dom->saveHTMLFile(CACHE_DIR.$htmlfile);
     // insert new row on TBL_CACHE and look for inserted id
-    $logid = db_insert(TBL_PREFIX.TBL_CACHE, "file, url, title, saved", "'".$htmlfile."', '".$URL."', '".$_POST['urltitle']."', NOW()");
-  }
+    $cache_id = db_insert(TBL_PREFIX.TBL_CACHE, 
+                       "file, url, layout, title, saved", 
+                       "'".$htmlfile."', '".$URL."', '".$_POST['layout']."','".$_POST['urltitle']."', NOW()");
 }
 
 // verify
-if (!isset($logid)) exit;
+if (!isset($cache_id)) exit;
 
 /* client browser stats ----------------------------------------------------- */
 
@@ -107,32 +94,41 @@ if (!$osname) {
 } else {
   $osid = $osname['id'];
 }
+// save domain id
+$domain = url_get_domain($URL);
+$d = db_select(TBL_PREFIX.TBL_DOMAINS, "id", "domain='".$domain."'");
+if (!$d) {
+  $did = db_insert(TBL_PREFIX.TBL_DOMAINS, "domain", "'".$domain."'");
+} else {
+  $did = $d['id'];
+}
 
 /* create database entry ---------------------------------------------------- */
-$fields  = "client_id,cache_id,os_id,browser_id,browser_ver,user_agent,";
+$fields  = "client_id,cache_id,domain_id,os_id,browser_id,browser_ver,user_agent,";
 $fields .= "ftu,ip,scr_width,scr_height,vp_width,vp_height,";
 $fields .= "sess_date,sess_time,fps,coords_x,coords_y,clicks,hovered,clicked"; 
 
-$values  = "'". $_POST['client']                    ."',";
-$values .= "'". $logid                              ."',";
-$values .= "'". $osid                               ."',";
-$values .= "'". $browserid                          ."',";
-$values .= "'". (float) $browser->getVersion()      ."',";
-$values .= "'". $browser->getUserAgent()            ."',";
+$values  = "'". $_POST['client']               ."',";
+$values .= "'". $cache_id                      ."',";
+$values .= "'". $did                           ."',";
+$values .= "'". $osid                          ."',";
+$values .= "'". $browserid                     ."',";
+$values .= "'". (float) $browser->getVersion() ."',";
+$values .= "'". $browser->getUserAgent()       ."',";
 
-$values .= "'". (int) $_POST['ftu']                 ."',";
-$values .= "'". get_ip()                            ."',";
-$values .= "'". (int) $_POST['screenw']             ."',";
-$values .= "'". (int) $_POST['screenh']             ."',";
-$values .= "'". (int) $_POST['pagew']               ."',";
-$values .= "'". (int) $_POST['pageh']               ."',";
+$values .= "'". (int) $_POST['ftu']            ."',";
+$values .= "'". get_ip()                       ."',";
+$values .= "'". (int) $_POST['screenw']        ."',";
+$values .= "'". (int) $_POST['screenh']        ."',";
+$values .= "'". (int) $_POST['pagew']          ."',";
+$values .= "'". (int) $_POST['pageh']          ."',";
 
 $values .= "NOW(),";
-$values .= "'". (float) $_POST['time']              ."',";
-$values .= "'". (int)   $_POST['fps']               ."',";
-$values .= "'". $_POST['xcoords']                   ."',";
-$values .= "'". $_POST['ycoords']                   ."',";
-$values .= "'". $_POST['clicks']                    ."',";
+$values .= "'". (float) $_POST['time']         ."',";
+$values .= "'". (int)   $_POST['fps']          ."',";
+$values .= "'". $_POST['xcoords']              ."',";
+$values .= "'". $_POST['ycoords']              ."',";
+$values .= "'". $_POST['clicks']               ."',";
 $values .= "'". array_sanitize($_POST['elhovered']) ."',";
 $values .= "'". array_sanitize($_POST['elclicked']) ."'";
 

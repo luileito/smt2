@@ -1,9 +1,7 @@
 <?php
-// load (smt)2 config
+// load (smt)2 system files
 $base = realpath(dirname(__FILE__).'/../../');
-require $base.'/config.php';
-
-error_reporting(0);
+require_once $base.'/config.php';
 
 // Config file for the PHP Web Proxy
 define('INDEX_FILE_NAME', 'index.php'); // Name of the default file (set on initial form)

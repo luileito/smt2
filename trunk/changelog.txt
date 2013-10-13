@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
-(smt)2 ChangeLog - 23rd March 2012
+(smt)2 ChangeLog - July 06th, 2012
 --------------------------------------------------------------------------------
-This is the change log for the 2.1.0 version.
+This is the change log for the 2.2.0 version.
 
 You may find the latest source code on the SVN:
 svn checkout http://smt2.googlecode.com/svn/trunk/
@@ -13,12 +13,22 @@ http://code.google.com/p/smt2/source/browse/
 
 [To-Do List] For next releases
 
-* New layout types were added for mouse track normalization and will be implemented soon.
-* Document the SWF API. Code started to be reviewed.
+* Document the SWF API. Some code parts were already reviewed.
 * Realtime in-person tracking (a.k.a 'Web Activity Sharing' or so).
 
 
-[2.1.0] March 23rd 2012
+[2.2.0] July 06th, 2012
+
++ New layout types were added for mouse track normalization.
++ Improved hypervideo capabilities (hypernotes, videoplayer, etc.)
++ Better multi-domain handling.
++ Simpler cross-domain POSTs: now smt2 can work as a hosting service.
++ Bypass warnings during installation, if desired.
++ New extension: classify pages by user behavior.
++ A lot of code reviews.
+
+
+[2.1.0] March 23rd, 2012
 
 + Click tracking refactored according to the UNIPEN format.
 + Added option to export database logs.
@@ -29,7 +39,7 @@ http://code.google.com/p/smt2/source/browse/
 + Integrated smt2 with Phill Sacre's php-web-proxy to track external websites (highly experimental).
 
 
-[2.0.2] September 30th 2010
+[2.0.2] September 30th, 2010
 
 + Added new extension: Maintenance (backup database, check 'orphan' cache logs, etc.)
 + Enabled cross-site POST requests.
@@ -38,7 +48,7 @@ http://code.google.com/p/smt2/source/browse/
 - Changed some function names for better consistency.
 
 
-[2.0.1] February 21th 2010
+[2.0.1] February 21th, 2010
 
 + Encoded cache pages in UTF-8 (LOG_ENCODING setting is not needed anymore).
 + Added refreshOnResize on replaying (but not enabled by default).
@@ -60,7 +70,7 @@ http://code.google.com/p/smt2/source/browse/
 + Added uninstall script.
 
 
-[2.0.0] September 12th 2009
+[2.0.0] September 12th, 2009
 
 + Remember agree statement if warning is enabled. <benjamin>
 + Enabled log filtering and user/page grouping. That makes delete tasks easier. <steven, griser>
@@ -76,19 +86,20 @@ http://code.google.com/p/smt2/source/browse/
    + Updated core files.
 
 
-[beta3] July 21th 2009
+[beta3] July 21th, 2009
 
 + Added the (empty) cache dir. <leo>
 - Removed Flash redirection alert message. <leo>
 
 
-[beta2] July 20th 2009
+[beta2] July 20th, 2009
 
 + Fixed root permissions when updating password. <leo>
-- Removed the window resize callback function (on IE seemed to happen the same as described on wiki issue #1): http://code.google.com/p/smt2/issues/detail?id=1
+- Removed the window resize callback function (on IE seemed to happen the same as described on wiki issue #1): 
+  http://code.google.com/p/smt2/issues/detail?id=1
 + Added the option to change the color background layer on JS replay file.
 
 
-[beta1] July 19th 2009
+[beta1] July 19th, 2009
 
 + First Beta release.

@@ -1,23 +1,22 @@
 package com.speedzinemedia.smt.display {
 
-    import flash.display.Sprite;
-    import flash.events.MouseEvent;
+  import flash.display.Sprite;
+  import flash.events.MouseEvent;
 	
 	/**
 	 * Class for panning (dragging) Sprites.
 	 * @autor Luis Leiva
 	 * @date 14-Ene-2010
 	 */
-    public class Pannable extends Control
+  public class Pannable extends Control
+  {
+    public function Pannable(obj:Sprite)
     {
-        public function Pannable(obj:Sprite)
-        {
-            super(obj);
-
+      super(obj);
 			target.addEventListener(MouseEvent.MOUSE_DOWN,  drag);
-        };
+    };
 		
-        protected function drag(e:MouseEvent):void
+    protected function drag(e:MouseEvent):void
 		{
 			if (e.target !== target) return;
 

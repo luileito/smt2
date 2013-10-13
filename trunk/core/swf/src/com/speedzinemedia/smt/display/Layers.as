@@ -42,17 +42,17 @@ package com.speedzinemedia.smt.display {
         
         /** Layers definition. */
         public static const collection:Array = [
-            { id: id.BACKGROUND,    label: "background overlay",    color: 0x555555, visible: true  },  // must be always at index 0
-            { id: id.MASK,          label: "interacted areas",      color: null,     visible: false },  // cannot change color because of blend mode
-            { id: id.PATH,          label: "mouse path",            color: 0x00CCCC, visible: true  },
-            { id: id.REGISTRATION,  label: "coordinates",           color: 0xFFFFFF, visible: false },
-            { id: id.STOP,          label: "dwell times",           color: 0xFFFF99, visible: false },
-            { id: id.DRAG,          label: "drag&drop/selections",  color: 0xAABBCC, visible: true  },
-            { id: id.CLICK,         label: "clicks",                color: 0xFF0000, visible: true  },
-            { id: id.DISTANCE,      label: "direction & distances", color: null,     visible: false },  // no color because of images
-            { id: id.CLUSTER,       label: "active areas",          color: 0x0000FF, visible: true  },
-            { id: id.CENTROID,      label: "path centroid",         color: 0xFF99FF, visible: true  },
-            { id: id.CURSOR,        label: "mouse pointers",        color: null,     visible: true  }   // no color because of images
+            { id: id.BACKGROUND,    label: "Background overlay",    color: 0x555555, visible: true  },  // must be always at index 0
+            { id: id.PATH,          label: "Cursor trail",          color: 0X99CCEE, visible: true  },
+            { id: id.REGISTRATION,  label: "Coordinates",           color: 0xFFFFFF, visible: false },
+            { id: id.STOP,          label: "Pauses",                color: 0xFFFF99, visible: false },
+            { id: id.DRAG,          label: "Drag&drop/selections",  color: 0xAABBCC, visible: true  },
+            { id: id.CLICK,         label: "Clicks",                color: 0x990000, visible: true  },
+            { id: id.DISTANCE,      label: "Direction arrows",      color: null,     visible: false },  // no color because of images
+            { id: id.CLUSTER,       label: "Active areas",          color: 0x0000FF, visible: true  },
+            { id: id.CENTROID,      label: "Centroids",             color: 0xFF99FF, visible: true  },
+            { id: id.CURSOR,        label: "Cursors",               color: null,     visible: true  },  // no color because of images
+            { id: id.MASK,          label: "Interacted areas",      color: null,     visible: false }   // special blend mode
         ];
         
         /** Precalculates the length of layers collection. */

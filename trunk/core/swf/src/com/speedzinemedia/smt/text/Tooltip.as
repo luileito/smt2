@@ -5,7 +5,7 @@ package com.speedzinemedia.smt.text {
     import flash.display.InteractiveObject;
     import flash.text.TextField;
     import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
+	  import flash.text.TextFormat;
     /**
      *  Tooltip class.
      *  This is a singleton class, and can only be accessed through Tooltip.instance() method.

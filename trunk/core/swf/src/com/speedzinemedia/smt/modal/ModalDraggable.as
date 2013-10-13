@@ -38,7 +38,7 @@ package com.speedzinemedia.smt.modal {
             
             $content.addChild($drag);
             
-            $move = new Asset.cursorMove();
+            $move = new Asset.CURSOR_MOVE();
             $move.visible = false;
             $content.addChild($move);
         };
