@@ -111,6 +111,7 @@ class Browser {
 		private $_version = '';
 		private $_platform = '';
 		private $_os = '';
+		private $_language = '';		
 		private $_is_aol = false;
     private $_is_mobile = false;
     private $_is_robot = false;
@@ -118,6 +119,7 @@ class Browser {
 
 		const BROWSER_UNKNOWN = 'unknown';
 		const VERSION_UNKNOWN = 'unknown';
+		const LANGUAGE_UNKNOWN = 'unknown';
 		
 		const BROWSER_OPERA = 'Opera';                            // http://www.opera.com/
     const BROWSER_OPERA_MINI = 'Opera Mini';                  // http://www.opera.com/mini/
@@ -144,7 +146,6 @@ class Browser {
     const BROWSER_BLACKBERRY = 'BlackBerry';                  // http://www.blackberry.com/
     const BROWSER_ICECAT = 'IceCat';                          // http://en.wikipedia.org/wiki/GNU_IceCat
     const BROWSER_FLOCK = 'Flock';                            // http://en.wikipedia.org/wiki/Flock_%28web_browser%29
-		
     const BROWSER_NETSCAPE_NAVIGATOR = 'Netscape Navigator';  // http://browser.netscape.com/ (DEPRECATED)
 		const BROWSER_GALEON = 'Galeon';                          // http://galeon.sourceforge.net/ (DEPRECATED)
 		const BROWSER_NETPOSITIVE = 'NetPositive';                // http://en.wikipedia.org/wiki/NetPositive (DEPRECATED)
@@ -176,6 +177,7 @@ class Browser {
 			$this->_version = self::VERSION_UNKNOWN;
 			$this->_platform = self::PLATFORM_UNKNOWN;
 			$this->_os = self::OPERATING_SYSTEM_UNKNOWN;
+			$this->_language = self::LANGUAGE_UNKNOWN;
 			$this->_is_aol = false;
       $this->_is_mobile = false;
       $this->_is_robot = false;
@@ -207,6 +209,16 @@ class Browser {
 		 * @param $platform The name of the Platform
 		 */
 		public function setPlatform($platform) { return $this->_platform = $platform; }
+		/**
+		 * The language.  All return types are from the class contants
+		 * @return string Language of the browser
+		 */
+		public function getLanguage() { return $this->_language; }
+		/**
+		 * Set the language of the bowser
+		 * @param $platform The language of the bowser
+		 */
+		public function setLanguage($language) { return $this->_language = $language; }		
 		/**
 		 * The version of the browser.
 		 * @return string Version of the browser (will only contain alpha-numeric characters and a period)
@@ -273,6 +285,7 @@ class Browser {
 		 */
 		protected function determine() {
 			$this->checkPlatform();
+			$this->checkLanguage();
 			$this->checkBrowsers();
 			$this->checkForAol();
 		}
@@ -292,7 +305,7 @@ class Browser {
 						$this->checkBrowserFlock() ||
 						$this->checkBrowserFirefox() ||
 						$this->checkBrowserChrome() ||
-                        $this->checkBrowserAndroid() ||
+            $this->checkBrowserAndroid() ||
 						$this->checkBrowserSafari() ||
 						$this->checkBrowserOpera() ||
 						$this->checkBrowserNetPositive() ||
@@ -307,10 +320,10 @@ class Browser {
 						$this->checkBrowserLynx() ||
 						$this->checkBrowseriPhone() ||
 						$this->checkBrowseriPod() ||
-                        $this->checkBrowserBlackBerry() ||
+            $this->checkBrowserBlackBerry() ||
 						$this->checkBrowserW3CValidator() ||
 						$this->checkBrowserMozilla() /* Mozilla is such an open standard that you must check it last */	
-						);
+      );
 		}
 
 		/**
@@ -878,6 +891,19 @@ class Browser {
 			elseif( preg_match('/BeOS/i', $this->_agent) ) {
 				$this->_platform = self::PLATFORM_BEOS;
 			}
+		}
+		
+		/**
+		 * Determine the user's language
+		 */
+		protected function checkLanguage() {
+		  $lang = preg_match('/[a-z]{2}-[a-z]{2}/i', $this->_agent, $matches);
+		  if ($lang) {
+		    $country_codes = explode("-", $matches[0]);
+  		  $this->_language = strtolower($country_codes[1]);
+		  } else {
+        $this->_language = self::LANGUAGE_UNKNOWN;		  
+		  }
 		}
 }
 ?>

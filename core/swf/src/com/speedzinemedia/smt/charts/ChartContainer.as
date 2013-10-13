@@ -6,7 +6,6 @@ package com.speedzinemedia.smt.charts {
     
     import flash.display.DisplayObject;
     import flash.display.DisplayObjectContainer;
-    
     import com.speedzinemedia.smt.charts.*;
     import com.speedzinemedia.smt.modal.ModalWindow;
     
@@ -15,9 +14,7 @@ package com.speedzinemedia.smt.charts {
         public function ChartContainer(parent:DisplayObjectContainer, settings:Object, chartClass:Object)
         {
             var chart:DisplayObject = new chartClass(settings);
-
             super.addChild(chart);
-
             super.show(parent, this);  
         };
         

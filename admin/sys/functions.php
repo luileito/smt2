@@ -31,7 +31,9 @@ require REQUIRED.'/messages.php';
 // --------------------------------------------------------------- utilities ---
 require REQUIRED.'/class.domutil.php';
 require REQUIRED.'/class.browser.php';
-require REQUIRED.'/class.point.php';
+require REQUIRED.'/class.kmeans.php';
+require REQUIRED.'/class.mousefeat.php';
+require REQUIRED.'/class.hypernote.php';
 // ------------------------------------------------------------------ others ---
 require REQUIRED.'/functions.array.php';
 require REQUIRED.'/functions.url.php';
@@ -61,7 +63,8 @@ function check_systemversion($type, $minReqVer = "5.0.0")
 {
   switch (strtolower($type)) {
     case 'mysql':
-      $ver = mysql_get_server_info();
+      // mysqli_get_client_info() doesn't require connection
+      $ver = mysql_get_client_info();
       break;
     case 'php':
       $ver = phpversion();
@@ -200,6 +203,22 @@ function trim_text($text, $words = 5)
   return $show;
 }
 
+/** 
+ * Shows only the first $chars of a text, plus a [...] symbol. 
+ * @param   string  $text   text to trim
+ * @param   int     $chars  number of chars to display (default: 20)
+ * @return  string          The trimmed text
+ */
+function trim_chars($text, $chars = 20) 
+{
+  $trimmed = substr($text, 0, $chars);
+  if (strlen($trimmed) >= $chars) {
+    $trimmed .= "[...]";
+  }
+  
+  return $trimmed;
+}
+
 /**
  * Gets the client IP.
  * @return  string
@@ -245,6 +264,8 @@ function get_ip()
    }
 
    return $final_ip;
+
+
 }
 
 /** 
@@ -254,9 +275,9 @@ function get_ip()
  */
 function mask_client($hash)
 {
-  $half = strlen($hash) / 2;
+  $len = strlen($hash) / 4;
   
-  return substr($hash, -$half, $half);
+  return substr($hash, 0, $len);
 }
 
 /** 
@@ -290,12 +311,12 @@ function convert_points($xcoords, $ycoords, $getDistances = false)
   // transform arrays in a single points array
   foreach ($xcoords as $i => $value) 
   {
-    $p = new Point($value, $ycoords[$i]); 
+    $p = array($value, $ycoords[$i]); 
     // check if next point exists 
     if ($i >= $maxCount) { break; }
-    // ok
-    $q = new Point($xcoords[$i + 1], $ycoords[$i + 1]);
-    $distance = $p->getDistance($q);
+    
+    $q = array($xcoords[$i + 1], $ycoords[$i + 1]);
+    $distance = KMeans::getDistance($p, $q);
     // check
     if ($getDistances) {
       $pointArray[] = $distance;
@@ -428,14 +449,28 @@ function ext_format()
 }
 
 /** 
- * Gets the current CMS extension name.
+ * Gets the current CMS extension name. 
+ * Sub-extensions are allowed as long as parent extension are allowed.
  * @return  string    Section name
  */
 function ext_name() 
 {
-  $ext = explode("/", dirname($_SERVER['PHP_SELF']));
+  $url = dirname($_SERVER['PHP_SELF']);
+  $tok = "/ext/";
   
-  return $ext[ count($ext) - 1 ];
+  if (strpos($url, $tok) === false) {
+    $ext = explode("/", $url);
+    return $ext[ count($ext) - 1 ];
+  }
+  
+  list($admin, $ext) = explode($tok, $url);
+  $subext = explode("/", $ext);
+  if (empty($subext[0])) {
+    $ext = explode("/", $url);
+    return $ext[ count($ext) - 1 ];
+  } else {
+    return $subext[0];
+  }
 }
 
 /** 
@@ -542,6 +577,7 @@ function is_admin()
 function is_root() 
 {
   if (!isset($_SESSION['login'])) return false;
+
   
   // get root role_id
   $user = db_select(TBL_PREFIX.TBL_USERS, "id", "login = '".$_SESSION['login']."'");
@@ -706,7 +742,7 @@ function get_cache_common_url($pageId)
 }
 
 /**
- * Checks if a strnig starts with a certain prefix.
+ * Checks if a string starts with a certain prefix.
  * @param   $string string  source string
  * @param   $prefix string  prefix to find
  * @return          boolean TRUE on success or FALSE on failure
@@ -714,5 +750,15 @@ function get_cache_common_url($pageId)
 function str_startswith($str, $prefix) 
 {
    return strncmp($str, $prefix, strlen($prefix)) == 0;
+}
+
+/**
+ * Converts Boolean value to string.
+ * @param   $string boolean value
+ * @return          string  Either "true" or "false"
+ */
+function strbool($value)
+{
+  return $value ? 'true' : 'false';
 }
 ?>

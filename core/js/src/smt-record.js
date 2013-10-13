@@ -31,25 +31,23 @@
      * If timeout is reached, mouse activity is not recorded.
      * @type number     
      */
-    recTime: 120,
+    recTime: 3600,
     /**
      * Interval to send data, in seconds
      * If timeout is reached, mouse activity is not recorded.
      * @type number     
      */
-    postInterval: 2,
+    postInterval: 30,
     /**
      * URL to local (smt)2 website, i.e., the site URL to track (with the smt*.js files).
-     * The record script will try to find automatically the URL, but if you used other name (i.e: http://my.server/test) 
-     * you must type it explicitly here.      
-     * Valid path names that will be recognized automatically are those having the string "smt2",
-     * e.g: "http://domain.name/smt2/", "/my/smt2dir/", "/server/t/tracksmt2/" ... and so on.
+     * If this property is empty, the system will detect it automatically.
      * @type string
      */
-    trackingServer: "/smt2/",
+    trackingServer: "",
     /**
      * URL to remote (smt)2 server, i.e., the site URL where the logs will be stored, and (of course) the CMS is installed.
      * If this value is empty, data will be posted to trackingServer URL.
+     * @deprecated in favor of the new 'Access-Control-Allow-Origin' HTTP header.
      * @type string
      */
     storageServer: "",
@@ -71,9 +69,11 @@
     cookieDays: 365,
     /** 
      * Main layout content diagramation; a.k.a 'how page content flows'. 
-     * Values: "left" (fixed), "center" (fixed and centered), or "liquid" (adaptable, default behavior).
-     * In "left" and "center" layouts the content is not adapted on resizing the browser.
-     * An example of left diagramation is http://smt.speedzinemedia.com
+     * Values: 
+     *  "left" (content is fixed and ragged left; e.g. http://smt.speedzinemedia.com), 
+     *  "center" (content is fixed and centered; e.g. http://personales.upv.es/luileito/), 
+     *  "right" (content is fixed and ragged right; e.g. ???), 
+     *  "liquid" (adaptable, optionally centered (or not); default behavior of web pages).
      * @type string
      */
     layoutType: "liquid",
@@ -83,6 +83,11 @@
      * @type boolean
      */
     contRecording: true,
+    /**
+     * Compress tracking data to lower bandwidth usage.
+     * @type boolean
+     */
+    compress: true,
     /** 
      * Random user selection: if true, (smt)2 is not initialized.
      * Setting it to false (or 0) means that all the population will be tracked.
@@ -99,7 +104,7 @@
   
   // get auxiliar functions
   var aux = window.smt2fn;
-  if (typeof aux === "undefined") { throw("auxiliar (smt)2 functions not found"); }
+  if (typeof aux === "undefined") { throw("Auxiliar (smt)2 functions not found"); }
     
   /** 
    * (smt)2 recording object.
@@ -114,6 +119,7 @@
     url:       null,                       // document URL
     rec:       null,                       // recording identifier
     userId:    null,                       // user identifier
+    smtId:     null,                       // smt identifier
     append:    null,                       // append data identifier
     paused:    false,                      // check active window
     clicked:   false,                      // no mouse click yet
@@ -239,40 +245,77 @@
     	++smtRec.i;
     },
     /** 
-     * Sends data in background via an XHR object (asynchronous request).
+     * Retrieves cursor data fields.
+     */
+    getCursorDataFields: function() 
+    {
+      var data  = "&pagew="       + smtRec.page.width;
+          data += "&pageh="       + smtRec.page.height;
+          if (smtOpt.compress) {
+            data += "&xcoords="   + aux.LZW.compress(smtRec.coords.x.join(","));
+            data += "&ycoords="   + aux.LZW.compress(smtRec.coords.y.join(","));
+            data += "&clicks="    + aux.LZW.compress(smtRec.coords.p.join(","));
+            data += "&elhovered=" + aux.LZW.compress(smtRec.elem.hovered.join(","));
+            data += "&elclicked=" + aux.LZW.compress(smtRec.elem.clicked.join(","));
+            data += "&compressed=1";
+          } else {
+            data += "&xcoords="   + smtRec.coords.x;
+            data += "&ycoords="   + smtRec.coords.y;
+            data += "&clicks="    + smtRec.coords.p;
+            data += "&elhovered=" + smtRec.elem.hovered;
+            data += "&elclicked=" + smtRec.elem.clicked;
+          }
+      return data;
+    },    
+    /** 
+     * Sends data in background via an XHR object.
      * This function starts the tracking session.
+     * @return void
+     * @param {boolean} async Whether request should be asynchronous or not (default: true)    
      */   
-    initMouseData: function() 
+    initMouseData: function(async) 
     {
       smtRec.computeAvailableSpace();
       // prepare data
-      var data  = "url="        + smtRec.url;
+      var data  = "client="     + smtRec.smtId;
+          data += "&url="       + smtRec.url;
           data += "&urltitle="  + document.title;
           data += "&cookies="   + document.cookie;
           data += "&screenw="   + screen.width;
           data += "&screenh="   + screen.height;
-          data += "&pagew="     + smtRec.page.width;
-          data += "&pageh="     + smtRec.page.height;
-          data += "&time="      + smtRec.getTime();
+          data += "&layout="    + smtOpt.layoutType;
+          data += "&time="      + smtRec.getBrowsingTime();
           data += "&fps="       + smtOpt.fps;
           data += "&ftu="       + smtRec.ftu;
-          data += "&xcoords="   + smtRec.coords.x;
-          data += "&ycoords="   + smtRec.coords.y;
-          data += "&clicks="    + smtRec.coords.p;
-          data += "&elhovered=" + smtRec.elem.hovered;
-          data += "&elclicked=" + smtRec.elem.clicked;
+          data += smtRec.getCursorDataFields();
           data += "&action="    + "store";
           data += "&remote="    + smtOpt.storageServer;
+          
       // send request
-      var gatewayUrl = aux.ensureLastURLSlash(smtOpt.trackingServer) + "core/gateway.php";
-      aux.sendAjaxRequest({
-        url:       gatewayUrl,
-        callback:  smtRec.setUserId, 
-        postdata:  data, 
-        xmlhttp:   smtRec.xmlhttp
+      smtRec.sendData({
+        async:     async,      
+        postdata:  data,
+        callback:  smtRec.setUserId        
       });
       // clean
       smtRec.clearMouseData();
+    },    
+    /**
+     * Sets smt ID.
+     * @return void
+     */    
+    setTrackingId: function() 
+    {
+      var id;
+      if (aux.cookies.checkCookie('smt-id')) {
+        id = aux.cookies.getCookie('smt-id');
+      } else {
+        id = md5( String(Math.random() + (new Date()).getTime() * Math.random()) );
+        // for cross-domain requests, this cookie must be set here
+        aux.cookies.setCookie('smt-id', id, smtOpt.expireDays);
+        // this ID will identify the client machine      
+      }
+      smtRec.smtId = id;
     },
     /**
      * Sets the user ID.
@@ -284,45 +327,61 @@
       smtRec.userId = parseInt(response);
       if (smtRec.userId > 0) {
         // once the session started, append mouse data
-        smtRec.append = setInterval(smtRec.appendMouseData, smtOpt.postInterval*1000);
+        smtRec.append = setInterval(function(){
+          smtRec.appendMouseData(true);
+        }, smtOpt.postInterval*1000);
       }
     },
     /** Gets current time (in seconds). */
-    getTime: function()
+    getBrowsingTime: function()
     {
       var ms = (new Date()).getTime() - smtRec.timestamp;
       
       return ms/1000; // use seconds
     },
     /** 
-     * Sends data (POST) in asynchronously mode via an XHR object.
-     * This appends the mouse data to the current tracking session.
+     * Sends data (POST) in asynchronously mode (or not) via an XHR object.
+     * This function appends the mouse data to the current tracking session.
      * If user Id is not set, mouse data are queued.     
+     * @return void
+     * @param {boolean} async Whether request should be asynchronous or not (default: true)
      */   
-    appendMouseData: function() 
+    appendMouseData: function(async) 
     {
       if (!smtRec.rec || smtRec.paused) { return false; }
       // prepare data
       var data  = "uid="        + smtRec.userId;
-          data += "&time="      + smtRec.getTime();
-          data += "&pagew="     + smtRec.page.width;
-          data += "&pageh="     + smtRec.page.height;
-          data += "&xcoords="   + smtRec.coords.x;
-          data += "&ycoords="   + smtRec.coords.y;
-          data += "&clicks="    + smtRec.coords.p;
-          data += "&elhovered=" + smtRec.elem.hovered;
-          data += "&elclicked=" + smtRec.elem.clicked;
+          data += "&time="      + smtRec.getBrowsingTime();
+          data += smtRec.getCursorDataFields();
           data += "&action="    + "append";
           data += "&remote="    + smtOpt.storageServer;
+
       // send request
-      var gatewayUrl = aux.ensureLastURLSlash(smtOpt.trackingServer) + "core/gateway.php";
-      aux.sendAjaxRequest({
-        url:       gatewayUrl, 
-        postdata:  data,
-        xmlhttp:   smtRec.xmlhttp
+      smtRec.sendData({
+        async:    async,      
+        postdata: data
       });
       // clean
       smtRec.clearMouseData();
+    },
+    /** 
+     * Sends cursor data.
+     */    
+    sendData: function(req) {
+      req.url = aux.ensureLastURLSlash(smtOpt.trackingServer) + "core/gateway.php";
+      req.xmlhttp = smtRec.xmlhttp;
+      aux.sendAjaxRequest(req);
+    },    
+    /** 
+     * Flushes mouse data from queue.
+     */
+    flushData: function()
+    {
+      if (smtRec.userId) {
+        smtRec.appendMouseData(false);
+      } else {
+        smtRec.initMouseData(false);
+      }
     },
     /** 
      * Clears mouse data from queue.        
@@ -431,6 +490,7 @@
      */
     init: function() 
     {
+      smtRec.setTrackingId();
       smtRec.computeAvailableSpace();
       // get this location BEFORE making the AJAX request
       smtRec.url = escape(window.location.href);
@@ -461,6 +521,7 @@
       aux.addEvent(document, "touchmove",  onMove);
       aux.addEvent(document, "touchend",   smtRec.releaseClick);
       aux.addEvent(window,   "resize",     smtRec.computeAvailableSpace);
+      aux.addEvent(window,   "orientationchange", smtRec.computeAvailableSpace);
       //aux.addEvent(document, "keydown",    smtRec.keyHandler);
       //aux.addEvent(document, "keyup",      smtRec.keyHandler);
       // check if recording should persist when current tab/window is not active
@@ -477,28 +538,29 @@
       // flush mouse data when tracking ends
       if (typeof window.onbeforeunload == 'function') {
         // user closes the browser window
-        aux.addEvent(window, "beforeunload", smtRec.appendMouseData);
+        aux.addEvent(window, "beforeunload", smtRec.flushData);
       } else {
         // page is unloaded (for old browsers)
-        aux.addEvent(window, "unload", smtRec.appendMouseData);
+        aux.addEvent(window, "unload", smtRec.flushData);
       }
       // this is the best cross-browser method to store tracking data successfully
-      setTimeout(smtRec.initMouseData, smtOpt.postInterval*1000);
-      // compute log session time by date instead of dividing coords length by frame rate
+      setTimeout(function(){
+        smtRec.initMouseData(true);
+      }, smtOpt.postInterval*1000);
+      // compute full session time by date instead of dividing coords length by frame rate
       smtRec.timestamp = (new Date()).getTime();
     }
   };
-  
-  // do not overwrite the smt2 namespace
-  if (typeof window.smt2 !== 'undefined') { throw("smt2 namespace conflict"); }
-  // else expose record method
+
+  // begin expose  
   window.smt2 = {
+    methods: smtRec,
     // to begin recording, the tracking script must be called explicitly
     record: function(opts) {
       // load custom recording options, if any
       if (typeof opts !== 'undefined') { aux.overrideTrackingOptions(smtOpt, opts); }
       // does user browse for the first time?
-      var previousUser = aux.cookies.checkCookie('smt-ftu');
+      var previousUser = aux.cookies.getCookie('smt-ftu');
       // do not skip first time users when current visit is not sampled
       if (smtOpt.disabled && previousUser) { return; }
       // store int numbers, not booleans (since it's casted to string for cookie storage)
@@ -525,8 +587,8 @@
         if (/smt-record/i.test(filename)) {
           var paths = filename.split("/");
           var pos = aux.array.indexOf(paths, "smt2");
-          if (pos && smtOpt.trackingServer === null) {
-            smtOpt.trackingServer = paths.slice(0, pos + 1).join("/");
+          if (pos && !smtOpt.trackingServer) {
+            smtOpt.trackingServer = paths.slice(0, pos+1).join("/");
           }
         }
       }

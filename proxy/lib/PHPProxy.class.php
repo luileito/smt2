@@ -104,7 +104,7 @@ class PHPProxy {
 	 * the output out to the current page.
 	 */
 	function handleRequest() {
-		if ($this->username) {
+		if (isset($this->username)) {
 			$this->connector->setLogin($this->username, $this->password);
 		}
 		

@@ -1,7 +1,7 @@
 package com.speedzinemedia.smt.display {
 
-    import flash.display.Bitmap;
-    import flash.display.Sprite;
+  import flash.display.Bitmap;
+  import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
@@ -16,16 +16,16 @@ package com.speedzinemedia.smt.display {
 	 * @autor Luis Leiva
 	 * @date 14-Ene-2010
 	 */
-    public class Draggable extends Pannable
-    {
-        // decorative (but usability-friendly) cursor
-		private var $move:Bitmap 	= new Asset.cursorMove();
-		private var $fp10:Boolean 	= (PlayerInfo.getPlayerVersion() >= 10);
+  public class Draggable extends Pannable 
+  {
+    // decorative (but usability-friendly) cursor
+    private var $move:Bitmap 	= new Asset.CURSOR_MOVE();
+    private var $fp10:Boolean = (PlayerInfo.getPlayerVersion() >= 10);
 		
-        public function Draggable(obj:Sprite)
-        {
-            super(obj);
-        };
+    public function Draggable(obj:Sprite)
+    {
+      super(obj);
+    };
 		
 		/** Adds the cursor Asset. */
 		override protected function drag(e:MouseEvent):void 
@@ -38,7 +38,7 @@ package com.speedzinemedia.smt.display {
 				Mouse.cursor = MouseCursor.HAND;
 			} else {
 				Mouse.hide();
-    // attach cursor to stage to make it scale-independent
+        // attach cursor to stage to make it scale-independent
 				target.stage.addChild($move);
 				target.addEventListener(MouseEvent.MOUSE_MOVE, pos);
 				// update cursor position
@@ -55,13 +55,13 @@ package com.speedzinemedia.smt.display {
 				Mouse.cursor = MouseCursor.AUTO;
 			} else {
 				Mouse.show();
-    // detach cursor
+        // detach cursor
 				target.stage.removeChild($move);
 				target.removeEventListener(MouseEvent.MOUSE_MOVE, pos);
 			}
 		};
 
-  private function pos(e:MouseEvent):void
+    private function pos(e:MouseEvent):void
 		{
 			$move.x = e.stageX - $move.width/2;
 			$move.y = e.stageY - $move.height/2;

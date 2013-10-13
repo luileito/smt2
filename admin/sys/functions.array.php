@@ -8,12 +8,9 @@
 function array_frequency($input, $threshold = 1) 
 {
   // convert $input in a real PHP array
-  $input = (!is_array($input)) ? explode(",", $input) : $input;
+  if (!is_array($input)) $input = explode(",", $input);
   // count occurrences (array keys must be strings or integers)
-  $unique = array_count_values($input); // returns an associative array of values from $input as keys and their count as value.
-  // $input is an associative array(string => int)
-  $unique = array_sanitize($unique);
-  
+  $unique = array_sanitize(array_count_values($input));
   // exit if there are no data
   if (!$unique) return false;
   
@@ -41,25 +38,19 @@ function array_frequency($input, $threshold = 1)
  */
 function array_sanitize($input)
 {
-  $isString = false;
+  $is_arr = is_array($input);
   
-  if (!is_array($input)) { 
-    $input = explode(",", $input);
-    $isString = true; 
-  }
-  
-  $temp = array();  
-  foreach ($input as $key => $value) {
-    // avoid buggy values
+  if (!$is_arr) $input = explode(",", $input);
+  $out = array();
+  foreach ($input as $key => $val) {
     $key = trim($key);
-    $value = trim($value);
-    // store valid data
-    if (!empty($key) && !empty($value)) {
-      $temp[$key] = $value;
+    $val = trim($val);
+    if (!empty($key) && !empty($val)) {
+      $out[$key] = $val;
     }
   }
   
-  return ($isString) ? implode(",", $temp) : $temp;
+  return $is_arr ? $out : implode(",", $out);
 }
 
 /** 
@@ -69,35 +60,14 @@ function array_sanitize($input)
  */
 function array_null($input)
 {
-  if (!is_array($input)) {
-    $input = explode(",", $input);
+  if (!is_array($input)) $input = explode(",", $input);
+  
+  $out = array(); 
+  foreach ($input as $key => $val) {
+    $out[$key] = (!empty($val)) ? $val : 0;
   }
   
-  $temp = array(); 
-  foreach ($input as $key => $value) {
-    // store valid data
-    $temp[$key] = (!empty($value)) ? $value : 0;
-  }
-  
-  return $temp;
-}
-
-/** 
- * Does a weighted sum for a given multidimensional numeric array and computed weights.
- * @param   array  $input     multidimensional array (matrix)
- * @param   array  $weights   weights 
- * @return  array             Weighted sum
- * @link    http://www.compapp.dcu.ie/~humphrys/PhD/e.html 
- */
-function array_avg_weighted($input, $weights) 
-{
-  $sumArray = array();
-  
-  foreach ($input as $arrItem) {
-    $sumArray[] = array_avg($arrItem) * count($arrItem) / max($weights);
-  }
-  
-  return $sumArray;
+  return $out;
 }
 
 /** 
@@ -111,6 +81,22 @@ function array_avg($input)
 }
 
 /**
+ * Computes the variance of a numeric array.
+ * @param   array  $input   array
+ * @return  int             Array index
+ */
+function array_sd($input, $mean = null)
+{
+  $variance = 0;
+  if ($mean == null) $mean = array_avg($input);
+  foreach ($input as $elem) {
+    $variance += ($elem - $mean) * ($elem - $mean);
+  }
+
+  return round( sqrt($variance/count($input)), 2 );
+}
+
+/**
  * Computes the average sum of a matrix, assuming that each row is a numeric array.
  * @param   array $matrix a set of arrays (matrix)
  * @return  float         matrix average value
@@ -120,32 +106,13 @@ function matrix_avg($matrix)
   $sum = 0;
   $count = 0;
 
-  foreach ($matrix as $arrItem)
-  {
-    if (!is_array($arrItem)) { $arrItem = explode(",", $arrItem); }
-
+  foreach ($matrix as $arrItem) {
+    //if (!is_array($arrItem)) $arrItem = explode(",", $arrItem);
     $sum += array_avg($arrItem);
-    // note that this is an accumulative sum
     ++$count;
   }
 
-  return round( $sum/$count, 2 );
-}
-
-/**
- * Computes the variance of a numeric array.
- * @param   array  $input   array
- * @return  int             Array index
- */
-function array_sd($input)
-{
-  $variance = 0;
-  $mean = array_avg($input);
-  foreach ($input as $elem) {
-    $variance += ($elem - $mean) * ($elem - $mean);
-  }
-
-  return round( sqrt($variance/count($input)), 2 );
+  return round($sum/$count, 2);
 }
 
 /**
@@ -158,16 +125,13 @@ function matrix_sd($matrix)
   $sd = 0;
   $count = 0;
 
-  foreach ($matrix as $arrItem)
-  {
-    if (!is_array($arrItem)) { $arrItem = explode(",", $arrItem); }
-
+  foreach ($matrix as $arrItem) {
+    //if (!is_array($arrItem)) $arrItem = explode(",", $arrItem);
     $sd += array_sd($arrItem);
-    // note that we can have more than one input array
     ++$count;
   }
   
-  return round( $sd/$count, 2 );
+  return round($sd/$count, 2);
 }
 
 /** 
@@ -178,15 +142,9 @@ function matrix_sd($matrix)
 function array_argmax($input)
 {
   $max = max($input);
-  foreach ($input as $key => $value)
-  {
-    if ($value == $max) {
-      $maxIndex = $key;
-      break;
-    }
-  }
+  $key = array_search($max, $input);
   
-  return $maxIndex;
+  return $key;
 }
 
 /** 
@@ -197,15 +155,9 @@ function array_argmax($input)
 function array_argmin($input)
 {
   $min = min($input);
-  foreach ($input as $key => $value)
-  {
-    if ($value == $min) {
-      $minIndex = $key;
-      break;
-    }
-  }
+  $key = array_search($min, $input);
   
-  return $minIndex;
+  return $key;
 }
 
 /**
@@ -226,5 +178,26 @@ function array_flatten($input)
   }
 
   return $input;
+}
+
+/**
+ * Normalize array values on a per feature basis, so that each feature has uniform variance.
+ */
+function whiten(array $matrix)
+{
+  $sd = array();
+  // transpose
+  $columns = array_map(NULL, $matrix);
+  foreach ($columns as $i => $col) {
+    $sd[$i] = array_sd($col);
+  }
+
+  foreach ($matrix as $row => &$feats) {
+    foreach ($feats as $i => &$feat) {
+      $feat /= $sd[$row];
+    }
+  }
+  
+  return $matrix;
 }
 ?>

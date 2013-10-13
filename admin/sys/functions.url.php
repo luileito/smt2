@@ -67,4 +67,16 @@ function url_get_base($url)
   
   return $base;
 }
+
+/** 
+ * Gets the domain (host) name of a given URL.
+ * @param   string  $url  input URL  
+ * @return  string        Domain
+ */
+function url_get_domain($url)
+{
+  $parts = parse_url($url);
+  
+  return isset($parts['host']) ? $parts['host'] : "";
+}
 ?>

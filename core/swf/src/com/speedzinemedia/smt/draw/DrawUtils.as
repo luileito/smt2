@@ -60,11 +60,27 @@ package com.speedzinemedia.smt.draw {
                 DrawUtils.drawStar(layer, p, centerSize);
             }
         };
-
+        
+        public static function drawArc(layer:*, p:Point, radius:Number, startAngle:Number = 0.0, arcAngle:Number = 0.0, steps:int = 5):void
+        {
+            startAngle -= .25;
+            
+            var twoPI:Number = 2 * Math.PI;
+            var angleStep:Number = arcAngle/steps;
+            var xx:Number = p.x + Math.cos(startAngle * twoPI) * radius;
+            var yy:Number = p.x + Math.sin(startAngle * twoPI) * radius;
+            layer.graphics.moveTo(xx, yy);
+            for (var i:int = 1; i <= steps; ++i){
+                var angle:Number = startAngle + i * angleStep;
+                xx = p.x + Math.cos(angle * twoPI) * radius;
+                yy = p.y + Math.sin(angle * twoPI) * radius;
+                layer.graphics.lineTo(xx, yy);
+            }
+        };
+        
         public static function createCircle(p:Point, size:int, color:uint = 0xFFFFFF, alpha:Number = 0.5):Shape
         {
             var c:Shape = new Shape();
-            
             drawCircle(c, p, size, color, alpha);
 
             return c;
@@ -81,7 +97,7 @@ package com.speedzinemedia.smt.draw {
         public static function applyBlurFilter(size:Number = 20, quality:int = 1):Array
         {
             var blur:BitmapFilter = new BlurFilter(size, size);
-            var filter:Array = new Array();
+            var filter:Array = [];
             filter.push(blur);
 
             return filter;

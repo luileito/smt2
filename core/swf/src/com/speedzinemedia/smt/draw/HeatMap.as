@@ -37,27 +37,27 @@ package com.speedzinemedia.smt.draw {
             
             /*
             // find max value from gaussians
-			for (i = 1; i <= $bmp.width; ++i)
+			      for (i = 1; i <= $bmp.width; ++i)
             {
-				for (j = 1; j <= $bmp.height; ++j)
-                {
-                    pixel = $bmp.bitmapData.getPixel32(i,j);
-				    max = Math.max(max, (pixel >> 8) & 0xFFFFFF);
-                }
+				      for (j = 1; j <= $bmp.height; ++j)
+              {
+                pixel = $bmp.bitmapData.getPixel32(i,j);
+    				    max = Math.max(max, (pixel >> 8) & 0xFFFFFF);
+              }
             }
             */
             
             // colorize
-			for (i = 1; i <= $bmp.width; ++i)
+			      for (i = 1; i <= $bmp.width; ++i)
             {
                 for (j = 1; j <= $bmp.height; ++j)
                 {
-				    pixel = $bmp.bitmapData.getPixel32(i,j);
-					if (pixel == 0) continue;
+				          pixel = $bmp.bitmapData.getPixel32(i,j);
+        					if (pixel == 0) continue;
 
-                    $bmp.bitmapData.setPixel32(j, i, colorize(((pixel >> 8) & 0xFFFFFF) / $max));
-				}
-			}
+                  $bmp.bitmapData.setPixel32(j, i, colorize(((pixel >> 8) & 0xFFFFFF) / $max));
+				        }
+      			}
         };
         
         /**
@@ -69,49 +69,49 @@ package com.speedzinemedia.smt.draw {
          * @date       2007-12-16
          */
         protected function colorize(intensity:Number):uint
-		{
-			var alpha:int = Math.min(255 * intensity, 255);
-			var temp:Number, r:int = 0, g:int = 0, b:int = 0;
+		    {
+			    var alpha:int = Math.min(255 * intensity, 255);
+			    var temp:Number, r:int = 0, g:int = 0, b:int = 0;
 
-			// blue
-			if (intensity < 0.33) {
-				b = 0;
-			}
-			else if (intensity >= 0.33 && intensity < 0.66) {
-				temp = (intensity - 0.33) / 0.33;
-				b = (1-temp) * 255;
-			}
-			else {
-				b = 0;
-			}
+			    // blue
+			    if (intensity < 0.33) {
+				    b = 0;
+			    }
+			    else if (intensity >= 0.33 && intensity < 0.66) {
+				    temp = (intensity - 0.33) / 0.33;
+				    b = (1-temp) * 255;
+			    }
+			    else {
+				    b = 0;
+			    }
 
-			// green
-			if (intensity < 0.33) {
-				temp = intensity / 0.33;
-				g = temp * 255;
-			}
-			else if (intensity >= 0.33 && intensity < 0.66)	{
-				g = 255;
-			}
-			else {
-				temp = (intensity - 0.66) / 0.34;
-				g = (1 - temp) * 255;
-			}
+			    // green
+			    if (intensity < 0.33) {
+				    temp = intensity / 0.33;
+				    g = temp * 255;
+			    }
+			    else if (intensity >= 0.33 && intensity < 0.66)	{
+				    g = 255;
+			    }
+			    else {
+				    temp = (intensity - 0.66) / 0.34;
+				    g = (1 - temp) * 255;
+			    }
 
-			// red
-			if (intensity < 0.33) {
-				r = 0;
-			}
-			else if (intensity >= 0.33 && intensity < 0.66)	{
-				temp = (intensity - 0.33) / 0.33;
-				r = temp * 255;
-			}
-			else {
-				r = 255;
-			}
+			    // red
+			    if (intensity < 0.33) {
+				    r = 0;
+			    }
+			    else if (intensity >= 0.33 && intensity < 0.66)	{
+				    temp = (intensity - 0.33) / 0.33;
+				    r = temp * 255;
+			    }
+			    else {
+				    r = 255;
+			    }
 
-			return (alpha << 24) + (r << 16) + (g << 8) + b;
-		};
+			    return (alpha << 24) + (r << 16) + (g << 8) + b;
+		  };
 		
 
     } // end class

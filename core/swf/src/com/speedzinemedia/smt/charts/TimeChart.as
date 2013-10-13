@@ -7,7 +7,6 @@ package com.speedzinemedia.smt.charts {
     import flash.display.Shape;
     import flash.display.Sprite;
     import flash.geom.Point;
-import flash.external.ExternalInterface;
     import caurina.transitions.Tweener;
     
     import com.speedzinemedia.smt.display.Layers;
@@ -64,12 +63,12 @@ import flash.external.ExternalInterface;
             const OFFSET:int = 10;
             // set background layer
             var bg:Shape = new Shape();
-            bg.graphics.beginFill(0xFFFFFF);
+            bg.graphics.beginFill(0xEEEEEE);
             bg.graphics.drawRect(-OFFSET,-OFFSET, $width + OFFSET*2,$height + OFFSET*2);
             bg.graphics.endFill();
             // draw bounding box
             var lines:Shape = new Shape();
-            lines.graphics.lineStyle(0,0xDDDDDD);
+            lines.graphics.lineStyle(0,0xCCCCCC);
             lines.graphics.drawRect(0,0, $width,$height);
             // origin arrows
             const oIni:Point = new Point(0,0);
@@ -110,7 +109,7 @@ import flash.external.ExternalInterface;
             
         private function drawChart(info:Object):void
         {            
-            var points:Array = ($type == TYPE_VERTICAL) ? info.activity.coords.y : info.activity.coords.x;
+            var points:Vector.<int> = ($type == TYPE_VERTICAL) ? info.activity.coords.y : info.activity.coords.x;
             
             var num:int = points.length - 1;
             var step:Number = $width / num;

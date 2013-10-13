@@ -107,14 +107,16 @@ if (!is_dir(BACKUPDIR))
                      );
   }
 }
+
+clearstatcache();
 // ensure full access to backup dir (at least apache/IIS)
-if (!is_writeable(BACKUPDIR)) {
+if (!is_writable(BACKUPDIR)) {
   $perms = substr(decoct( fileperms(BACKUPDIR) ), 2);
   if (($perms != "775" || $perms != "777") && !chmod(BACKUPDIR, 0775)) 
   {
     echo display_text($_displayType["ERROR"],
                       'Settings permissions to <strong>'.BACKUPDIR.'</strong> failed.
-                       You must set write permissions to that directory manually.'
+                       You must set write permissions (either 775 or 777) to that directory manually.'
                      );
   }
 }

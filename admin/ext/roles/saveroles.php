@@ -17,7 +17,7 @@ if ($form == "manage")
   
   if (!isset($exts)) {
     // nothing to change...
-    notify_request($form, false, "You should check at least one section for that role.");
+    //notify_request($form, false, "You should check at least one section for that role.");
   }
   
   // check if role name exists

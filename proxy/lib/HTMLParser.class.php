@@ -21,16 +21,8 @@ class HTMLParser {
     // create (smt) record script
     $aux = $dom->createExternalScript(SMT_AUX);
     $rec = $dom->createExternalScript(SMT_RECORD);
-    
-    $cdata_smt = '
-//<![CDATA[
-  try {
-    smt2.record();
-  } catch(err) {}
-//]]>
-';
-
-    $smt = $dom->createInlineScript($cdata_smt);
+    require_once BASE_PATH.'/proxy/conf/trackingcode.php';
+    $smt = $dom->createInlineScript($smt2code);
     // parse
     $head = $dom->getElementsByTagName('head');
     foreach ($head as $h) {

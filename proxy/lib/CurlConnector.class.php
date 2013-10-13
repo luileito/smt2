@@ -59,7 +59,7 @@ class CurlConnector implements Connector {
 	}
 	
 	function setReferer($referer) {
-		curl_setopt($this->curl, CURLOPT_REFERER, $url);
+		curl_setopt($this->curl, CURLOPT_REFERER, $this->url);
 	}
 	
 	function setCookie($cookie) {

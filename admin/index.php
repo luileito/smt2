@@ -3,15 +3,6 @@
 require '../config.php';
 require SYS_DIR.'/logincheck.php';
 
-// check this first
-$ROOT = is_root();
-// exclude the superuser from being tracked
-if ($ROOT && !isset($_COOKIE['smt-root'])) {
-  // set expiration date in 1 year
-  $expires = time() + 60 * 60 * 24 * 365;
-  setcookie('smt-root', true, $expires, '/');
-}
-
 // now render page
 include INC_DIR.'header.php';
 
@@ -22,7 +13,7 @@ if (isset($_SESSION['error']["NOT_ALLOWED"])) {
 }
 
 // sanitize installed/removed extensions
-if ($ROOT) {
+if (is_root()) {
   $prioritized = get_exts_order();
   // is there a new extension installed? 
   $newext = array_flip($_SESSION['allowed']);
@@ -65,7 +56,7 @@ if (!db_check()) {
   $msg  = '<h2>Seems that you need to setup your database</h2>';
   $msg .= '<p>';
   $msg .= 'Did you edit your <em>config.php</em> file?'.PHP_EOL;
-  $msg .= 'If server data are correct, go <a href="./sys/install.php">install (smt)</a>.';
+  $msg .= 'If server data are correct, go <a href="'.SYS_DIR.'install.php">install (smt)</a>.';
   $msg .= '</p>';
   
   echo display_text($_displayType["WARNING"], $msg, 'div');
@@ -105,7 +96,7 @@ if (ini_get('safe_mode'))
 
 if (ini_get('open_basedir'))
 {
-  $msg  = 'Your PHP open base dir restriction could interfere with cURL.'.PHP_EOL;
+  $msg  = 'Your PHP open base dir restriction could interfere with cURL.';
   $msg .= 'Fortunately, there exist <a rel="external" href="http://www.php.net/manual/en/function.curl-setopt.php#71313">some</a>';
   $msg .= ' <a rel="external" href="http://www.php.net/manual/en/function.curl-setopt.php#79787">workarounds</a>.';
 
@@ -113,25 +104,29 @@ if (ini_get('open_basedir'))
 }
 
 /* version checking --------------------------------------------------------- */
-if (!check_systemversion("mysql")) 
+if (!check_systemversion("mysql", 5)) 
 {
   $dberror = true;
   
   $msg  = '<h2>MySQL version test failed</h2>';
   $msg .= '<p>';
-  $msg .= 'You have MySQL '.mysql_get_client_info().' installed, but at least version 5 is required to work with (smt).';
+  $msg .= 'You have MySQL <code>'.mysql_get_client_info().'</code> installed, ';
+  $msg .= 'but at least version <strong>5</strong> is required. ';
+  $msg .= '<em>You can ignore this message if the system is already working.</em>';
   $msg .= '</p>';
 
   echo display_text($_displayType["ERROR"], $msg, 'div');
 }
-// check also PHP version
-if (!check_systemversion("php")) 
+
+if (!check_systemversion("php", 5)) 
 {
   $dberror = true;
 
   $msg  = '<h2>PHP version test failed</h2>';
   $msg .= '<p>';
-  $msg .= 'You have PHP '.phpversion().' installed, but at least PHP 5 is required to handle the tracking logs.';
+  $msg .= 'You have PHP <code>'.phpversion().'</code> installed, ';
+  $msg .= 'but at least PHP <strong>5</strong> is required to handle the tracking logs. ';
+  $msg .= '<em>You can ignore this warning if the system is already working.</em>'; 
   $msg .= '</p>';
 
   echo display_text($_displayType["ERROR"], $msg, 'div');
@@ -156,7 +151,8 @@ else
   }
   $dblog = db_records();
   if ($cache > $dblog) {
-    echo display_text($_displayType["WARNING"], 'There are '.$cache.' logs in cache dir, but there are '.$dblog.' in database, which is something weird :/');
+    echo display_text($_displayType["WARNING"], 
+          'There are '.$cache.' logs in cache dir, but there are '.$dblog.' in database, which is something weird :/');
   }
   
   // ensure that logs can be written
@@ -172,6 +168,27 @@ else
   }
 }
 
+if (is_admin()) {
+?>
+
+<h3>Tracking Code</h3>
+<p>Put this snippet in the pages you'd wish to track:</p>
+<code><pre><?php
+  //$code  = '<script type="text/javascript" src="'.ABS_PATH.'core/js/smt-aux.min.js"></script>'    . PHP_EOL;
+  //$code .= '<script type="text/javascript" src="'.ABS_PATH.'core/js/smt-record.min.js"></script>' . PHP_EOL;
+  $code  = '<script type="text/javascript" src="'.ABS_PATH.'core/js/smt2e.min.js"></script>' . PHP_EOL;
+  $code .= '<script type="text/javascript">' . PHP_EOL;
+  $code .= 'try { '             . PHP_EOL;
+  $code .= '  smt2.record();'   . PHP_EOL;
+  $code .= '} catch(err) {} '   . PHP_EOL;
+  $code .= '</script>'          . PHP_EOL;
+  echo htmlentities($code);
+?></pre></code>
+<br/>
+<p>For more info, go to <a href="https://code.google.com/p/smt2/w/list">the Wiki pages</a>.</p>
+
+<?php
+}
 
 // include footer file
 include INC_DIR.'footer.php';

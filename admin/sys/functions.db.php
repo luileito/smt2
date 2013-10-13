@@ -64,7 +64,7 @@ function db_select($table, $column, $condition)
 function db_select_all($table, $column, $condition)
 {
   $sql = "SELECT $column FROM $table WHERE $condition";
-
+  
   $res = db_query($sql);
   // get ALL rows
   $opt = array();

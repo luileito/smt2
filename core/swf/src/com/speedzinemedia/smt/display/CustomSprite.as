@@ -6,13 +6,13 @@ package com.speedzinemedia.smt.display {
 	
 	import flash.display.Sprite;
 	
-	public class CustomSprite extends Sprite
-    {
-        private var _color:uint;
+	public class CustomSprite extends Sprite {
+	
+    private var _color:uint;
+          
+    public function CustomSprite(){};
         
-        public function CustomSprite(){};
-        
-        // getter/setters
+    // getter/setters
 		public function set color(c:uint):void
 		{
 			_color = c;
@@ -23,5 +23,5 @@ package com.speedzinemedia.smt.display {
 			return _color;
 		};
         
-    } // end class
+  } // end class
 }

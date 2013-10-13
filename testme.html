@@ -6,14 +6,13 @@
 
   <title>My document title</title>
 
-  <script type="text/javascript" src="/smt2/core/js/smt-aux.min.js"></script>
-  <script type="text/javascript" src="/smt2/core/js/smt-record.min.js"></script>
+  <!--<script type="text/javascript" src="/smt2/SVN/core/js/src/smt2e.js"></script>-->
+  <script type="text/javascript" src="/smt2/core/js/smt2e.min.js"></script>
   <script type="text/javascript">
   try {
     smt2.record({ 
-      recTime: Number.MAX_VALUE,
-      disabled: false,
-      warn: false
+      warn:true, 
+      warnText:"smt2e is going to track your cursor activity." 
     });
   } catch(err) {}
   </script>

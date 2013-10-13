@@ -10,6 +10,7 @@
  */
 function get_remote_webpage($URL, $opts = array())
 {
+  if (empty($URL)) return false;
   // basic options (regular GET requests)
   $options = array(
                     CURLOPT_URL            => $URL,
@@ -78,5 +79,27 @@ function get_client_id()
   }
   
   return $id;
+}
+
+/**
+ * Removes smt2 scripts from DOM.
+ */
+function remove_smt_scripts(&$dom) 
+{
+  $scripts = $dom->getElementsByTagName("script");
+  $scriptsToRemove = array();
+  // mark
+  foreach ($scripts as $script) 
+  {
+    $src = $script->getAttribute("src");
+    // use hardcoded strings instead of defined constants since file versions will change
+    if (strstr($src, "smt-record") || strstr($src, "smt-aux") || strstr($src, "smt2e")) {
+      $scriptsToRemove[] = $script;
+    }
+  }
+  // sweep
+  foreach ($scriptsToRemove as $script) {
+    $script->parentNode->removeChild($script);
+  }
 }
 ?>

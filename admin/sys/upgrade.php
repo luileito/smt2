@@ -34,14 +34,20 @@ if (!mysql_num_rows($res)) {
   db_query($sql);
   $UPGRADED = true;
 }
-// in any case, allow recording more time
-$res = db_query("ALTER TABLE `".TBL_PREFIX.TBL_RECORDS."` MODIFY `sess_time` FLOAT(7,2) unsigned NOT NULL");
 
-// check if clicks should be updated
+// in any case, allow recording more time, and update browser version columun data type
+$sql  = "ALTER TABLE `".TBL_PREFIX.TBL_RECORDS."` ";
+$sql .= "MODIFY `sess_time`   FLOAT(7,2) unsigned NOT NULL, ";
+$sql .= "MODIFY `browser_ver` FLOAT(3,1) unsigned NOT NULL";
+// also, do not update timestamp of session date
+$sql .= "MODIFY `sess_date`   TIMESTAMP  default  CURRENT_TIMESTAMP, ";
+$res = db_query($sql);
+
+// check if old click format should be updated
 $res = db_query("SHOW COLUMNS FROM ".TBL_PREFIX.TBL_RECORDS." LIKE 'clicks'");
 if (!mysql_num_rows($res)) {
   // convert previous clicks to the UNIPEN format
-  $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "id,clicks_x", 1); // there is no need to parse clicks_y for this conversion
+  $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "id,clicks_x", "1"); // there is no need to parse clicks_y for this conversion
   if ($logs) {
     $info = array();
     foreach ($logs as $log) {
@@ -69,6 +75,50 @@ if (!mysql_num_rows($res)) {
   $UPGRADED = true;
 }
 
+// alter cache table
+$res = db_query("SHOW COLUMNS FROM ".TBL_PREFIX.TBL_CACHE." LIKE 'layout'");
+if (!mysql_num_rows($res)) {
+  $sql  = "ALTER TABLE `".TBL_PREFIX.TBL_CACHE."` ";
+  $sql .= "ADD `layout` ENUM('left', 'center', 'right', 'liquid') NOT NULL DEFAULT 'liquid' AFTER `url`";
+  db_query($sql);
+  $UPGRADED = true;
+}
+
+// this table didn't exist in previous versions, so supress MySQL error
+$res = @db_query("SHOW COLUMNS FROM ".TBL_PREFIX.TBL_DOMAINS." LIKE 'id'");
+if (!$res) {
+  $sql  = 'CREATE TABLE IF NOT EXISTS `'.TBL_PREFIX.TBL_DOMAINS.'` (';
+  $sql .= '`id`           SMALLINT      unsigned  NOT NULL auto_increment, ';   // domain id
+  $sql .= '`domain`       VARCHAR(255)            NOT NULL, ';                  // domain name
+  $sql .= 'PRIMARY KEY (`id`) ';
+  $sql .= ') DEFAULT CHARSET utf8';
+  
+  db_query($sql);
+  $UPGRADED = true;
+}
+
+// check if domains should be updated
+$res = db_query("SHOW COLUMNS FROM ".TBL_PREFIX.TBL_RECORDS." LIKE 'domain_id'");
+if (!mysql_num_rows($res)) {
+  // create new column
+  $sql = "ALTER TABLE `".TBL_PREFIX.TBL_RECORDS."` ADD `domain_id` SMALLINT unsigned NOT NULL AFTER `cache_id`";
+  db_query($sql);
+  // and update old DB records with the new values
+  $pages = db_select_all(TBL_PREFIX.TBL_CACHE, "id,url", "1");
+  foreach ($pages as $page) {
+    $domain = url_get_domain($page['url']);
+    $d = db_select(TBL_PREFIX.TBL_DOMAINS, "id", "domain='".$domain."'");
+    if (!$d) {
+      $did = db_insert(TBL_PREFIX.TBL_DOMAINS, "domain", "'".$domain."'");
+    } else {
+      $did = $d['id'];
+    }
+    db_update(TBL_PREFIX.TBL_RECORDS, "domain_id='".$did."'", "cache_id='".$page['id']."'");
+  }
+  $UPGRADED = true;
+}
+
+
 // define helper function
 function update_cms($table, $fields, $values, $condition)
 {
@@ -86,9 +136,11 @@ $opts = array(
                 array(CMS_TYPE,   "maxSampleSize",      0, "Number of logs to replay/analyze simultaneously (0 means no limit). If your database has a lot of records for the same URL, you can take into account only a certain subset of logs."),
                 // disabled by default
                 array(CMS_CHOICE, "mergeCacheUrl",      0, "Merges all logs that have the same URL. Useful when grouping records by page ID, and one wants to analyze all common URLs."),
+                array(CMS_CHOICE, "fetchOldUrl",        0, "Tries to fetch a URL that could not be cached or that was deleted from cache."),
                 array(CMS_CHOICE, "refreshOnResize",    0, "Reload visualization page on resizing the browser window."),                
                 array(CMS_CHOICE, "displayWidgetInfo",  0, "Display hover and click frequency for each interacted DOM element."),
-                array(CMS_CHOICE, "displayGoogleMap",   0,  "If you typed a valid Google Maps key on your <em>config.php</em> file, the client location will be shown on a map when analyzing the logs."),
+                array(CMS_CHOICE, "displayGoogleMap",   0, "If you typed a valid Google Maps key on your <em>config.php</em> file, the client location will be shown on a map when analyzing the logs."),
+                array(CMS_CHOICE, "displayAvgTrack",    0, "Display average mouse trail when visualizing simultaneous users."),
                 array(CMS_CHOICE, "enableDebugging",    0, "Turn on PHP strict mode and work with JS src files instead of minimized ones.")
              );
 // update CMS options table
@@ -113,6 +165,21 @@ foreach ($opts as $arrValue) {
               $arrValue[0]."','".$arrValue[1]."','".$arrValue[2]."','".$arrValue[3],
               "name = '".$arrValue[1]."'"
             );
+}
+
+// this table didn't exist in previous versions, so supress MySQL error
+$res = @db_query("SHOW COLUMNS FROM ".TBL_PREFIX.TBL_HYPERNOTES." LIKE 'record_id'");
+if ($res) {
+  $sql  = 'CREATE TABLE IF NOT EXISTS `'.TBL_PREFIX.TBL_HYPERNOTES.'` (';
+  $sql .= '`record_id`    BIGINT        unsigned  NOT NULL, ';                  // log id
+  $sql .= '`cuepoint`     CHAR(5)                 NOT NULL, ';                  // time position (SMPTE: ##:##)
+  $sql .= '`user_id`      TINYINT                 NOT NULL, ';                  // owner
+  $sql .= '`hypernote`    MEDIUMTEXT              NOT NULL, ';                  // html contents
+  $sql .= 'UNIQUE KEY `rcu` (`record_id`,`cuepoint`,`user_id`) ';
+  $sql .= ') DEFAULT CHARSET utf8';
+  
+  db_query($sql);
+  $UPGRADED = true;
 }
 
 // display message

@@ -7,20 +7,20 @@ package com.speedzinemedia.smt.events {
 	import flash.events.Event;
 	
 	public class BaseEvent extends Event
-    {
-        // pass params to event additionally
-        public var data:Object;
+  {
+      // pass params to event additionally
+      public var data:Object;
         
-        public function BaseEvent(type:String, obj:Object = null, bubbles:Boolean = false, cancelable:Boolean = false)
-        {
-            super(type, bubbles, cancelable);
-            this.data = obj;
-        };
+      public function BaseEvent(type:String, obj:Object = null, bubbles:Boolean = false, cancelable:Boolean = false)
+      {
+          super(type, bubbles, cancelable);
+          this.data = obj;
+      };
         
-        override public function clone():Event
-        {
-            return new BaseEvent(type, this.data, bubbles, cancelable);
-        };
+      override public function clone():Event
+      {
+          return new BaseEvent(type, this.data, bubbles, cancelable);
+      };
         
-    } // end class
+  } // end class
 }

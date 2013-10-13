@@ -75,6 +75,11 @@ function display_options($arrOptions)
 
 <h1>Tracking Visualization Options</h1>
 
+<p>smt2 uses a Flash (SWF) visualization API, where all options are customized at runtime by means of a control panel. 
+These options are stored on a <a href="http://en.wikipedia.org/wiki/Local_Shared_Object">Local Shared Object</a> (aka <em>Flash cookie</em>).
+</p>
+
+<!--
 <h2>Flash API</h2>
 <p>When using the Flash (SWF) visualization API, all options are customized at runtime. 
 These options are stored on a <a href="http://en.wikipedia.org/wiki/Local_Shared_Object">Local Shared Object</a> (aka <em>Flash cookie</em>).</p>
@@ -105,5 +110,6 @@ These options are stored on your MySQL database. <em>Leave fields blank for defa
     <input type="submit" class="button round" value="Set JS replay options" />
   </fieldset>
 </form>
+-->
 
 <?php include INC_DIR.'footer.php'; ?>

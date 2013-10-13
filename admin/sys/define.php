@@ -1,6 +1,6 @@
 <?php
 /** Installed (smt) version. */
-define ('SMT_VERSION',  "2.1.0");
+define ('SMT_VERSION',  "2.2.0");
 
 /** Title for CMS pages. */
 define ('CMS_TITLE',   "simple mouse tracking " . SMT_VERSION);
@@ -35,7 +35,7 @@ define ('JS_SELECTOR',   JS_PATH."selector".$jsext);
 define ('SWFOBJECT',     ADMIN_PATH."js/swfobject.js"); // it's already minified
 
 /** HTML logs dir. Do not use absolute URLs because fopen wrappers could be disabled. */
-define ('CACHE_DIR',     INC_PATH."cache/");
+define ('CACHE_DIR',     BASE_PATH."/cache/");
 /** Path to system dir. */
 define ('SYS_DIR',       INC_PATH."sys/");
 /** Path to common includes (header, footer, and so on). */

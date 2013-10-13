@@ -39,12 +39,14 @@ a[rel~="external"] { background:url(external.png) center right no-repeat; paddin
 .pb { padding-bottom:1em; }
 .pl { padding-left:1em; }
 
+.indent { margin-left:2em; }
+
 /* tables */
 table.cms { width:100%; margin:auto; table-layout:fixed; /*border-collapse:collapse;*/ }
 table.cms caption { font-size:100%; padding:.5em; margin:0 auto; }
 table.cms th { text-align:center; font:80% sans-serif; font-weight:bold; padding:.3em; }
 table.cms tr { text-align:center; }
-table.cms td { /*vertical-align:top;*/ }
+table.cms td { overflow:hidden; /*vertical-align:top;*/ }
 
 /* forms */
 fieldset { margin:.7em auto; display:block; }

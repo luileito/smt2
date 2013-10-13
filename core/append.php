@@ -1,11 +1,12 @@
 <?php
-// check data first
-if (empty($_POST)) exit;
+// check data first (exclude registered users)
+if (empty($_POST) || isset($_COOKIE['smt-usr'])) die(":(");
+
 require_once '../config.php';
 
-$values  = "sess_time = '".                         (float) $_POST['time']    ."',";
-$values .= "vp_width  = '".                         (int)   $_POST['pagew']   ."',";
-$values .= "vp_height = '".                         (int)   $_POST['pageh']   ."',";
+$values  = "sess_time = '". (float) $_POST['time']   ."',";
+$values .= "vp_width  = '". (int)   $_POST['pagew']  ."',";
+$values .= "vp_height = '". (int)   $_POST['pageh']  ."',";
 $values .= "coords_x  = CONCAT(COALESCE(coords_x, ''), ',". $_POST['xcoords'] ."'),";
 $values .= "coords_y  = CONCAT(COALESCE(coords_y, ''), ',". $_POST['ycoords'] ."'),";
 $values .= "clicks    = CONCAT(COALESCE(clicks,   ''), ',". $_POST['clicks']  ."'),";

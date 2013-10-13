@@ -20,5 +20,5 @@ package com.speedzinemedia.smt.events {
 			_progress = progress;
 		};
 		
-    } // end class
+  } // end class
 }
