@@ -1,0 +1,80 @@
+/** 
+ * Base interface CSS. 
+ * These are the structural and system styles. 
+ */
+ 
+* { margin:0; padding:0; border:none; }
+body { font:90% Georgia,serif; }
+
+/* headings */
+h1,h2 { font:normal 150% sans-serif; letter-spacing:-0.02em; }
+h1 { font-size:200%; }
+h2 { margin:.3em auto; }
+
+/* links marked as external (rel attribute) will open in a new browser tab, so mark'em */
+a[rel~="external"] { background:url(external.png) center right no-repeat; padding-right:13px; }
+
+/* useful, common styles */
+.center { text-align:center; }
+.right { text-align:right; }
+.left { text-align:left; }
+.inline { display:inline; }
+.heading { margin:.5em auto; }
+.block { display:block; }
+.valign { vertical-align:middle; }
+.small { font-size:75% !important; }
+.mini { font-size:55% !important; }
+
+.clear { clear:both; }
+.fl { float:left; }
+.fr { float:right; }
+
+.mt { margin-top:1em; }
+.mr { margin-right:1em; }
+.mb { margin-bottom:1em; }
+.ml { margin-left:1em; }
+
+.pt { padding-top:1em; }
+.pr { padding-right:1em; }
+.pb { padding-bottom:1em; }
+.pl { padding-left:1em; }
+
+.indent { margin-left:2em; }
+
+/* tables */
+table.cms { width:100%; margin:auto; table-layout:fixed; /*border-collapse:collapse;*/ }
+table.cms caption { font-size:100%; padding:.5em; margin:0 auto; }
+table.cms th { text-align:center; font:80% sans-serif; font-weight:bold; padding:.3em; }
+table.cms tr { text-align:center; }
+table.cms td { overflow:hidden; /*vertical-align:top;*/ }
+
+/* forms */
+fieldset { margin:.7em auto; display:block; }
+legend { font-size:75%; text-align:left; }
+label { font-weight:bold; font-size:75%; color:#036; }
+input,select { vertical-align:middle; }
+  select, .text { border:1px solid #555; padding:2px; }
+  .radio { margin-left:.5em; }
+  /*.button { margin:auto 1em; padding:.3em 1em; cursor:pointer; font:bold italic 90% Georgia,serif; }*/
+  .button { margin:auto 1em; padding:.3em .7em; cursor:pointer; font:bold 100% sans-serif; }
+  
+.readonly { background-color:#AAA; }
+
+/* system messages */
+.error, .success, .warning { display:block; clear:both; color:#000; text-align:left; padding:.5em .5em .5em 30px; margin-bottom:1em; 
+                             border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; }
+  .error { border:1px solid #C00; background:#FCC url(icon-error.png) no-repeat 5px 5px; }
+  .success { border:1px solid #393; background:#CFF url(icon-success.png) no-repeat 5px 5px; }
+  .warning { border:1px solid #FC6; background:#FFC url(icon-warning.png) no-repeat 5px 5px; }
+
+/* first time users will be starred on tracking report section */
+.ftu { background:transparent url(icon-star.png) no-repeat center left; }
+
+/* round corners */
+.round { border-radius:10px; -moz-border-radius:10px; -webkit-border-radius:10px; }
+.smallround { border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; }
+.glow { box-shadow:0px 0px 20px #DDD; -moz-box-shadow:0px 0px 20px #DDD; -webkit-box-shadow:0px 0px 20px #DDD; }
+
+/* other elements */
+abbr { cursor:help !important; border-bottom:1px dotted #000; }
+p { margin-bottom:.5em; }
