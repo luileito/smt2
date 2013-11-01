@@ -11,6 +11,7 @@ require './includes/settings.php';
 // insert custom CSS and JS files
 $headOpts = array(
   '<link rel="stylesheet" type="text/css" href="styles/table.css" />',
+  '<link rel="stylesheet" type="text/css" href="styles/flags.css" />',
   '<link rel="stylesheet" type="text/css" href="styles/ui-lightness/custom.css" />'
 );
 add_head($headOpts);
@@ -27,6 +28,8 @@ $show = (isset($_SESSION['limit']) && $_SESSION['limit'] > 0) ? $_SESSION['limit
 if (!$show) { $show = $defaultNumRecords; }
 ?>
 
+    <p><a href="./howto/">Some guides are available</a> to help you with these logs.</p>
+    
     <div class="center">
       <!-- Order by date (descending) and client ID -->
       <h1>User logs</h1>
@@ -36,14 +39,19 @@ if (!$show) { $show = $defaultNumRecords; }
         <table class="cms" cellpadding="10" cellspacing="1">
         <thead>
         <tr>
-          <th>client ID</th>
-          <th>location</th>
+          <th title="Anonymized data">user ID</th>
+          <th title="Anonymized data">location</th>
+          <th>domain ID</th>
           <th>page ID</th>
-          <th>date</th>
-          <th>browsing time</th>
-          <th>interaction time</th>
+          <th title="Format: yyyy/mm/dd">date</th>
+          <th title="In seconds">time</th>
+          <!--<th>interaction time</th>-->
           <th># clicks</th>
-          <!--<th>visualize</th>-->
+          <!--
+          <th>% moves</th>
+          <th>% vscroll</th>
+          -->
+          <th># notes</th>
           <th>action</th>
         </tr>
         </thead>
@@ -73,10 +81,10 @@ if (!$show) { $show = $defaultNumRecords; }
           $s  = '<label for="'.$id.'">'.$label.'</label> ';
           $s .= '<select id="'.$id.'" name="'.$id.'" class="mr">';
           $s .= '<option value="">---</option>';
-          $row = db_select_all($table, "*", "1");
-          foreach ($row as $entry) {
-            $select = (isset($_SESSION[$id]) && $entry['id'] == $_SESSION[$id]) ? 'selected="selected"' : null;
-            $s .= '<option '.$select.' value="'.$entry['id'].'">'.$entry['name'].'</option>'; 
+          $rows = db_select_all($table, "*", "1");
+          foreach ($rows as $row) {
+            $select = (isset($_SESSION[$id]) && $row['id'] == $_SESSION[$id]) ? 'selected="selected"' : null;
+            $s .= '<option '.$select.' value="'.$row['id'].'">'.$row['name'].'</option>'; 
           }
           $s .= '</select>';
           return $s;
@@ -90,45 +98,77 @@ if (!$show) { $show = $defaultNumRecords; }
         }
         function select_cache() 
         {
-          $s  = '<label for="cache">Page ID</label> ';
+          $s  = '<label for="cache">Page</label> ';
           $s .= '<select id="cache" name="cache_id" class="mr">';
           $s .= '<option value="">---</option>';
-          $row = db_select_all(TBL_PREFIX.TBL_CACHE, "*", "1 ORDER BY id DESC");
+          $rows = db_select_all(TBL_PREFIX.TBL_CACHE, "id, title", "1 ORDER BY id DESC");
           // pad with zeros the page id
-          $num = strlen( count($row) );
-          foreach ($row as $entry) {
-            $select = (isset($_SESSION['cache_id']) && $entry['id'] == $_SESSION['cache_id']) ? 'selected="selected"' : null;
-            $s .= '<option '.$select.' value="'.$entry['id'].'">'.pad_number($entry['id'],$num).': '.trim_text($entry['title']).'</option>';
+          $num = db_select(TBL_PREFIX.TBL_CACHE, "MAX(id) as max", 1);
+          $n = strlen($num['max']);
+          foreach ($rows as $row) {
+            $select = (isset($_SESSION['cache_id']) && $row['id'] == $_SESSION['cache_id']) ? 'selected="selected"' : null;
+            $s .= '<option '.$select.' value="'.$row['id'].'">'.pad_number($row['id'],$n).': '.trim_text($row['title']).'</option>';
           }
           $s .= '</select>';
           return $s;
         }
+        function select_domain() 
+        {
+          $s  = '<label for="cache">Domain</label> ';
+          $s .= '<select id="domain" name="domain_id" class="mr">';
+
+          $s .= '<option value="">---</option>';
+          $rows = db_select_all(TBL_PREFIX.TBL_DOMAINS, "id, domain", "1 ORDER BY id DESC"); // GROUP BY domain?
+          // pad with zeros the domain id
+          $num = db_select(TBL_PREFIX.TBL_DOMAINS, "MAX(id) as max", 1);          
+          $n = strlen($num['max']);
+          foreach ($rows as $row) {
+            $select = (isset($_SESSION['domain_id']) && $row['id'] == $_SESSION['domain_id']) ? 'selected="selected"' : null;
+            $s .= '<option '.$select.' value="'.$row['id'].'">'.pad_number($row['id'],$n).': '.trim_chars($row['domain']).'</option>';            
+          }
+          $s .= '</select>';
+          return $s;
+        }        
         function select_client() 
         {
-          $s  = '<label for="client">Client ID</label> ';
+          $s  = '<label for="client">User</label> ';
           $s .= '<select id="client" name="client_id" class="mr">';
           $s .= '<option value="">---</option>';
-          $row = db_select_all(TBL_PREFIX.TBL_RECORDS, "DISTINCT client_id", "1");
-          foreach ($row as $entry) {
-            $select = (isset($_SESSION['client_id']) && $entry['client_id'] == $_SESSION['client_id']) ? 'selected="selected"' : null;
-            $s .= '<option '.$select.' value="'.$entry['client_id'].'">'.mask_client($entry['client_id']).'</option>'; 
+          $rows = db_select_all(TBL_PREFIX.TBL_RECORDS, "DISTINCT client_id", "1");
+          foreach ($rows as $row) {
+            $select = (isset($_SESSION['client_id']) && $row['client_id'] == $_SESSION['client_id']) ? 'selected="selected"' : null;
+            $s .= '<option '.$select.' value="'.$row['client_id'].'">'.mask_client($row['client_id']).'</option>'; 
           }
           $s .= '</select>';
           return $s;
         }
+        function select_fps() 
+        {
+          $s  = '<label for="fps">FPS</label> ';
+          $s .= '<select id="fps" name="fps" class="mr">';
+          $s .= '<option value="">---</option>';
+          $rows = db_select_all(TBL_PREFIX.TBL_RECORDS, "DISTINCT fps", "1");
+          foreach ($rows as $row) {
+            $select = (isset($_SESSION['fps']) && $row['fps'] == $_SESSION['fps']) ? 'selected="selected"' : null;
+            $s .= '<option '.$select.' value="'.$row['fps'].'">'.$row['fps'].'</option>'; 
+          }
+          $s .= '</select>';
+          return $s;
+        }        
         function select_group() 
         {
           $s  = '<label for="groupby">Group result by</label> ';
           $s .= '<select id="groupby" name="groupby" class="mr">';
           $s .= '<option value="">---</option>';
           $opt = array(
-                        "client_id"  => "Client ID",
-                        "cache_id"   => "Page ID",
+                        "client_id"  => "Client",
+                        "cache_id"   => "Page",
+                        //"domain_id"  => "Domain",
                         "ip"         => "Location"
                       );
-          foreach ($opt as $key => $entry) {
+          foreach ($opt as $key => $val) {
             $select = (!empty($_SESSION['groupby']) && $key == $_SESSION['groupby']) ? 'selected="selected"' : null;
-            $s .= '<option '.$select.' value="'.$key.'">'.$entry.'</option>'; 
+            $s .= '<option '.$select.' value="'.$key.'">'.$val.'</option>'; 
           }
           $s .= '</select>';
           return $s;
@@ -138,7 +178,7 @@ if (!$show) { $show = $defaultNumRecords; }
           $s  = '<label for="limit">Records per query</label> ';
           $s .= '<select id="limit" name="limit" class="mr">';
           $s .= '<option value="">---</option>';
-          $num = array(10,20,50,100,200,500,1000);
+          $num = array(10,50,100,200,500,1000);
           foreach ($num as $n) {
             $select = (!empty($_SESSION['limit']) && $n == $_SESSION['limit']) ? 'selected="selected"' : null;
             $s .= '<option '.$select.' value="'.$n.'">'.$n.'</option>'; 
@@ -168,17 +208,19 @@ if (!$show) { $show = $defaultNumRecords; }
         <fieldset class="smallround">
           <legend>Filter by</legend>
           <?php
-            echo select_cache();
             echo select_client();
-            echo select_tbl(TBL_PREFIX.TBL_OS, "os_id", "Operating System");
+            echo select_domain();            
+            echo select_cache();
+            echo select_tbl(TBL_PREFIX.TBL_OS, "os_id", "OS");
             echo select_tbl(TBL_PREFIX.TBL_BROWSERS, "browser_id", "Browser");
-            echo checkbox("ftu", "Only first-time users");
+            echo select_fps();
           ?>
         </fieldset>
         <fieldset class="clear smallround">
           <legend>Grouping</legend>
-          <?=select_records()?>
           <?=select_group()?>
+          <?=select_records()?>
+          <?=checkbox("ftu", "Display only first-time users")?>
         </fieldset>
         <fieldset class="clear smallround">
           <legend>Date range</legend>
@@ -250,6 +292,7 @@ if (!$show) { $show = $defaultNumRecords; }
     
     <script type="text/javascript" src="<?=ADMIN_PATH?>js/jquery.stripy.js"></script>
     <script type="text/javascript" src="<?=ADMIN_PATH?>js/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="<?=ADMIN_PATH?>js/jquery.tablesorter.widgets.min.js"></script>
     <script type="text/javascript" src="<?=ADMIN_PATH?>js/jquery.ui.core.js"></script>
     <script type="text/javascript" src="<?=ADMIN_PATH?>js/jquery.ui.datepicker.js"></script>
     <script type="text/javascript" src="<?=ADMIN_PATH?>js/jquery.ui.slider.js"></script>
@@ -292,9 +335,13 @@ if (!$show) { $show = $defaultNumRecords; }
   		});
 
       // display nice table
-      $(records).stripy().tablesorter({
+      $(records).tablesorter({
+			    widgets        : ['zebra', 'columns'],
+			    //usNumberFormat : false,
+			    //sortReset      : true,
+			    //sortRestart    : true,
           headers: {
-            7: { sorter: false }
+            8: { sorter: false }
           },
           cssHeader: "headerNormal"
       });

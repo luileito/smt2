@@ -207,7 +207,7 @@ try_sql_query($sql);
 /* insert default options --------------------------------------------------- */
 $opts = array(
                 // admin options
-                array(CMS_TYPE,   "recordsPerTable",    20, "Number of records to show on each tracking table. This will be the default value, and it can be overriden on the <em>Tracking report</em> section."),
+                array(CMS_TYPE,   "recordsPerTable",    20, "Number of records to show on each tracking table. This will be the default value, and it can be overriden on the <em>Admin logs</em> section."),
                 array(CMS_TYPE,   "cacheDays",          60, "Cache (in days) for HTML logs. If the requested page was not modified in this amount of time, the system will use a cached copy. Leaving it blank or setting it to <code>0</code> means that no logs will be cached: each visit will generate one HTML log."),
                 array(CMS_TYPE,   "maxSampleSize",      0,  "Number of logs to replay/analyze simultaneously (0 means no limit). If your database has a lot of records for the same URL, you can take into account only a small subset of logs."),
                 // disabled by default

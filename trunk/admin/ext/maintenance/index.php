@@ -130,7 +130,7 @@ if ($ROOT) {
 <p>
   Note that in all cases the whole database will be dumped in SQL format.
   If you only want to export the interactions logs from the <code><?=TBL_PREFIX.TBL_RECORDS?></code>,
-  please go to <a href="../tracking-report/">the tracking report</a> section instead.
+  please go to <a href="../admin-logs/">the admin logs</a> section instead.
 </p>
 <?php
 }

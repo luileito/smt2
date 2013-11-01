@@ -1,6 +1,6 @@
 <?php
 // connect to geobytes web service
-$ws = "http://www.geobytes.com/IpLocator.htm?GetLocation&template=xml.txt&ipaddress=".$IP;
+$ws = "http://www.geobytes.com/IpLocator.htm?GetLocation&template=xml.txt&ipaddress=".base64_decode($IP);
 $xml = get_remote_webpage($ws);
 $doc = simplexml_load_string($xml['content']);
 

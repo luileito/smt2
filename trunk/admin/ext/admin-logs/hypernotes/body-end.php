@@ -1,0 +1,3 @@
+</div><!--#global-->
+</body>
+</html>

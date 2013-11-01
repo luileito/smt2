@@ -1,0 +1,9 @@
+#tips ol, #tips ul { margin-left:0.5em; }
+#tips h3 { margin:1em auto; }
+#tips ol ol, #tips ol ul { margin-top:0.5em; margin-bottom:0.5em; }
+
+#tips ol { counter-reset: section; list-style-type: none; }
+#tips ol li { counter-increment: section; }
+#tips ol li:before  { content: counters(section, ".") ". "; }
+
+span.subpanel { text-transform:uppercase; }
