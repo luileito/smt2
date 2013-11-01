@@ -1,6 +1,6 @@
 /*! 
  * smt2e -- simple mouse tracking
- * Copyleft (cc) 2012 Luis Leiva
+ * Copyleft (cc) 2013 Luis Leiva
  * http://smt2.googlecode.com & http://smt.speedzinemedia.com
  */
 (function(){

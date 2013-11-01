@@ -20,9 +20,9 @@ if (isset($HTTP_RAW_POST_DATA)) {
 }
           
 require 'functions.php';
-require 'class.lzw.php';
 
 if ($_POST['compressed']) {
+  require 'class.lzw.php';
   $_POST['xcoords'] = LZW::decompress($_POST['xcoords']);
   $_POST['ycoords'] = LZW::decompress($_POST['ycoords']);
   $_POST['clicks']  = LZW::decompress($_POST['clicks']);

@@ -16,9 +16,9 @@ http://code.google.com/p/smt2/source/browse/
 * Document the SWF API. Some code parts were already reviewed.
 * Realtime in-person tracking (a.k.a 'Web Activity Sharing' or so).
 
-
 [2.2.0] July 06th, 2012
 
++ Added data compression, to lower bandwidth usage.
 + New layout types were added for mouse track normalization.
 + Improved hypervideo capabilities (hypernotes, videoplayer, etc.)
 + Better multi-domain handling.
