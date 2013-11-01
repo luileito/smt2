@@ -13,7 +13,7 @@ include INC_DIR.'header.php';
 ?>
 
 
-<p>&larr; <a href="./">Back to tracking report</a></p>
+<p>&larr; <a href="./">Back to admin logs</a></p>
     
 <div id="rawlog">
     
@@ -29,8 +29,12 @@ include INC_DIR.'header.php';
     $b = TBL_PREFIX.TBL_BROWSERS;
     $o = TBL_PREFIX.TBL_OS;
     // get log data
-    $log = db_select($r." LEFT JOIN ".$c." ON ".$r.".cache_id = ".$c.".id LEFT JOIN ".$b." ON ".$r.".browser_id = ".$b.".id LEFT JOIN ".$o." ON ".$r.".os_id = ".$o.".id", 
-                     $r.".*, ".$c.".*, ".$b.".name, ".$o.".name", 
+    $tables  = $r . " LEFT JOIN ".$c." ON ".$r.".cache_id = ".$c.".id";
+    $tables .=      " LEFT JOIN ".$b." ON ".$r.".browser_id = ".$b.".id";
+    $tables .=      " LEFT JOIN ".$o." ON ".$r.".os_id = ".$o.".id";
+    $log = db_select($tables, 
+                     //$r.".*, ".$c.".*, ".$b.".name, ".$o.".name",
+                     $r.".* AS record, ".$c.".* AS cache, ".$b.".name AS browser, ".$o.".name AS os", 
                      TBL_PREFIX.TBL_RECORDS.".id = '".$id."'");
                      
     if (!$log) { 
@@ -39,24 +43,21 @@ include INC_DIR.'header.php';
     
     // user globals
     $clientId = $log['client_id'];
-    $time[] = $log['sess_time'];
-    $vpWidth[] = $log['vp_width'];
-    $vpHeight[] = $log['vp_height'];
-    $cX = explode(",", $log['coords_x']);
-    $cY = explode(",", $log['coords_y']);
-    $coordsX[] = $cX;
-    $coordsY[] = $cY;
-    /*$clickCoords = get_click_coordinates($cX,$cY,$log['clicks']);
-    $clicksX[] = $clickCoords['x'];
-    $clicksY[] = $clickCoords['y'];*/
-    $clicks[] = $log['clicks'];
     $hovered = $log['hovered'];
     $clicked = $log['clicked'];
+    $mouseTracks[] = array(
+      'x' => $log['coords_x'],
+      'y' => $log['coords_y'],
+      'c' => $log['clicks'],
+      'f' => $log['fps'],
+      'w' => $log['vp_width'],
+      'h' => $log['vp_height']
+    );
     
     include './includes/rawlog-client.php';
     
     if (db_option(TBL_PREFIX.TBL_CMS, "displayGoogleMap")) {
-      $IP = $log['ip'];
+      $IP = base64_encode($log['ip']);
       include './includes/rawlog-location.php';
     }
   }
@@ -74,19 +75,19 @@ include INC_DIR.'header.php';
     $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "client_id = '".$clientId."'");
     // the same user could come from different locations, so don't include the raw-location file
   }
-  else if (isset($_GET['ip']))
+  else if (isset($_GET['lid']))
   {
     // skip visualization items from log data
-    $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "ip = '".$_GET['ip']."'");
+    $logs = db_select_all(TBL_PREFIX.TBL_RECORDS, "*", "ip = '".base64_decode($_GET['lid'])."'");
     if (db_option(TBL_PREFIX.TBL_CMS, "displayGoogleMap")) {
-      $IP = $_GET['ip'];
+      $IP = $_GET['lid'];
       include './includes/rawlog-location.php';
     }
   }
   
   
   // now compute grouped metrics
-  if (isset($_GET['cid']) || isset($_GET['pid']) || isset($_GET['ip']))
+  if (isset($_GET['cid']) || isset($_GET['pid']) || isset($_GET['lid']))
   {
     if (!$logs) { die("Error retrieving logs."); }
     
@@ -100,17 +101,16 @@ include INC_DIR.'header.php';
     {
       if( isset($_GET['pid']) && (isset($keys) && !in_array($i, $keys)) ) continue;
       
-      $time[] = $log['sess_time'];
-      $vpWidth[] = $log['vp_width'];
-      $vpHeight[] = $log['vp_height'];
-      $cX = explode(",", $log['coords_x']);
-      $cY = explode(",", $log['coords_y']);
-      $coordsX[] = $cX;
-      $coordsY[] = $cY;
-      /*$clickCoords = get_click_coordinates($cX,$cY,$log['clicks']);
-      $clicksX[] = $clickCoords['x'];
-      $clicksY[] = $clickCoords['y'];*/
-      $clicks[] = $log['clicks'];
+      //$time[] = $log['sess_time'];
+      $mouseTracks[] = array(
+        'x' => $log['coords_x'],
+        'y' => $log['coords_y'],
+        'c' => $log['clicks'],
+        'f' => $log['fps'],
+        'w' => $log['vp_width'],
+        'h' => $log['vp_height']
+      );
+          
       $hovered .= $log['hovered'];
       $clicked .= $log['clicked'];
     }

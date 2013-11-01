@@ -6,10 +6,12 @@ require SYS_DIR.'logincheck.php';
 
 $defaults = array(
                     "cache_id"    => "all",
+                    "domain_id"   => "all",
                     "url"         => "all",
                     "client_id"   => "all",
                     "os_id"       => "all",
                     "browser_id"  => "all",
+                    "fps"         => "all",                    
                     "ftu"         => "all",
                     "ip"          => "all",
                     //"from"        => date("Y/m/d H:i", strtotime("last year")),

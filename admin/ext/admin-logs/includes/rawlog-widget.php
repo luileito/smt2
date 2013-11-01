@@ -18,7 +18,7 @@ if (isset($_GET['cid'])) {
 }
 else if (isset($_GET['pid'])) {
   echo '<p class="center"><em>These tables take into account ALL users that browsed
-        <a rel="external" href="track.php?pid='.$_GET['pid'].'&amp;api=swf">this page</a>.
+        <a rel="external" href="track.php?pid='.$_GET['pid'].'">this page</a>.
         Thus, here you have the page model.</em></p>'; 
 } else if (isset($_GET['ip'])) {
   $IP = empty($_GET['ip']) ? "NO_IP" : $_GET['ip'];
@@ -40,11 +40,11 @@ else if (isset($_GET['pid'])) {
   <?php
   $list  = '<tr class="odd">'.PHP_EOL;
   // log data  
-  $list .= '<td>'.PHP_EOL;
-  $list .= computeDOMelements($hovered, "hover");
+  $list .= '<td>' .PHP_EOL;
+  $list .=    computeDOMelements($hovered, "hover");
   $list .= '</td>'.PHP_EOL;
-  $list .= '<td>'.PHP_EOL;
-  $list .= computeDOMelements($clicked, "click");
+  $list .= '<td>' .PHP_EOL;
+  $list .=    computeDOMelements($clicked, "click");
   $list .= '</td>'.PHP_EOL;
   $list .= '</tr>'.PHP_EOL;
   

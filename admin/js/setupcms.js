@@ -71,7 +71,7 @@ var SetupCMS = {
         });
     },
 
-    // fire all options (used in tracking-report section)
+    // fire all options (used in admin-logs section)
     all: function()
     {
         this.deleteTrackingButtons();
