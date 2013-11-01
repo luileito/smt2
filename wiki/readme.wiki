@@ -1,6 +1,9 @@
 #summary This an introductory page for describing the new smt2 version
 #labels Featured
 
+== Please don't post comments below. If you find a bug use the issue tracker. If you need assistance drop me an email. ==
+
+
 = Requirements =
 
 *MySQL 5* database and *PHP 5* installed with the libraries *cURL* and *json*. These settings are very common on most web servers. If your server doesn't meet these requirements, you will be advised during installation.
