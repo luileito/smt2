@@ -1,16 +1,16 @@
 /*! 
- * (smt)2 simple mouse tracking v2.1.0
- * Copyleft (cc) 2006-2012 Luis Leiva
+ * (smt)2 simple mouse tracking v2.2.0
+ * Copyleft (cc) 2006-2013 Luis Leiva
  * http://smt2.googlecode.com & http://smt.speedzinemedia.com
  */
 /** 
  * (smt)2 simple mouse tracking - record script (smt-record.js)
- * Copyleft (cc) 2006-2012 Luis Leiva
- * Release date: March 23 2012
+ * Copyleft (cc) 2006-2013 Luis Leiva
+ * Release date: October 13 2013
  * http://smt2.googlecode.com & http://smt.speedzinemedia.com
  * @class smt2-record
  * @requires smt2-aux Auxiliary (smt)2 functions  
- * @version 2.1.0
+ * @version 2.2.0
  * @author Luis Leiva 
  * @license Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses. 
  * @see smt2fn
@@ -28,7 +28,8 @@
     fps: 24,
     /**
      * Maximum recording time (aka tracking timeout), in seconds. 
-     * If timeout is reached, mouse activity is not recorded.
+     * When the timeout is reached, mouse activity is not recorded.
+     * If this value is set to 0, there is no timeout.
      * @type number     
      */
     recTime: 3600,
@@ -45,14 +46,16 @@
      */
     trackingServer: "",
     /**
-     * URL to remote (smt)2 server, i.e., the site URL where the logs will be stored, and (of course) the CMS is installed.
-     * If this value is empty, data will be posted to trackingServer URL.
+     * URL to remote (smt)2 server, i.e., the site URL where the logs will be stored, 
+     * and (of course) the CMS is installed.
+     * If this value is empty, data will be posted to trackingServer URL (recommended).
      * @deprecated in favor of the new 'Access-Control-Allow-Origin' HTTP header.
      * @type string
      */
     storageServer: "",
     /**
      * You may choose to advice users (or not) that their mouse activity is going to be logged.
+     * Not doing so may be illegal in some countries.
      * @type boolean      
      */
     warn: false,
@@ -91,12 +94,13 @@
     /** 
      * Random user selection: if true, (smt)2 is not initialized.
      * Setting it to false (or 0) means that all the population will be tracked.
-     * You should use random sampling for better statistical analysis,
-     * or your own sampling strategy; e.g. this would track users only on Mondays:
+     * You should use random sampling for better statistical analysis:
+     * disabled: Math.round(Math.random())
+     * You can set your own sampling strategy; e.g. this one would track users only on Mondays:
      * disabled: (function(){ return (new Date().getDay() == 1); })()
      * @type int
      */
-    disabled: 0 //Math.round(Math.random()) // <-- random sampling
+    disabled: 0
   };
   
   
@@ -231,7 +235,7 @@
       // track mouse only if window is active (has focus)
       if (smtRec.paused) { return; }
       // get mouse coords until timeout is reached 
-      if (smtRec.i < smtRec.timeout) {
+      if (smtRec.i <= smtRec.timeout) {
         // store using the UNIPEN format
         smtRec.coords.x.push(smtRec.mouse.x);
         smtRec.coords.y.push(smtRec.mouse.y);
