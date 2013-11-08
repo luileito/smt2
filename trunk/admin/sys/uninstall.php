@@ -24,7 +24,7 @@ include INC_DIR.'doctype.php';
   <link rel="stylesheet" type="text/css" href="<?=CSS_PATH?>theme.css" />
   <link rel="stylesheet" type="text/css" href="<?=CSS_PATH?>install.css" />
   
-  <script type="text/javascript" src="<?=ADMIN_PATH?>js/jquery-1.3.2.min.js"></script>
+  <script type="text/javascript" src="<?=ADMIN_PATH?>js/jquery-1.7.2.min.js"></script>
   <script type="text/javascript" src="<?=ADMIN_PATH?>js/flashdetect.min.js"></script>
   <script type="text/javascript" src="<?=ADMIN_PATH?>js/setupcms.js"></script>
   
