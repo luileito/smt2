@@ -17,7 +17,7 @@ This is the admin base dir. Here you will check your database server status and 
 
 Here you can set the basic CMS options, change the extensions' order priority, and customize the visualization options.
 
-== Tracking Report ==
+== Admin logs ==
 
 This is the most featured extension. Here you will manage all tracked visits (visualize, analyze and delete). You can sort the records table by client ID, date and session time. Additionally, you can filter and refine your saved logs.
 
