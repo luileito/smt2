@@ -286,6 +286,6 @@ Please take into account this checklist before reporting a new bug about _empty 
 
 = Working with the gathered data =
 
-All recorded user visits can be managed on the _tracking report_ section of the CMS. The system will use the SWF visualization tool, if Flash plugin is available. Otherwise the JavaScript visualization API will be used (which is actually deprecated).
+All recorded user visits can be managed on the _admin logs_ section of the CMS. The system will use the SWF visualization tool, if Flash plugin is available. Otherwise the JavaScript visualization API will be used (which is actually deprecated).
 
 Read more about the CMS on the [http://code.google.com/p/smt2/wiki/CMS wiki page].
