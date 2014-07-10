@@ -33,9 +33,9 @@ include INC_DIR.'header.php';
     $tables .=      " LEFT JOIN ".$b." ON ".$r.".browser_id = ".$b.".id";
     $tables .=      " LEFT JOIN ".$o." ON ".$r.".os_id = ".$o.".id";
     $log = db_select($tables, 
-                     //$r.".*, ".$c.".*, ".$b.".name, ".$o.".name",
-                     $r.".* AS record, ".$c.".* AS cache, ".$b.".name AS browser, ".$o.".name AS os", 
-                     TBL_PREFIX.TBL_RECORDS.".id = '".$id."'");
+                     $r.".*, ".$c.".*, ".$b.".name, ".$o.".name",
+                     //$r.".* AS record, ".$c.".* AS cache, ".$b.".name AS browser, ".$o.".name AS os", 
+                     $r.".id = '".$id."'");
                      
     if (!$log) { 
       die('<strong>Error</strong>: User log #'.$id.' was not found on database.'); 
