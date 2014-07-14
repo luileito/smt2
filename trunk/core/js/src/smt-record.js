@@ -316,7 +316,7 @@
       } else {
         id = md5( String(Math.random() + (new Date()).getTime() * Math.random()) );
         // for cross-domain requests, this cookie must be set here
-        aux.cookies.setCookie('smt-id', id, smtOpt.expireDays);
+        aux.cookies.setCookie('smt-id', id, smtOpt.cookieDays);
         // this ID will identify the client machine      
       }
       smtRec.smtId = id;
