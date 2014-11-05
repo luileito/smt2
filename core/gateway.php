@@ -30,8 +30,10 @@ if ($_POST['compressed']) {
   $_POST['elclicked'] = LZW::decompress($_POST['elclicked']);
 }
 
+/*
 // add client id to POST data (the local server has the user cookies)
 $_POST['client'] = get_client_id();
+*/
 
 $file = ($_POST['action'] == "store") ? "store.php" : "append.php";
 if (!empty($_POST['remote']) && $_POST['remote'] != "null") 
