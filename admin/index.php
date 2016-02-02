@@ -15,7 +15,7 @@ if (isset($_SESSION['error']["NOT_ALLOWED"])) {
 // sanitize installed/removed extensions
 if (is_root()) {
   $prioritized = get_exts_order();
-  // is there a new extension installed? 
+  // is there a new extension installed?
   $newext = array_flip($_SESSION['allowed']);
   $diff = array_diff_key($newext, $prioritized);
   $warn = false;
@@ -30,7 +30,7 @@ if (is_root()) {
       echo display_text($_displayType["WARNING"], 'New extensions have been installed. Please reload this page.');
     }
   }
-  // should be removed from DB a previously installed extension? 
+  // should be removed from DB a previously installed extension?
   $installed = ext_available();
   foreach ($prioritized as $dir => $priority) {
     if (!in_array($dir, $installed)) {
@@ -52,20 +52,20 @@ error_reporting(0);
 // check if (smt) is installed properly
 if (!db_check()) {
   $dberror = true;
-  
+
   $msg  = '<h2>Seems that you need to setup your database</h2>';
   $msg .= '<p>';
   $msg .= 'Did you edit your <em>config.php</em> file?'.PHP_EOL;
   $msg .= 'If server data are correct, go <a href="'.SYS_DIR.'install.php">install (smt)</a>.';
   $msg .= '</p>';
-  
+
   echo display_text($_displayType["WARNING"], $msg, 'div');
-} 
+}
 // now enable default error reporting
 error_reporting(E_ALL ^ E_NOTICE);
 
 /* JSON checking ------------------------------------------------------------ */
-if (!function_exists('json_encode')) 
+if (!function_exists('json_encode'))
 {
   $msg  = '<h2>JSON library not found</h2>';
   $msg .= '<p>';
@@ -77,7 +77,7 @@ if (!function_exists('json_encode'))
 }
 
 /* cURL checking ------------------------------------------------------------ */
-if (!function_exists('curl_init')) 
+if (!function_exists('curl_init'))
 {
   $msg  = '<h2>cURL library not found</h2>';
   $msg .= '<p>';
@@ -104,10 +104,10 @@ if (ini_get('open_basedir'))
 }
 
 /* version checking --------------------------------------------------------- */
-if (!check_systemversion("mysql", 5)) 
+if (!check_systemversion("mysql", 5))
 {
   $dberror = true;
-  
+
   $msg  = '<h2>MySQL version test failed</h2>';
   $msg .= '<p>';
   $msg .= 'You have MySQL <code>'.mysql_get_client_info().'</code> installed, ';
@@ -118,7 +118,7 @@ if (!check_systemversion("mysql", 5))
   echo display_text($_displayType["ERROR"], $msg, 'div');
 }
 
-if (!check_systemversion("php", 5)) 
+if (!check_systemversion("php", 5))
 {
   $dberror = true;
 
@@ -126,7 +126,7 @@ if (!check_systemversion("php", 5))
   $msg .= '<p>';
   $msg .= 'You have PHP <code>'.phpversion().'</code> installed, ';
   $msg .= 'but at least PHP <strong>5</strong> is required to handle the tracking logs. ';
-  $msg .= '<em>You can ignore this warning if the system is already working.</em>'; 
+  $msg .= '<em>You can ignore this warning if the system is already working.</em>';
   $msg .= '</p>';
 
   echo display_text($_displayType["ERROR"], $msg, 'div');
@@ -139,26 +139,26 @@ if (!$dberror) {
 }
 */
 
-if (!is_dir(CACHE_DIR))
+if (!is_dir(CACHE_DIR) && !mkdir(CACHE_DIR))
 {
-  echo display_text($_displayType["ERROR"], 'The cache dir does not exist.');
+    echo display_text($_displayType["ERROR"], 'Cannot create cache dir.');
 }
 else
 {
   $cache = count_dir_files(CACHE_DIR);
-  if (!$cache) { 
+  if (!$cache) {
     echo display_text($_displayType["WARNING"], 'The log cache is empty.');
   }
   $dblog = db_records();
   if ($cache > $dblog) {
-    echo display_text($_displayType["WARNING"], 
+    echo display_text($_displayType["WARNING"],
           'There are '.$cache.' logs in cache dir, but there are '.$dblog.' in database, which is something weird :/');
   }
-  
+
   // ensure that logs can be written
   if (!is_writeable(CACHE_DIR)) {
     $perms = substr(decoct( fileperms(CACHE_DIR) ), 2);
-    if (($perms != "775" || $perms != "777") && !chmod(CACHE_DIR, 0775)) 
+    if (($perms != "775" || $perms != "777") && !chmod(CACHE_DIR, 0775))
     {
       echo display_text($_displayType["ERROR"],
                         'Settings permissions to <strong>'.CACHE_DIR.'</strong> failed.
