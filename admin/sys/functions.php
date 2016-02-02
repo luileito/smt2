@@ -1,7 +1,7 @@
 <?php
 /**
  * smt2 CMS core functions.
- * @date 27/March/2009  
+ * @date 27/March/2009
  * @rev 30/September/2010
  */
 unregister_GLOBALS();
@@ -46,27 +46,64 @@ if (@db_option(TBL_PREFIX.TBL_CMS, "enableDebugging")) {
   error_reporting(E_ERROR);
 }
 
-/** 
+/**
  * Additional head tags. Enable inserting custom tags on page head.
  * @global array $_headAdded
  */
 $_headAdded = array();
 
-/** 
+/**
+ * Retrieves all integers in a string.
+ * @param   string    $value  Input string
+ * @return  int               The integer value
+ */
+function better_intval($value)
+{
+	$value = (string)$value;
+	$new   = '';
+	$found = false;
+	for ($i = 0, $sz = strlen($value); $i < $sz; $i++) {
+		if (is_numeric($value[$i])) {
+			$found = true;
+			$new .= $value[$i];
+		} elseif ($found) {
+			break;
+		}
+	}
+	return (int)$new;
+}
+
+/**
+ * Converts a version number to integer,
+ * @param   string    $version  Input version number
+ * @return  int                 The integer value
+ */
+function version2int($version)
+{
+	$version = explode('.', $version);
+	$version = array_map('better_intval', $version);
+	$version = $version[0] * 10000 + $version[1] * 100 + $version[2];
+	return $version;
+}
+
+/**
  * Checks if server is ready to work with smt2 by comparing the server's $type version.
  * At least are required both PHP 5 and MySQL 5.
  * @param   string    $type       "php" or "mysql", by now
- * @param   string    $minReqVer  minimun system version (default: 5.0.0) 
- * @return  boolean               TRUE on sucess, or FALSE on failure 
+ * @param   string    $minReqVer  minimun system version (default: 5.0.0)
+ * @return  boolean               TRUE on sucess, or FALSE on failure
  */
-function check_systemversion($type, $minReqVer = "5.0.0") 
+function check_systemversion($type, $minReqVer = "5.0.0")
 {
   switch (strtolower($type)) {
     case 'mysql':
       // mysqli_get_client_info() doesn't require connection
       $ver = mysql_get_client_info();
+      // mysql version numbers can be as weird as "mysqlnd 5.0.11-dev - 20120503 - $Id: ...$"
+      $ver = version2int($ver);
       break;
     case 'php':
+      // php version numbers work fine with version_compare
       $ver = phpversion();
       break;
     default:
@@ -74,34 +111,34 @@ function check_systemversion($type, $minReqVer = "5.0.0")
   }
   // $ver must be >= $minReqVer
   $status = version_compare($ver, $minReqVer, ">=");
-  
+
   return $status;
 }
 
-/** 
+/**
  * Checks if a new smt2 version is released via (smt) website.
- * @return  int   Server response: 1 (up to date), 2 (new version found), 3 (minor build released), 0 (connection error), -1 (parsing error) 
+ * @return  int   Server response: 1 (up to date), 2 (new version found), 3 (minor build released), 0 (connection error), -1 (parsing error)
  */
 function get_smt_releases()
 {
   // connect to Web Service
   $ws = get_remote_webpage("http://smt.speedzinemedia.com/versioncheck.php?v=".SMT_VERSION);
-  
+
   return $ws['content'];
 }
 
-/** 
+/**
  * Displays a message about the installed smt2 version.
- * @return  string   Message 
+ * @return  string   Message
  */
 function check_smt_releases()
 {
   global $_displayType;
-  
+
   $dwnurl = "http://smt.speedzinemedia.com/downloads.php";
-  
+
   $code = get_smt_releases();
-  
+
   switch ($code) {
     case -1:  // parsing/reading error
       $type = $_displayType["ERROR"];
@@ -125,7 +162,7 @@ function check_smt_releases()
       $text = 'It seems that there is a <a href="'.$dwnurl.'">new (smt)<sup>2</sup> build available</a>.';
       break;
   }
-  
+
   return display_text($type, $text);
 }
 
@@ -144,18 +181,18 @@ function display_text($type, $msg, $elem = 'p')
  * Redirects the browser to a specified anchor on the index.php page that sent a form from a CMS section.
  * @param   string    $id         HTML element id
  * @param   boolean   $success    no errors to display
- * @param   string    $customErr  if $success is false, type here your own custom message  
+ * @param   string    $customErr  if $success is false, type here your own custom message
  */
 function notify_request($id, $success, $customErr = "")
 {
   global $_displayType, $_notifyMsg;
-  
+
   $errorMessage = $_notifyMsg["ERROR"];
   if (!$success && !empty($customErr)) {
     $errorMessage = $customErr;
   }
-  
-  $_SESSION[ $id ] = ($success) ? 
+
+  $_SESSION[ $id ] = ($success) ?
                      display_text($_displayType["SUCCESS"], $_notifyMsg["SAVED"])
                      :
                      display_text($_displayType["ERROR"],   $errorMessage);
@@ -165,9 +202,9 @@ function notify_request($id, $success, $customErr = "")
 
 /**
  * Displays the message saved on current PHP session. Then the $_SESSION text is unset.
- * @param   string  $name   session variable name 
+ * @param   string  $name   session variable name
  */
-function check_notified_request($name) 
+function check_notified_request($name)
 {
   // get $name text from session
   if (isset($_SESSION[$name])) {
@@ -177,45 +214,45 @@ function check_notified_request($name)
   unset($_SESSION[$name]);
 }
 
-/** 
- * Shows only the first $words of a text, plus a [...] symbol. 
+/**
+ * Shows only the first $words of a text, plus a [...] symbol.
  * @param   string  $text   text to trim
  * @param   int     $words  number of words to display (default: 5)
- * @return  string          The trimmed text   
+ * @return  string          The trimmed text
  */
-function trim_text($text, $words = 5) 
+function trim_text($text, $words = 5)
 {
-  $space = " ";  
+  $space = " ";
   $text = explode($space, $text);
-  
+
   $show = "";
   foreach ($text as $i => $str) {
-    if ($i < $words) { 
-      $show .= $str.$space; 
+    if ($i < $words) {
+      $show .= $str.$space;
     }
   }
-  // references of $i and the last array element remain 
+  // references of $i and the last array element remain
   if ($i >= $words) {
     // add [...] if word count is indeed larger than $words
-    $show .= $space."[...]"; 
+    $show .= $space."[...]";
   }
 
   return $show;
 }
 
-/** 
- * Shows only the first $chars of a text, plus a [...] symbol. 
+/**
+ * Shows only the first $chars of a text, plus a [...] symbol.
  * @param   string  $text   text to trim
  * @param   int     $chars  number of chars to display (default: 20)
  * @return  string          The trimmed text
  */
-function trim_chars($text, $chars = 20) 
+function trim_chars($text, $chars = 20)
 {
   $trimmed = substr($text, 0, $chars);
   if (strlen($trimmed) >= $chars) {
     $trimmed .= "[...]";
   }
-  
+
   return $trimmed;
 }
 
@@ -268,7 +305,7 @@ function get_ip()
 
 }
 
-/** 
+/**
  * Masks a given client ID string, just for pretty reading.
  * @param  string   $hash   client ID
  * @return string           Pretty-formatted client ID
@@ -276,45 +313,45 @@ function get_ip()
 function mask_client($hash)
 {
   $len = strlen($hash) / 4;
-  
+
   return substr($hash, 0, $len);
 }
 
-/** 
+/**
  * Displays a default error page.
- * Used when a cached page is deleted, as well as when cURL cannot fetch a remote page. 
+ * Used when a cached page is deleted, as well as when cURL cannot fetch a remote page.
  * @param  string   $bodyText additional info to display on page body
- * @return string             The error page 
+ * @return string             The error page
  */
 
-function error_webpage($bodyText = "") 
-{  
+function error_webpage($bodyText = "")
+{
   $webpage = '<html><head><title>Error</title></head><body>'.$bodyText.'</body></html>';
-  
-  return $webpage; 
-} 
 
-/** 
+  return $webpage;
+}
+
+/**
  * Merges vertical and horizontal coordinates in a bidimensional point array.
- * Stops coordinates (hesitations) are removed. 
+ * Stops coordinates (hesitations) are removed.
  * @param   array  $xcoords        horizontal coordinates
  * @param   array  $ycoords        vertical coordinates
  * @param   array  $getDistances   if TRUE, the result array contains euclidean distances
  * @return  array                  2D points or euclidean distances array
  */
-function convert_points($xcoords, $ycoords, $getDistances = false) 
+function convert_points($xcoords, $ycoords, $getDistances = false)
 {
   // initialize points array
   $pointArray = array();
   // check for illegal offsets on $coords
   $maxCount = count($xcoords) - 1;
   // transform arrays in a single points array
-  foreach ($xcoords as $i => $value) 
+  foreach ($xcoords as $i => $value)
   {
-    $p = array($value, $ycoords[$i]); 
-    // check if next point exists 
+    $p = array($value, $ycoords[$i]);
+    // check if next point exists
     if ($i >= $maxCount) { break; }
-    
+
     $q = array($xcoords[$i + 1], $ycoords[$i + 1]);
     $distance = KMeans::getDistance($p, $q);
     // check
@@ -325,7 +362,7 @@ function convert_points($xcoords, $ycoords, $getDistances = false)
       if ($distance > 0) { $pointArray[] = $p; }
     }
   }
-  
+
   return $pointArray;
 }
 
@@ -336,14 +373,14 @@ function convert_points($xcoords, $ycoords, $getDistances = false)
  * @return  int              number of clicks
  */
 function get_click_coordinates($coords_x, $coords_y, $clicks)
-{ 
+{
   // check
   if (!is_array($coords_x)) { $coords_x = explode(",", $coords_x); }
   if (!is_array($coords_y)) { $coords_y = explode(",", $coords_y); }
   if (!is_array($clicks)) { $clicks = explode(",", $clicks); }
-  
-  $clickCoords = array( 
-                        "x" => array(), 
+
+  $clickCoords = array(
+                        "x" => array(),
                         "y" => array()
                       );
   foreach ($clicks as $i => $value)
@@ -366,9 +403,9 @@ function get_click_coordinates($coords_x, $coords_y, $clicks)
 function count_clicks($clicks)
 {
   $numClicks = 0;
-  
+
   if (!is_array($clicks)) { $clicks = explode(",", $clicks); }
-  
+
   $maxCount = count($clicks) - 1;
   foreach ($clicks as $i => $value)
   {
@@ -383,15 +420,15 @@ function count_clicks($clicks)
 
   return $numClicks;
 }
-      
-/** 
+
+/**
  * Gets installed extensions priorities.
  * @return  array   Array with keys: dir name (string) => order priority (int)
  */
-function get_exts_order() 
+function get_exts_order()
 {
   $exts = db_select_all(TBL_PREFIX.TBL_EXTS, "*", "1");
-  
+
   foreach ($exts as $ext) {
     $priority[ $ext['dir'] ] = (int) $ext['priority'];
   }
@@ -401,15 +438,15 @@ function get_exts_order()
   return $priority;
 }
 
-/** 
+/**
  * Gets all available CMS sections.
  * @return  array   Array of strings (sections)
  */
-function ext_available() 
+function ext_available()
 {
   $dir = INC_PATH.'ext';
   $ext = array();
-  if ($handle = opendir($dir)) 
+  if ($handle = opendir($dir))
   {
     while (false !== ($file = readdir($handle))) {
       // look for available module extensions
@@ -419,50 +456,50 @@ function ext_available()
     }
     closedir($handle);
   }
-  
+
   return $ext;
 }
 
-/** 
- * Gives format to CMS sections. 
+/**
+ * Gives format to CMS sections.
  * @return  string  Formatted output list (LI elements)
  */
 function ext_format()
 {
   if (!isset($_SESSION['allowed'])) return false;
-  
+
   $current = ext_name();
   // check priority
   $prioritized = get_exts_order();
   // loop through available sections
   $list = "";
-  foreach ($prioritized as $dir => $priority) 
-  { 
+  foreach ($prioritized as $dir => $priority)
+  {
     if (!in_array($dir, $_SESSION['allowed'])) { continue; }
-    
+
     $css = ($current == $dir) ? ' class="current"' : null;
     $href = ADMIN_PATH.'ext/'.$dir.'/';
     $list .= '<li'.$css.'><a href="'.$href.'">'.ucfirst(filename_to_str($dir)).'</a></li>';
   }
-  
+
   return $list;
 }
 
-/** 
- * Gets the current CMS extension name. 
+/**
+ * Gets the current CMS extension name.
  * Sub-extensions are allowed as long as parent extension are allowed.
  * @return  string    Section name
  */
-function ext_name() 
+function ext_name()
 {
   $url = dirname($_SERVER['PHP_SELF']);
   $tok = "/ext/";
-  
+
   if (strpos($url, $tok) === false) {
     $ext = explode("/", $url);
     return $ext[ count($ext) - 1 ];
   }
-  
+
   list($admin, $ext) = explode($tok, $url);
   $subext = explode("/", $ext);
   if (empty($subext[0])) {
@@ -473,43 +510,43 @@ function ext_name()
   }
 }
 
-/** 
+/**
  * Assigns a valid filename to a given string: only alphanumeric chars. Spaces are converted to dashes.
- * @param   string  $string   input string 
+ * @param   string  $string   input string
  * @return  string            Normalized String
  */
-function str_to_filename($string) 
+function str_to_filename($string)
 {
   // remove non alphanumeric chars
   $string = preg_replace('/[^a-z0-9A-Z\s]+/', '', strtolower($string));
   // now convert spaces to dashes
   $string = str_replace(" ", "-", $string);
-  
+
   return $string;
 }
 
-/** 
+/**
  * Reverse function for str_to_filename. Dashes are converted to spaces.
- * @param   string  $string   normalized String 
+ * @param   string  $string   normalized String
  * @return  string            Output String
  */
-function filename_to_str($string) 
+function filename_to_str($string)
 {
-  // now convert dashes to spaces 
+  // now convert dashes to spaces
   $string = str_replace("-", " ", $string);
-  
+
   return $string;
 }
 
-/** 
+/**
  * Adds $element tags to all CMS extensions header.
  * @param   mixed   $element  HTML code to insert in the HEAD of any CMS section (<style>, <script>, etc.). Can be a single string or an Array
  * @global  array   $_headAdded
  */
-function add_head($element) 
+function add_head($element)
 {
   global $_headAdded;
-  
+
   if (!$element) return;
 
   if (is_array($element)) {
@@ -521,28 +558,28 @@ function add_head($element)
   }
 }
 
-/** 
+/**
  * Displays a <noscript> warning message. Useful for those extensions that require JavaScript functionality.
  * @param   string  $msg    custom warning message. Default: "Please enable JavaScript in order to work on this section."
- * @return  string          Message wrapped in a <noscript> tag   
+ * @return  string          Message wrapped in a <noscript> tag
  */
-function check_noscript($msg = "") 
+function check_noscript($msg = "")
 {
   global $_displayType, $_notifyMsg;
-  
+
   if (empty($msg)) $msg = $_notifyMsg["NOSCRIPT"];
-  
+
   return '<noscript>'.display_text($_displayType["WARNING"], $msg).'</noscript>';
 }
 
-/** 
+/**
  * Count files in a dir. This function skip directories, and it is not recursive.
- * By now it is only used to check the cache logs. 
+ * By now it is only used to check the cache logs.
  * @param   string  $dir    the directory to read files from
  * @return  int             Number of files
  */
-function count_dir_files($dir) 
-{  
+function count_dir_files($dir)
+{
   $count = 0;
   if ($handle = opendir($dir)) {
     while (false !== ($file = readdir($handle))) {
@@ -552,49 +589,49 @@ function count_dir_files($dir)
     }
     closedir($handle);
   }
-  
+
   return $count;
 }
 
-/** 
+/**
  * Verifies that current login has admin privileges.
  * Note that various admin users can coexist on the CMS.
  * @return  boolean   TRUE on sucess, or FALSE on failure
  */
-function is_admin() 
+function is_admin()
 {
   if (!isset($_SESSION['login'])) return false;
-  
+
   // get admin role_id
   $user = db_select(TBL_PREFIX.TBL_USERS, "role_id", "login = '".$_SESSION['login']."'");
   return ( (int) $user['role_id'] === 1 );
 }
 
-/** 
+/**
  * Verifies that current login is the superadmin user.
  * @return  boolean   TRUE on sucess, or FALSE on failure
  */
-function is_root() 
+function is_root()
 {
   if (!isset($_SESSION['login'])) return false;
 
-  
+
   // get root role_id
   $user = db_select(TBL_PREFIX.TBL_USERS, "id", "login = '".$_SESSION['login']."'");
   return ( (int) $user['id'] === 1 );
 }
 
-/** 
+/**
  * Gets all allowed CMS extensions for the current user.
  * @return  array   Array of strings (sections)
  */
-function is_allowed() 
+function is_allowed()
 {
   // check current user's role
   if ($_SESSION['role_id'] > 0)
   {
     $user = db_select(TBL_PREFIX.TBL_USERS, "role_id", "login = '".$_SESSION['login']."'");
-    if ( (int) $user['role_id'] !== 1 ) 
+    if ( (int) $user['role_id'] !== 1 )
     {
       $current = ext_name();
       // check if current section is allowed
@@ -603,17 +640,17 @@ function is_allowed()
       return true;
     }
   }
-  else 
+  else
   {
     return false;
   }
 }
-   
+
 /**
  * Random Password Generator.
  * @autor Charlie
- * @link http://snippets.dzone.com/user/Charlie 
- * @version 0.1.0 - 2006-02-14 
+ * @link http://snippets.dzone.com/user/Charlie
+ * @version 0.1.0 - 2006-02-14
  */
 function generate_password()
 {
@@ -638,28 +675,28 @@ function generate_password()
 }
 
 /**
- * Checks if an email address is valid. 
+ * Checks if an email address is valid.
  * The chars # $ % & ' * + / = ? ^ ` { | } ~ are theoretically allowed on the local part,
- * but in practice they are discarded.  
- * @param   string    $email  email to check 
- * @return  boolean           TRUE on sucess, or FALSE on failure   
+ * but in practice they are discarded.
+ * @param   string    $email  email to check
+ * @return  boolean           TRUE on sucess, or FALSE on failure
  * @link    http://tools.ietf.org/html/rfc5321
- * @link    http://tools.ietf.org/html/rfc5322  
+ * @link    http://tools.ietf.org/html/rfc5322
  */
 function is_email($email)
-{       
+{
   return eregi("^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$", $email);
 }
 
 /**
- * Searches DNS for MX records corresponding to user's email account hostname. 
- * @param   string    $email  user email 
- * @return  boolean           TRUE on sucess, or FALSE on failure   
+ * Searches DNS for MX records corresponding to user's email account hostname.
+ * @param   string    $email  user email
+ * @return  boolean           TRUE on sucess, or FALSE on failure
  */
 function email_exists($email)
 {
   if (!is_email($email)) { return false; }
-  
+
   list($user, $domain) = split("@", $email);
   if (function_exists('getmxrr') && getmxrr($domain, $MXHost)) {
     return true;
@@ -675,7 +712,7 @@ function email_exists($email)
 function die_msg($text = "")
 {
   if (!empty($text)) { $text = ": ".$text; }
-  
+
   die("<strong>Error</strong>".$text);
 }
 
@@ -747,7 +784,7 @@ function get_cache_common_url($pageId)
  * @param   $prefix string  prefix to find
  * @return          boolean TRUE on success or FALSE on failure
  */
-function str_startswith($str, $prefix) 
+function str_startswith($str, $prefix)
 {
    return strncmp($str, $prefix, strlen($prefix)) == 0;
 }
